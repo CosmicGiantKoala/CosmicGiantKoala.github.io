@@ -1,4 +1,4 @@
-baseURL = 'https://CosmicGiantKoala.github.io/CosmicGiantKoala-Doc-Page/'
+baseURL = 'https://CosmicGiantKoala.github.io/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
 
