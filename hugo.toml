@@ -1,6 +1,6 @@
-baseURL = 'https://CosmicGiantKoala.github.io/CosmicGiantKoala-Doc-Page/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = 'https://CosmicGiantKoala.github.io/'
+languageCode = 'ko-KR'
+title = 'CosmicGiantKoala'
 
 [module]
 # uncomment line below for temporary local development of module

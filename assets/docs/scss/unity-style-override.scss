@@ -1,0 +1,33 @@
+﻿:root {
+  --unity-gray: #222C37;
+  --unity-mint: #00cccc;
+  --primary: var(--unity-gray);
+}
+
+img.shard-left {
+  margin-left: auto;
+}
+
+img.shard-right {
+  margin-right: auto;
+}
+
+img.sidebar-logo {
+  width: 100%;
+  margin-left: -5px;
+}
+
+.flexsearch-container {
+  background-color: var(--unity-mint);
+  .form-control {
+    border: 0px solid var(--primary);
+    font-size: 1.2rem;
+    background-color: var(--white);
+    border-radius: 0px;
+  }
+}
+
+.search-btn-override{
+  width: 50%;
+}
+

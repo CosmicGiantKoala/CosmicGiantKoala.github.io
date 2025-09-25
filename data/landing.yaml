@@ -1,0 +1,17 @@
+﻿hero:
+  enable: true
+  weight: 0
+  template: hero
+
+  badge:
+    text: v1.2.3
+    color: success
+  ctaButton:
+    btnText: "시작하기"
+    url: "/docs/"
+
+featureGrid:
+  enable: false
+
+imageCompare:
+  enable: false
