@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docs on CosmicGiantKoala</title>
+    <title>CGK Documentation on CosmicGiantKoala</title>
     <link>http://localhost:1313/docs/</link>
-    <description>Recent content in Docs on CosmicGiantKoala</description>
+    <description>Recent content in CGK Documentation on CosmicGiantKoala</description>
     <generator>Hugo</generator>
     <language>ko-KR</language>
-    <lastBuildDate>Mon, 22 May 2023 00:27:57 +0100</lastBuildDate>
+    <lastBuildDate></lastBuildDate>
     <atom:link href="http://localhost:1313/docs/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Example Page</title>
-      <link>http://localhost:1313/docs/example-page/</link>
-      <pubDate>Mon, 22 May 2023 00:27:57 +0100</pubDate>
-      <guid>http://localhost:1313/docs/example-page/</guid>
-      <description></description>
-    </item>
   </channel>
 </rss>
