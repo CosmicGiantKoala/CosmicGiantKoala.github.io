@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SlimeLush on CosmicGiantKoala</title>
+    <link>http://localhost:1313/docs/projects/slimlush/</link>
+    <description>Recent content in SlimeLush on CosmicGiantKoala</description>
+    <generator>Hugo</generator>
+    <language>ko-KR</language>
+    <lastBuildDate>Mon, 22 May 2023 00:27:57 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/docs/projects/slimlush/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Projects No1</title>
+      <link>http://localhost:1313/docs/projects/slimlush/project1/</link>
+      <pubDate>Mon, 22 May 2023 00:27:57 +0100</pubDate>
+      <guid>http://localhost:1313/docs/projects/slimlush/project1/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction &lt;a href=&#34;#introduction&#34; class=&#34;anchor&#34; aria-hidden=&#34;true&#34;&gt;&lt;i class=&#34;material-icons align-middle&#34;&gt;link&lt;/i&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Introduction link&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
