@@ -1,0 +1,13 @@
+﻿{{ $videoPath := .Get "src" }}
+{{ $video := resources.Get $videoPath }}
+
+{{ with $video }}
+{{ $videoURL := .RelPermalink }}
+
+<video controls preload="auto" class="{{ $.Get "class" }}" width="{{ $.Get "width" }}" height="{{ $.Get "height" }}">
+<source src="{{ $videoURL }}" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+{{ else }}
+{{ errorf "ERROR: The video file specified in 'src' ('%s') was not found in the 'assets' folder." $videoPath }}
+{{ end }}
