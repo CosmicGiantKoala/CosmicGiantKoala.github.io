@@ -1,7 +1,10 @@
 ﻿:root {
   --unity-gray: #222C37;
   --unity-mint: #00cccc;
+  --unity-codeblock-bg: #2d2d2d;
+  --unity-codeblock-text-color : #fff;
   --primary: var(--unity-gray);
+
 }
 
 img.shard-left {
@@ -42,4 +45,15 @@ h4 {
 }
 body {
   font-size: 0.875rem;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--unity-codeblock-text-color) !important;
+  background: var(--unity-codeblock-bg) !important;
+}
+
+div.code-toolbar {
+  background: var(--unity-codeblock-bg);
+  border-radius: 0px;
 }
