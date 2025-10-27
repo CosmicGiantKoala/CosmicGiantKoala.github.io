@@ -6,11 +6,11 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 302
+weight = 401
 +++
 
 ### MyRoomEditor 시스템 분석 및 구조 정리
-📋 전체적인 구조 및 아키텍처
+전체적인 구조 및 아키텍처
 MyRoomEditor는 Unity 기반의 3D 룸 편집 시스템으로, MVP(Model-View-Presenter) 패턴과 의존성 주입(DI) 패턴을 활용하여 구현되었습니다.
 주요 디렉토리 구조```
 MyRoomEditor/
