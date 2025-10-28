@@ -1,5 +1,5 @@
 ﻿+++
-title = "Assist Camera"
+title = "Assist Camera(서브 카메라 유틸리티)"
 description = "보조렌더링 도구"
 icon = "videocam"
 date = "2023-05-22T00:27:57+01:00"

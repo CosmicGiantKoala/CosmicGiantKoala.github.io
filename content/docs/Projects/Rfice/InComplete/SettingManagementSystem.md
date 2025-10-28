@@ -1,5 +1,5 @@
 ﻿+++
-title = "세팅시스템"
+title = "세팅시스템(작성중)"
 # description = "Rfice 개요"
 icon = "settings"
 date = "2023-05-22T00:27:57+01:00"

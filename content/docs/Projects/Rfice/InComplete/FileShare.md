@@ -1,5 +1,5 @@
 ﻿+++
-title = "실시간 파일 공유 오브젝트 기능"
+title = "실시간 파일 공유 오브젝트 기능(작성중)"
 # description = "Rfice 개요"
 icon = "connected_tv"
 date = "2023-05-22T00:27:57+01:00"
