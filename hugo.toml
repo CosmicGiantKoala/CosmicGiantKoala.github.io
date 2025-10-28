@@ -3,10 +3,10 @@ languageCode = 'ko-KR'
 title = 'CosmicGiantKoala'
 contentDir = "content"
 enableEmoji = true
-enableGitInfo = true
+enableGitInfo = false
 
 [module]
-# uncomment line below for temporary local development of module
+# 모듈의 임시 로컬 개발을 위한 아래 줄 주석 해제
 replacements = "github.com/colinwilson/lotusdocs -> lotusdocs"
 [module.hugoVersion]
 extended = true
@@ -25,8 +25,8 @@ startLevel = 1
 [markup.goldmark]
 [markup.goldmark.renderer]
 unsafe = true # https://jdhao.github.io/2019/12/29/hugo_html_not_shown/
-# [markup.highlight]
-#   codeFences = false # disables Hugo's default syntax highlighting
+# [markup.highlight] # 마크업 하이라이트 설정
+#   codeFences = false # Hugo의 기본 구문 강조 비활성화
 [markup.goldmark.parser]
 [markup.goldmark.parser.attribute]
 block = true
@@ -34,102 +34,105 @@ block = true
 
 [params]
 
-# Google Fonts
+# Google Fonts # 구글 폰트 설정
 google_fonts = [
     ["Inter", "300, 400, 600, 700"],
     ["Fira Code", "500, 700"]
 ]
 
-sans_serif_font = "Inter"     # Default is System font
-secondary_font  = "Inter"     # Default is System font
-mono_font       = "Fira Code" # Default is System font
+sans_serif_font = "Inter"     # 기본값은 시스템 폰트
+secondary_font  = "Inter"     # 기본값은 시스템 폰트
+mono_font       = "Fira Code" # 기본값은 시스템 폰트
 
 [params.footer]
 copyright = "© :YEAR: [**<a href=\"https://cosmicgiantkoala.github.io\" style=\"color:var(--unity-mint); text-decoration:none;\">CosmicGiantKoala</a>**](https://cosmicgiantkoala.github.io). Built with [**Lotus Docs**](https://github.com/colinwilson/lotusdocs)"
-version   = true # include git commit info in footer
+version   = true # 푸터에 git 커밋 정보 포함
 
-#[params.social]
+#[params.social] # 소셜 미디어 설정
 #github = "CosmicGiantKoala" # github.com/YOUR_GITHUB_ID
 # twitter = "lotusdocs"            # twitter.com/YOUR_TWITTER_ID
 # bluesky = "colinwilson.uk"       # bsky.app/profile/YOUR_BLUESKY_ID
 # instagram = "colinwilson"      # instagram.com/YOUR_INSTAGRAM_ID
-# rss = true                     # show rss icon with link
+# rss = true                     # RSS 아이콘과 링크 표시
 
-[params.docs] # Parameters for the /docs 'template'
-title           = "CGK Docs"                        # default html title for documentation pages/sections
+[params.docs] # /docs 템플릿 파라미터
+title           = "CGK Docs"                        # 문서 페이지/섹션의 기본 HTML 제목
 
-# pathName        = "docs"                            # path for documentation site | default "docs"
+# pathName        = "docs"                            # 문서 사이트 경로 | 기본값 "docs"
 
-# themeColor      = "cyan"                            # (optional) - Set theme accent colour. Options include: blue (default), green, red, yellow, emerald, cardinal, magenta, cyan
+# themeColor      = "cyan"                            # (선택사항) - 테마 강조 색상 설정. 옵션: blue (기본), green, red, yellow, emerald, cardinal, magenta, cyan
 
-darkMode        = false                                # enable dark mode option? default false
+darkMode        = false                                # 다크 모드 옵션 활성화? 기본값 false
 
-prism           = true                                # enable syntax highlighting via Prism
+prism           = true                                # Prism을 통한 구문 강조 활성화
 
-prismTheme      = "lotusdocs"                         # (optional) - Set theme for PrismJS. Options include: lotusdocs (default), solarized-light, twilight, lucario
+prismTheme      = "lotusdocs"                         # (선택사항) - PrismJS 테마 설정. 옵션: lotusdocs (기본), solarized-light, twilight, lucario
 
-# gitinfo
-repoURL         = "https://cosmicgiantkoala.github.io/"  # Git repository URL for your site [support for GitHub, GitLab, and BitBucket]
-repoBranch      = "master"                           # Name of your Git repository branch
-editPage        = true                                # enable 'Edit this page' feature - default false
-lastMod         = true                                # enable 'Last modified' date on pages - default false
-lastModRelative = true                                # format 'Last modified' time as relative - default true
+# gitinfo # Git 정보 설정
+repoURL         = "https://cosmicgiantkoala.github.io/"  # 사이트의 Git 저장소 URL [GitHub, GitLab, BitBucket 지원]
+repoBranch      = "master"                           # Git 저장소 브랜치 이름
+editPage        = true                                # '이 페이지 편집' 기능 활성화 - 기본값 false
+lastMod         = true                                # 페이지에 '최종 수정일' 표시 - 기본값 false
+lastModRelative = true                                # '최종 수정일' 시간을 상대적으로 표시 - 기본값 true
 
-# ToC
-toc             = true                                # enable table of contents? default is true
-tocMobile       = true                                # enable table of contents in mobile view? default is true
-scrollSpy       = true                                # enable scrollspy on ToC? default is true
+# ToC # 목차 설정
+toc             = true                                # 목차 활성화? 기본값 true
+tocMobile       = true                                # 모바일 뷰에서 목차 활성화? 기본값 true
+scrollSpy       = true                                # ToC에 스크롤스파이 활성화? 기본값 true
 
-# icons
-sidebarIcons    = true                                # enable sidebar icons? default false
-titleIcon       = false                                # enable front matter icon title prefix? default is false
+# icons # 아이콘 설정
+sidebarIcons    = true                                # 사이드바 아이콘 활성화? 기본값 false
+titleIcon       = false                                # 프론트 매터 아이콘 제목 접두사 활성화? 기본값 false
 
-# content navigation
-breadcrumbs     = true                                # default is true
-navDesc         = true                                # include front matter descriptions in Prev/Next navigation cards
-navDescTrunc    = 30                                  # Number of characters by which to truncate the Prev/Next descriptions
+# content navigation # 콘텐츠 네비게이션 설정
+breadcrumbs     = true                                # 기본값 true
+navDesc         = true                                # 이전/다음 네비게이션 카드에 프론트 매터 설명 포함
+navDescTrunc    = 30                                  # 이전/다음 설명을 자를 문자 수
 
-listDescTrunc   = 100                                 # Number of characters by which to truncate the list card description
-backToTop       = true                                # enable back-to-top button? default true
+listDescTrunc   = 100                                 # 목록 카드 설명을 자를 문자 수
+backToTop       = true                                # 맨 위로 버튼 활성화? 기본값 true
 
-# front matter
-descriptions    = true                                # enable front matter descriptions under content title?
+# front matter # 프론트 매터 설정
+descriptions    = true                                # 콘텐츠 제목 아래 프론트 매터 설명 활성화?
 
-# Link behaviour
-intLinkTooltip  = true                                # Enable a tooltip for internal links that displays info about the destination? default false
-# extLinkNewTab   = false                             # Open external links in a new Tab? default true
-logoLinkURL     = "/"                                 # Set a custom URL destination for the top header logo link.
+# Link behaviour # 링크 동작 설정
+intLinkTooltip  = true                                # 목적지에 대한 정보를 표시하는 내부 링크 툴팁 활성화? 기본값 false
+# extLinkNewTab   = false                             # 외부 링크를 새 탭에서 열기? 기본값 true
+logoLinkURL     = "/"                                 # 상단 헤더 로고 링크의 사용자 정의 URL 목적지 설정
 
-[params.flexsearch] # Parameters for FlexSearch
+# doc navigation # 문서 네비게이션 설정
+docNav          = false                               # 이전/다음 문서 네비게이션 카드 표시? 기본값 true
+
+[params.flexsearch] # FlexSearch 파라미터
 enabled             = true
 # tokenize            = "full"
 # optimize            = true
 # cache               = 100
-# minQueryChar        = 3 # default is 0 (disabled)
-# maxResult           = 5 # default is 5
+# minQueryChar        = 3 # 기본값 0 (비활성화)
+# maxResult           = 5 # 기본값 5
 # searchSectionsIndex = []
 
-#[params.docsearch] # Parameters for DocSearch
-#appID     = "O2QIOCBDAK"                       # Algolia Application ID (or set env variable HUGO_PARAM_DOCSEARCH_appID)
-#apiKey    = "fdc60eee76a72a35d739b54521498b77" # Algolia Search-Only API (Public) Key (or set env variable HUGO_PARAM_DOCSEARCH_apiKey)
-#indexName = "dev_lotusdocs.dev"               # Index Name to perform search on (or set env variable HUGO_PARAM_DOCSEARCH_indexName)
+#[params.docsearch] # DocSearch 파라미터
+#appID     = "O2QIOCBDAK"                       # Algolia 애플리케이션 ID (또는 환경 변수 HUGO_PARAM_DOCSEARCH_appID 설정)
+#apiKey    = "fdc60eee76a72a35d739b54521498b77" # Algolia 검색 전용 API (공개) 키 (또는 환경 변수 HUGO_PARAM_DOCSEARCH_apiKey 설정)
+#indexName = "dev_lotusdocs.dev"               # 검색할 인덱스 이름 (또는 환경 변수 HUGO_PARAM_DOCSEARCH_indexName 설정)
 
-#[params.plausible] # Parameters for Plausible Analytics
-#dataDomain = "lotusdocs.dev" # (or set via env variable HUGO_PARAMS_PLAUSIBLE_dataDomain)
-#scriptURL  = "/docs/s/js/script.outbound-links.js"       # (or set via env variable HUGO_PARAMS_PLAUSIBLE_scriptURL)
-#eventAPI   = "/docs/s/api/event/"       # optional - (or set via env variable HUGO_PARAMS_PLAUSIBLE_eventAPI)
+#[params.plausible] # Plausible Analytics 파라미터
+#dataDomain = "lotusdocs.dev" # (또는 환경 변수 HUGO_PARAMS_PLAUSIBLE_dataDomain로 설정)
+#scriptURL  = "/docs/s/js/script.outbound-links.js"       # (또는 환경 변수 HUGO_PARAMS_PLAUSIBLE_scriptURL로 설정)
+#eventAPI   = "/docs/s/api/event/"       # 선택사항 - (또는 환경 변수 HUGO_PARAMS_PLAUSIBLE_eventAPI로 설정)
 
-#[params.feedback]
+#[params.feedback] # 피드백 파라미터
 #enabled = true
 #emoticonTpl = true
-#eventDest = ["plausible","google"]
-##emoticonEventName = "Feedback"
-#positiveEventName = "Positive Feedback"
-#negativeEventName = "Negative Feedback"
-#positiveFormTitle = "What did you like?"
-#negativeFormTitle = "What went wrong?"
-#successMsg = "Thank you for helping to improve Lotus Docs' documentation!"
-#errorMsg = "Sorry! There was an error while attempting to submit your feedback!"
+#eventDest = ["plausible","google"] # 이벤트 목적지 = ["plausible","google"]
+##emoticonEventName = "Feedback" # 이모티콘 이벤트 이름 = "Feedback"
+#positiveEventName = "Positive Feedback" # 긍정적 피드백 이벤트 이름 = "Positive Feedback"
+#negativeEventName = "Negative Feedback" # 부정적 피드백 이벤트 이름 = "Negative Feedback"
+#positiveFormTitle = "What did you like?" # 긍정적 폼 제목 = "What did you like?"
+#negativeFormTitle = "What went wrong?" # 부정적 폼 제목 = "What went wrong?"
+#successMsg = "Thank you for helping to improve Lotus Docs' documentation!" # 성공 메시지 = "Thank you for helping to improve Lotus Docs' documentation!"
+#errorMsg = "Sorry! There was an error while attempting to submit your feedback!" # 오류 메시지 = "Sorry! There was an error while attempting to submit your feedback!"
 #positiveForm = [
 #    ["Accurate", "Accurately describes the feature or option."],
 #    ["Solved my problem", "Helped me resolve an issue."],
