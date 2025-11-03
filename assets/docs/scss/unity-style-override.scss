@@ -4,6 +4,7 @@
   --unity-codeblock-bg: #2d2d2d;
   --unity-codeblock-text-color : #fff;
   --primary: var(--unity-gray);
+  --content-link-color: #b83c82;
 
 }
 
@@ -34,6 +35,10 @@ img.sidebar-logo {
   width: 50%;
 }
 
+h1 {
+  font-size: 1.75rem;
+}
+
 h2 {
   font-size: 1.5rem;
 }
@@ -56,4 +61,28 @@ pre[class*="language-"] {
 div.code-toolbar {
   background: var(--unity-codeblock-bg);
   border-radius: 0px;
+}
+
+//.docs-content
+.docs-content .main-content a {
+  font-weight: 400;
+  color: var(--content-link-color);
+  text-decoration: underline 1.5px var(--content-link-color);
+  text-underline-offset: 2px !important;
+  text-decoration-skip-ink: none;
+
+  &:hover {
+    text-decoration: underline 1.5px var(--content-link-color);
+    text-underline-offset: 2px !important;
+    transition: 0s !important;
+  }
+}
+
+.lead {
+  font-size: 1rem;
+}
+
+#TableOfContents a,
+#toc a {
+  font-size: 13px;
 }
