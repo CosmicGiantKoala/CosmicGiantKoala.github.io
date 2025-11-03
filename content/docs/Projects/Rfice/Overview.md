@@ -33,7 +33,7 @@ weight = 301
 
 ### 기여 요약
 #### 클라이언트 개발(최신순)
-1. **MyRoomEditor** : 하우징 시스템
+1. [**MyRoomEditor** : 하우징 시스템]({{< ref "docs/projects/rfice/housingsystem/overview" >}})
 2. **PrefabLocalIdHelper** : 프리팹 고유 ID 관리 유틸리티 (작성중)
 3. **NetworkedScreen** : 실시간 파일공유 오브젝트 (작성중)
 4. **SettingManagementSystem** : 시스템 설정 시스템 (작성중)

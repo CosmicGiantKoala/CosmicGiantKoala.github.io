@@ -35,6 +35,10 @@ img.sidebar-logo {
   width: 50%;
 }
 
+h1 {
+  font-size: 1.75rem;
+}
+
 h2 {
   font-size: 1.5rem;
 }
@@ -72,4 +76,13 @@ div.code-toolbar {
     text-underline-offset: 2px !important;
     transition: 0s !important;
   }
+}
+
+.lead {
+  font-size: 1rem;
+}
+
+#TableOfContents a,
+#toc a {
+  font-size: 13px;
 }
