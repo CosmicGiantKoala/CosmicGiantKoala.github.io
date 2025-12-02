@@ -279,6 +279,7 @@ class MyRoomEditorPropEditor {
     MyRoomEditorPropEditingManager --> MyRoomEditorInteractionManager : uses
     MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
 ```
+<br><br>
 
 ### 사용자 입력 및 입력 유틸리티
 {{< table "table-striped">}}
@@ -323,8 +324,8 @@ direction LR
     MyRoomEditorCameraInputDispatcher --> MyRoomEditorInputUtils : uses
     MyRoomEditorEditingInputDispatcher --> MyRoomEditorInputUtils : uses
     MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
-
 ```
+<br><br>
 
 ### 오브젝트 동작 및 정의 Component
 {{< table "table-striped">}}
@@ -378,8 +379,8 @@ direction LR
     SpawnablePhotoFrameProp --> SpawnablePropBase : extends
     SpawnableScreenProp --> SpawnablePropBase : extends
     SpawnablePropBase --> PropEditingState : has
-
 ```
+<br><br>
 
 ### 오브젝트 동작 및 정의 Interface 
 {{< table "table-striped">}}
@@ -455,8 +456,8 @@ direction LR
     IRotatableProp --> IMyRoomEditorEditableObject : extends
     IPhotoFrameProp --> IInteractableProp : extends
     IScreenProp --> IInteractableProp : extends
-
 ```
+<br><br>
 
 ### 오브젝트 배치 구역 정의 Component 및 Interface
 {{< table "table-striped">}}
@@ -488,8 +489,9 @@ direction LR
     PlacementAreaProp --> IPlaceableArea : implements
     PlacementAreaProp --> IColorEditableProp : implements
     PlacementAreaInProp --> IPlaceableArea : implements
-
 ```
+<br><br>
+
 
 ### 오브젝트 편집UI Component
 {{< table "table-striped">}}
@@ -524,9 +526,7 @@ classDiagram
     MyRoomEditorObjectEditUI --> MyRoomEditorColorSelectUI : uses
     MyRoomEditorColorSelectUI --> MyRoomEditorColorEditItem : manages
 ```
-<img src="/assets/images/test.svg" width="100%" alt="MyRoomEditor 클래스 다이어그램">
-
- 
+<br><br>
 
 ## 4. 주요 특징 및 최적화
 
