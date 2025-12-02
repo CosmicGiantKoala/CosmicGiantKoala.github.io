@@ -90,6 +90,113 @@ weight = 401
 |**MyRoomEditorPropEditingManager**<br>-->MyRoomEditorState| ️💡 오브젝트 편집 상태를 관리하는 implement 클래스.<br> 💡 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행.<br> 💡 서브 클래스`(MyRoomPropEditor)`와 UI이벤트를 통해 편집 동작을 처리.<br> 💡 실행취소를 포함한 상태 스택 관리.|
 {{< /table >}}<br>
 
+```mermaid
+classDiagram
+    direction LR
+    class MyRoomEditorState {
+        <<abstract>>
+        + Enable()
+        + Disable()
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorPlacementManager {
+        + Enable()
+        + Disable()
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorPropEditingManager {
+        - PropEditMode _currentEditMode
+        - MyRoomEditorPropEditor _currentEditor
+        + Enable()
+        + Disable()
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCancel()
+        + OnRightClick()
+        + SetEditMode(PropEditMode mode)
+    }
+
+    class MyRoomEditorStateHandle {
+        - MyRoomEditorStateEnum _currentState
+        + ChangeState(MyRoomEditorStateEnum newState)
+        + GetCurrentState() MyRoomEditorStateEnum
+    }
+
+    class MyRoomEditorEdittingInputDispatcher {
+        + Enable()
+        + Disable()
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorInputUtils {
+        + VerifyUIInteraction() bool
+        + GetRaycastHit() bool
+        + PointerDelta() Vector2
+        + IsPointerOnUI() bool
+    }
+
+    class MyRoomEditorInteractionManager {
+        - IMyRoomInteractionInteractor _interactor
+        + UploadImage(Action<string>)
+    }
+
+    class MyRoomEditorObjectEditUI {
+        + ShowEditUI(IMyRoomEditorEditableObject)
+        + HideEditUI()
+    }
+
+    class MyRoomEditorPropEditor {
+        <<abstract>>
+        + Enable()
+        + Disable()
+        + Setup(IMyRoomEditorEditableObject) bool
+        + CleanUp()
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class PropEditMode {
+        <<enumeration>>
+        Disable
+        Select
+        Move
+        Rotate
+    }
+
+    class MyRoomEditorStateEnum {
+        <<enumeration>>
+        Edit
+        Placement
+        Standby
+    }
+
+    MyRoomEditorPlacementManager --> MyRoomEditorState : extends
+    MyRoomEditorPropEditingManager --> MyRoomEditorState : extends
+    MyRoomEditorState --> MyRoomEditorEdittingInputDispatcher : uses
+    MyRoomEditorState --> MyRoomEditorStateHandle : uses
+    MyRoomEditorStateHandle --> MyRoomEditorStateEnum : uses
+    MyRoomEditorPlacementManager --> MyRoomEditorInputUtils : uses
+    MyRoomEditorPropEditingManager --> MyRoomEditorInputUtils : uses
+    MyRoomEditorPropEditingManager --> MyRoomEditorInteractionManager : uses
+    MyRoomEditorPropEditingManager --> MyRoomEditorPropEditor : manages
+    MyRoomEditorPropEditingManager --> PropEditMode : uses
+    MyRoomEditorPropEditingManager --> MyRoomEditorObjectEditUI : uses
+```
+<br><br>
+
 ### 오브젝트 선택/편집기
 {{< table "table-striped">}}
 | 클래스 | 역할 |
@@ -101,6 +208,79 @@ weight = 401
 |**MyRoomEditorInteractionManager**| ️💡 오브젝트의 특수 인터렉션을 담당하는 클래스.<br> 💡`MyRoomEditorPropEditingManager` 를 통해 특정 인터렉션 호출을 처리. |
 {{< /table >}}<br>
 
+```mermaid
+classDiagram
+direction LR
+class MyRoomEditorPropEditor {
+<<abstract>>
++ Enable()
++ Disable()
++ Setup(IMyRoomEditorEditableObject) bool
++ CleanUp()
++ OnPointerDown()
++ OnPointerUp()
++ OnCancel()
++ OnRightClick()
+}
+
+    class MyRoomEditorPropSelector {
+        - List<RaycastHit> _raycastHits
+        - RaycastHit _closestHit
+        + Enable()
+        + Disable()
+        + Setup(IMyRoomEditorEditableObject) bool
+        + CleanUp()
+        + OnPointerDown()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorPropMover {
+        - Transform defaultPropTransform
+        - GameObject moveArrow
+        - Material arrowMaterial
+        - IMoveableProp _moveableProp
+        - IRotatableProp _rotatableProp
+        + Enable()
+        + Disable()
+        + Setup(IMyRoomEditorEditableObject) bool
+        + CleanUp()
+        + OnPointerDown()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorPropRotator {
+        - GameObject rotateArrow
+        - Material rotateMaterial
+        - IRotatableProp _rotatableProp
+        + Enable()
+        + Disable()
+        + Setup(IMyRoomEditorEditableObject) bool
+        + CleanUp()
+        + OnPointerDown()
+        + OnCancel()
+        + OnRightClick()
+    }
+
+    class MyRoomEditorInteractionManager {
+        - IMyRoomInteractionInteractor _interactor
+        + UploadImage(Action<string>)
+    }
+
+    class MyRoomEditorPropEditingManager {
+        // 편집 상태 관리자 (관계 표시용)
+    }
+
+    MyRoomEditorPropSelector --> MyRoomEditorPropEditor : extends
+    MyRoomEditorPropMover --> MyRoomEditorPropEditor : extends
+    MyRoomEditorPropRotator --> MyRoomEditorPropEditor : extends
+    MyRoomEditorPropEditingManager --> MyRoomEditorPropEditor : uses
+    MyRoomEditorPropEditingManager --> MyRoomEditorInteractionManager : uses
+    MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
+```
+<br><br>
+
 ### 사용자 입력 및 입력 유틸리티
 {{< table "table-striped">}}
 | 클래스 | 역할 |
@@ -110,6 +290,42 @@ weight = 401
 |**MyRoomEditorEditingInputDispatcher**| ️💡 편집 관련 입력 이벤트를 처리하는 클래스. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리. |
 |**MyRoomEditorInputUtils**| ️💡 입력 유틸리티 클래스. UI 검증, `Raycast` 실행, 포인터 델타 계단 등 입력 관련 헬퍼 함수 제공. |
 {{< /table >}}<br>
+
+```mermaid
+classDiagram
+direction LR
+    class MyRoomEditorInputController {
+        + Enable()
+        + Disable()
+        // InputAction 이벤트를 디스패처로 전달
+    }
+
+    class MyRoomEditorCameraInputDispatcher {
+        + Enable()
+        + Disable()
+        // 카메라 조작 이벤트 처리 (WASD, 마우스)
+    }
+
+    class MyRoomEditorEditingInputDispatcher {
+        + Enable()
+        + Disable()
+        // 편집 관련 입력 이벤트 처리
+    }
+
+    class MyRoomEditorInputUtils {
+        + VerifyUIInteraction() bool
+        + GetRaycastHit() bool
+        + PointerDelta() Vector2
+        + IsPointerOnUI() bool
+    }
+
+    MyRoomEditorInputController --> MyRoomEditorCameraInputDispatcher : delegates
+    MyRoomEditorInputController --> MyRoomEditorEditingInputDispatcher : delegates
+    MyRoomEditorCameraInputDispatcher --> MyRoomEditorInputUtils : uses
+    MyRoomEditorEditingInputDispatcher --> MyRoomEditorInputUtils : uses
+    MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
+```
+<br><br>
 
 ### 오브젝트 동작 및 정의 Component
 {{< table "table-striped">}}
@@ -122,6 +338,49 @@ weight = 401
 |**SpawnableScreenProp**<br>-->SpawnablePropBase<br>-->IScreenProp<br>-->IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 개인공간에서 실시간 파일 공유 기능 모듈(`NetworkedScreen`)을 사용 할 수 있게 세팅.  |
 |**PropEditingState**| ️💡 오브젝트 편집 상태에 따라 오브젝트의 `Material` 효과를 표현하는 클래스. |
 {{< /table >}}<br>
+```mermaid
+classDiagram
+direction LR
+    class SpawnablePropBase {
+        <<abstract>>
+        + Id : string
+        + ParentProp : SpawnablePropBase
+        + GetGameObject() GameObject
+        + AddChildProp(SpawnablePropBase)
+        + RemoveChildProp(SpawnablePropBase)
+        + SetPropParent(SpawnablePropBase)
+        + ClearPropParent()
+    }
+
+    class SpawnableFloorAndCeilProp {
+        // 바닥/천장 배치 오브젝트
+    }
+
+    class SpawnableWallProp {
+        // 벽 배치 오브젝트
+    }
+
+    class SpawnablePhotoFrameProp {
+        // 사진 프레임 오브젝트
+    }
+
+    class SpawnableScreenProp {
+        // 스크린 오브젝트
+    }
+
+    class PropEditingState {
+        + Select()
+        + Deselect()
+        // Material을 통한 상태 표현
+    }
+
+    SpawnableFloorAndCeilProp --> SpawnablePropBase : extends
+    SpawnableWallProp --> SpawnablePropBase : extends
+    SpawnablePhotoFrameProp --> SpawnablePropBase : extends
+    SpawnableScreenProp --> SpawnablePropBase : extends
+    SpawnablePropBase --> PropEditingState : has
+```
+<br><br>
 
 ### 오브젝트 동작 및 정의 Interface 
 {{< table "table-striped">}}
@@ -139,6 +398,66 @@ weight = 401
 |**IPhotoFrameProp** <br> *<<interface>>* <br> -->IInteractableProp | ️💡 사진 프레임 정의 및 이미지 설정 기능 정의. |
 |**IScreenProp** <br> *<<interface>>* <br> -->IInteractableProp | ️💡 실시간 파일 공유 모듈 정의. |
 {{< /table >}}<br>
+```mermaid
+classDiagram
+direction LR
+    class IMyRoomEditorEditableObject {
+        <<interface>>
+        + GameObject GetGameObject
+        + bool IsEditable
+        + event Action<bool> OnSelectionChangedEvent
+        + void Deselected()
+        + bool IsMovableProp(out IMoveableProp)
+        + bool IsRotatableProp(out IRotatableProp)
+        + bool IsColorEditableProp(out IColorEditableProp)
+    }
+
+    class IColorEditableProp {
+        <<interface>>
+        + List<Color> GetColorList()
+        + int GetColorIndex()
+        + void SetColor(int index)
+    }
+
+    class IMoveableProp {
+        <<interface>>
+        + SpawnablePropBase PropBaseComponent
+        + Vector3 GetPosition()
+        + void Move(Vector3 position)
+        + (Vector3, Quaternion) GetGizmoPositionAndRotation()
+        + bool IsPlaceableArea(Vector3 point, IPlaceableArea area)
+    }
+
+    class IRotatableProp {
+        <<interface>>
+        + Quaternion GetRotation()
+        + void SetRotation(Quaternion rotation)
+        + void RotationBySnapValue(float snapValue)
+        + (Vector3, Quaternion) GetGizmoPositionAndRotation()
+    }
+
+    class IInteractableProp {
+        <<interface>>
+        // 특수 인터렉션 정의
+    }
+
+    class IPhotoFrameProp {
+        <<interface>>
+        + void SetImage(string url)
+    }
+
+    class IScreenProp {
+        <<interface>>
+        // 스크린 인터렉션 정의
+    }
+
+    IColorEditableProp --> IMyRoomEditorEditableObject : extends
+    IMoveableProp --> IMyRoomEditorEditableObject : extends
+    IRotatableProp --> IMyRoomEditorEditableObject : extends
+    IPhotoFrameProp --> IInteractableProp : extends
+    IScreenProp --> IInteractableProp : extends
+```
+<br><br>
 
 ### 오브젝트 배치 구역 정의 Component 및 Interface
 {{< table "table-striped">}}
@@ -148,6 +467,30 @@ weight = 401
 |**PlacementAreaProp** <br> -->IPlaceableArea <br> -->IColorEditableProp | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
 |**PlacementAreaInProp** <br> -->IPlaceableArea | ️💡 책상, 탁자, 데크 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.<br> 💡 부모 오브젝트 내 자식 오브젝트 처리. |
 {{< /table >}}<br>
+```mermaid
+classDiagram
+direction LR
+    class IPlaceableArea {
+        <<interface>>
+        + bool IsPlaceable(Vector3 point)
+        + Vector3 GetPlacementPosition(Vector3 point)
+        + Quaternion GetPlacementRotation()
+        + string GetPlacePropId()
+    }
+
+    class PlacementAreaProp {
+        // 바닥, 천장, 벽면 배치 영역
+    }
+
+    class PlacementAreaInProp {
+        // 책상, 탁자 등 오브젝트 위 배치 영역
+    }
+
+    PlacementAreaProp --> IPlaceableArea : implements
+    PlacementAreaProp --> IColorEditableProp : implements
+    PlacementAreaInProp --> IPlaceableArea : implements
+```
+<br><br>
 
 
 ### 오브젝트 편집UI Component
@@ -158,6 +501,32 @@ weight = 401
 |**MyRoomEditorColorSelectUI**| ️💡 색상 선택 UI를 처리하는 클래스. <br> 💡 사용할 수 있는 색상 옵션을 표시하고 선택 이벤트 처리. |
 |**MyRoomEditorColorEditItem**| ️💡 선택 가능한 색상 항목을 나타내는 UI 컴포넌트. <br> 💡 개별 색상을 표시하고 선택 상태를 관리. |
 {{< /table >}}<br>
+```mermaid
+classDiagram
+    direction LR
+
+    class MyRoomEditorObjectEditUI {
+        + ShowEditUI(IMyRoomEditorEditableObject)
+        + HideEditUI()
+        // 편집 기능 버튼 관리
+    }
+
+    class MyRoomEditorColorSelectUI {
+        + ShowColorOptions(List<Color> colors)
+        + HideColorOptions()
+        // 색상 선택 UI 관리
+    }
+
+    class MyRoomEditorColorEditItem {
+        + SetColor(Color color)
+        + OnColorSelected event
+        // 개별 색상 항목 UI
+    }
+
+    MyRoomEditorObjectEditUI --> MyRoomEditorColorSelectUI : uses
+    MyRoomEditorColorSelectUI --> MyRoomEditorColorEditItem : manages
+```
+<br><br>
 
 ## 4. 주요 특징 및 최적화
 
