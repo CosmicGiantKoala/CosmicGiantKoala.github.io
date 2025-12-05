@@ -11,8 +11,8 @@
   #  btnText: "시작하기"
   #  url: "/docs/"
 
-  title: CGK
-  subtitle: CGK Docs
+  title: CGK 포트폴리오 페이지
+  subtitle: CGK 포트폴리오 페이지 subtitle. **Bold텍스트는 다음처럼 표시**
 
 
 featureGrid:

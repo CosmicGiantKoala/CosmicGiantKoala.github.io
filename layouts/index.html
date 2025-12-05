@@ -42,7 +42,7 @@
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 2 + 0.5,
+                    radius: Math.random() * 4 + 0.5,
                     opacity: Math.random(),
                     twinkleSpeed: Math.random() * 0.02 + 0.01,
                     direction: Math.random() > 0.5 ? 1 : -1
@@ -53,10 +53,12 @@
         function drawStars() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-                ctx.fill();
+                ctx.fillRect(star.x, star.y, star.radius, star.radius);
+
+                ctx.strokeStyle = `rgba(255, 255, 255, ${star.opacity * 0.7})`;
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(star.x, star.y, star.radius, star.radius);
 
                 star.opacity += star.twinkleSpeed * star.direction;
                 if (star.opacity <= 0 || star.opacity >= 1) {
@@ -70,9 +72,17 @@
         resizeCanvas();
         createStars();
         drawStars();
+
+        // Add landing-page class to body for index.html specific styling
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('landing-page');
+        });
     </script>
 
     <style>
+        .landing-page {
+            background-color: var(--unity-gray);
+        }
         body {
             background-color: var(--unity-gray);
         }

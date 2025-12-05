@@ -1,8 +1,27 @@
 ﻿:root {
   --unity-gray: #222c37;
   --unity-landing-menu: #ffffff;
+  --unity-mint: #00cccc;
 }
 
+/* Index.html 전용 헤딩 스타일 - mono 폰트 + 흰색 */
+.landing-page {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Nanum Gothic Coding", $font-family-monospace;
+  }
+  h4{
+    color: var(--unity-landing-menu);
+  }
+  .para-desc{
+    font-family: "Nanum Gothic Coding", $font-family-monospace; // mono 스타일
+    color: var(--unity-landing-menu) !important; // 흰색
+    font-size: 1.2rem; // 크기 조정
+  }
+
+  strong{
+    color: var(--unity-mint)
+  }
+}
 
 #topnav {
   .navigation-menu {
