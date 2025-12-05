@@ -1,3 +1,23 @@
 ﻿:root {
   --unity-gray: #222c37;
+  --unity-landing-menu: #ffffff;
+}
+
+
+#topnav {
+  .navigation-menu {
+    > li {
+      &:hover > a,
+      &.active > a{
+        color: var(--unity-landing-menu);
+      }
+      > a {
+        color: var(--unity-landing-menu);
+        &:hover,
+        &:active{
+          color: var(--unity-landing-menu);
+        }
+      }
+    }
+  }
 }
