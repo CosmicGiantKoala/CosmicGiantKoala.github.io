@@ -1,1 +1,97 @@
-﻿//Implement not yet
+﻿@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap');
+
+.nanum-gothic-coding-regular {
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.nanum-gothic-coding-bold {
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+:root {
+  --unity-gray: #222c37;
+  --unity-landing-menu: #ffffff;
+  --unity-mint: #00cccc;
+}
+
+/* Index.html 전용 헤딩 스타일 - mono 폰트 + 흰색 */
+.landing-page {
+  .para-desc{
+    font-family: "Nanum Gothic Coding", monospace; // mono 스타일
+    color: var(--unity-landing-menu) !important; // 흰색
+    font-size: 1.5rem; // 크기 조정
+    letter-spacing: -1.5px;
+    max-width: 100%;
+  }
+
+  strong{
+    color: var(--unity-mint)
+  }
+}
+
+.title-heading {
+  .heading{
+    color: var(--unity-landing-menu);
+    font-family: "Nanum Gothic Coding", monospace;
+    font-size: 2.5rem !important;
+    letter-spacing: -2.5px;
+  }
+}
+
+.col-lg-6 {
+  width: 75%;
+}
+#topnav.nav-sticky{
+  background: var(--unity-gray);
+}
+
+#topnav {
+  .navigation-menu {
+    > li {
+      &:hover > a,
+      &.active > a{
+        color: var(--unity-landing-menu);
+      }
+      > a {
+        color: var(--unity-landing-menu);
+        &:hover,
+        &:active{
+          color: var(--unity-landing-menu);
+        }
+      }
+    }
+  }
+}
+
+.hero {
+  .row{
+    min-height: 400px;
+  }
+  #floating-koala {
+    position: absolute;
+    right: 20px;
+    top: 30%;
+    transform: translateY(-50%);
+    z-index: 100;
+    width: 256px;
+    height: auto;
+    animation: float 5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(-20%) translateX(0);
+    }
+    50% {
+      transform: translateY(-30%) translateX(0px);
+    }
+    100% {
+      transform: translateY(-20%) translateX(0);
+    }
+  }
+}
