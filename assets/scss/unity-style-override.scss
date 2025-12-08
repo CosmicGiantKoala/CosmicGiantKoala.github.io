@@ -1,4 +1,19 @@
-﻿:root {
+﻿@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap');
+
+.nanum-gothic-coding-regular {
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.nanum-gothic-coding-bold {
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+:root {
   --unity-gray: #222c37;
   --unity-landing-menu: #ffffff;
   --unity-mint: #00cccc;
@@ -6,21 +21,30 @@
 
 /* Index.html 전용 헤딩 스타일 - mono 폰트 + 흰색 */
 .landing-page {
-  h1, h2, h3, h4, h5, h6 {
-    font-family: "Nanum Gothic Coding", $font-family-monospace;
-  }
-  h4{
-    color: var(--unity-landing-menu);
-  }
   .para-desc{
-    font-family: "Nanum Gothic Coding", $font-family-monospace; // mono 스타일
+    font-family: "Nanum Gothic Coding", monospace; // mono 스타일
     color: var(--unity-landing-menu) !important; // 흰색
-    font-size: 1.2rem; // 크기 조정
+    font-size: 1.5rem; // 크기 조정
+    letter-spacing: -1.5px;
+    max-width: 100%;
   }
 
   strong{
     color: var(--unity-mint)
   }
+}
+
+.title-heading {
+  .heading{
+    color: var(--unity-landing-menu);
+    font-family: "Nanum Gothic Coding", monospace;
+    font-size: 2.5rem !important;
+    letter-spacing: -2.5px;
+  }
+}
+
+.col-lg-6 {
+  width: 75%;
 }
 
 #topnav {
