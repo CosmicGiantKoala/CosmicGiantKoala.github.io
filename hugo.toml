@@ -148,9 +148,15 @@ enabled             = true
 #]
 
 [[menu.primary]]
-name  = "Docs"
-url = "/docs/"
-identifier = "docs"
+name = "CGK"
+url = "/docs/personal/"
+identifier = "cgk"
+ weight = 9
+
+[[menu.primary]]
+name  = "Projects"
+url = "/docs/projects/"
+identifier = "projects"
 weight = 10
 
 # [[menu.primary]]

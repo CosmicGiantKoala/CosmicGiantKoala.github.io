@@ -20,8 +20,8 @@ featureGrid:
   weight: 20
   template: feature grid
 
-  title: Why choose Lotus Docs?
-  subtitle: Lotus Docs is a highly configurable Hugo documentation theme. Yet, with the default configuration you can deploy and publish your documentation site in a matter of minutes. Check out some core features below.
+  title: 기록된 아카이브
+  subtitle: 프로젝트에 적용하기 위해 작업된 기술적 도전과 성장의 흔적입니다. 고민하고 해결했던 **개발 과정과 결과물** 을 상세히 담아두었습니다.
 
   items:
     - title: Fast

@@ -99,6 +99,8 @@
 .section-title .title{
   color: var(--unity-landing-menu);
   font-family: "Nanum Gothic Coding", monospace;
+  font-size: 2rem;
+  letter-spacing: -2px;
 }
 
 .features .title{
@@ -109,6 +111,7 @@
 .text-muted {
   color: var(--unity-landing-menu) !important;
   font-family: "Nanum Gothic Coding", monospace;
+  font-size: 1.2rem !important;
 }
 
 .material-icons {
