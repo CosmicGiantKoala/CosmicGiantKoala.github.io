@@ -95,3 +95,37 @@
     }
   }
 }
+
+.section-title .title{
+  color: var(--unity-landing-menu);
+  font-family: "Nanum Gothic Coding", monospace;
+}
+
+.features .title{
+  color: var(--unity-landing-menu);
+  font-family: "Nanum Gothic Coding", monospace;
+}
+
+.text-muted {
+  color: var(--unity-landing-menu) !important;
+  font-family: "Nanum Gothic Coding", monospace;
+}
+
+.material-icons {
+  color: var(--unity-mint)
+}
+
+.feature-primary .icon{
+  background: rgba(0, 204, 204, 0.1) !important;
+}
+
+.text-primary {
+  color: var(--unity-mint) !important;
+  font-family: "Nanum Gothic Coding", monospace;
+}
+
+
+.footer-light{
+  background: rgba(0, 0, 0, 0) !important;
+  color: #ffffff !important;
+}
