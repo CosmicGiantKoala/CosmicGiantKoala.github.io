@@ -14,13 +14,13 @@ weight = 401
 
 - **MyRoomEditor**는 Unity 기반의 3D 개인 룸 커스터마이징 시스템으로, 사용자가 가상 공간에 가구와 장식 요소들을 자유롭게 배치하고 편집할 수 있는 통합 편집 환경을 제공합니다.
 - **제작기간**: 2024.11 ~ 2025.03(WebGL support)
-- **시스템 개발 인원** : 7인(유니티 클라이언트 2인, 3D 디자인 3인, 백엔드 1인, UX/UI 1인)
+- **시스템 개발 인원** : 7인(**유니티 클라이언트** 2인, 3D 디자인 3인, 백엔드 1인, UX/UI 1인)
 
 ### 개발 배경 및 요구사항
 - 사용자가 개인 공간을 3D 환경에서 직관적으로 커스터마이징 다른 사용자들과 공유하는 소셜/크리에이티브 공간 제공.
 - 다양한 가구와 장식 요소들을 실시간으로 배치하고 편집하는 기능.
 - 가구의 위치(`Vector3`), 회전(`Quaternion`) 및 커스텀데이터(`Material`, `URL`)을 JSON 데이터로 직렬화하여 서버와 통신 가능한 형태로 파싱.
-- 편집 화면에서 '꾸미기 종료' UI 조작시 서버에 편집데이터를 저장하고, 사용자의 룸에 유저가 진입시 서버에서 데이터를 받아 오브젝트를 동적으로 생성/배치 하는 방식으로 제작.  
+- 편집 화면에서 '꾸미기 종료' UI 조작시 서버에 편집데이터를 저장하고, 사용자의 룸에 유저가 진입시 서버에서 데이터를 받아 오브젝트를 동적으로 생성/배치 하는 방식으로 제작.
 - MVP 패턴과 의존성 주입을 활용한 확장 가능한 아키텍처 구축.
 - EA의 심즈4 건축시스템을 참고하여 동작 플로우 제작.
 - 사용자로부터 이미지 URL 또는 파일을 받아 런타임에서 텍스처를 로드하고, 해당 텍스처를 액자 오브젝트의 Material에 적용하여 동적으로 커스터마이징.
@@ -95,105 +95,77 @@ classDiagram
     direction LR
     class MyRoomEditorState {
         <<abstract>>
-        + Enable()
-        + Disable()
-        + OnPointerDown()
-        + OnPointerUp()
-        + OnCancel()
-        + OnRightClick()
-    }
-
-    class MyRoomEditorPlacementManager {
-        + Enable()
-        + Disable()
-        + OnPointerDown()
-        + OnPointerUp()
-        + OnCancel()
-        + OnRightClick()
-    }
-
-    class MyRoomEditorPropEditingManager {
-        - PropEditMode _currentEditMode
-        - MyRoomEditorPropEditor _currentEditor
-        + Enable()
-        + Disable()
-        + OnPointerDown()
-        + OnPointerUp()
-        + OnCancel()
-        + OnRightClick()
-        + SetEditMode(PropEditMode mode)
+        # MyRoomEditorStateHandle : class
+        # MyRoomEditorEdittingInputDispatcher : class
+        # OnUpdatedPlacementProp : event Action
+        # ChangeState(MyRoomEditorStateEnum)
+        # Enable()
+        # Disable()
+        # OnPointerDown()
+        # OnPointerUp()
+        # OnCancel()
+        # OnRightClick()
     }
 
     class MyRoomEditorStateHandle {
-        - MyRoomEditorStateEnum _currentState
-        + ChangeState(MyRoomEditorStateEnum newState)
-        + GetCurrentState() MyRoomEditorStateEnum
+        + OnStateChange : Action[MyRoomEditorStateEnum]
+        + ChangeState(MyRoomEditorStateEnum)
     }
 
+
     class MyRoomEditorEdittingInputDispatcher {
-        + Enable()
-        + Disable()
-        + OnPointerDown()
-        + OnPointerUp()
-        + OnCancel()
-        + OnRightClick()
+        // 편집 인풋 전달 클래스
+    }
+
+    class MyRoomEditorPlacementManager {
+        + CancelPlacement()
+        + SetPlacementTarget(Gameobject)
+    }
+
+    class MyRoomEditorPropEditingManager {
+        + RegisterProp(SpawnablePropBase)
     }
 
     class MyRoomEditorInputUtils {
-        + VerifyUIInteraction() bool
-        + GetRaycastHit() bool
-        + PointerDelta() Vector2
-        + IsPointerOnUI() bool
+        // 조작 유틸리티 클래스
     }
 
     class MyRoomEditorInteractionManager {
-        - IMyRoomInteractionInteractor _interactor
-        + UploadImage(Action<string>)
+        // 인터렉션 편집 클래스
     }
 
     class MyRoomEditorObjectEditUI {
-        + ShowEditUI(IMyRoomEditorEditableObject)
-        + HideEditUI()
+        // 편집 UI 클래스
     }
 
     class MyRoomEditorPropEditor {
         <<abstract>>
-        + Enable()
-        + Disable()
-        + Setup(IMyRoomEditorEditableObject) bool
-        + CleanUp()
-        + OnPointerDown()
-        + OnPointerUp()
-        + OnCancel()
-        + OnRightClick()
+        // 편집 기능 클래스
+    }
+    
+    class SpawnablePropBase{
+        // 프랍 컴포넌트 베이스
+    }
+    
+    class IMyRoomEditorEditableObject{
+        // 편집 가능한 프랍 인터페이스
     }
 
-    class PropEditMode {
-        <<enumeration>>
-        Disable
-        Select
-        Move
-        Rotate
-    }
-
-    class MyRoomEditorStateEnum {
-        <<enumeration>>
-        Edit
-        Placement
-        Standby
-    }
-
-    MyRoomEditorPlacementManager --> MyRoomEditorState : extends
-    MyRoomEditorPropEditingManager --> MyRoomEditorState : extends
-    MyRoomEditorState --> MyRoomEditorEdittingInputDispatcher : uses
-    MyRoomEditorState --> MyRoomEditorStateHandle : uses
-    MyRoomEditorStateHandle --> MyRoomEditorStateEnum : uses
-    MyRoomEditorPlacementManager --> MyRoomEditorInputUtils : uses
-    MyRoomEditorPropEditingManager --> MyRoomEditorInputUtils : uses
-    MyRoomEditorPropEditingManager --> MyRoomEditorInteractionManager : uses
-    MyRoomEditorPropEditingManager --> MyRoomEditorPropEditor : manages
-    MyRoomEditorPropEditingManager --> PropEditMode : uses
-    MyRoomEditorPropEditingManager --> MyRoomEditorObjectEditUI : uses
+    MyRoomEditorState o--> MyRoomEditorEdittingInputDispatcher : subscribe
+    MyRoomEditorState o--> MyRoomEditorStateHandle : subscribe, used
+    
+    MyRoomEditorPlacementManager --|> MyRoomEditorState : extend
+    MyRoomEditorPlacementManager o--> MyRoomEditorInputUtils : used
+    MyRoomEditorPlacementManager o--> SpawnablePropBase
+    
+    MyRoomEditorPropEditingManager --|> MyRoomEditorState : extend
+    MyRoomEditorPropEditingManager o--> MyRoomEditorInputUtils : used
+    MyRoomEditorPropEditingManager o--> MyRoomEditorInteractionManager : used
+    MyRoomEditorPropEditingManager o--> MyRoomEditorPropEditor : used
+    MyRoomEditorPropEditingManager o--> MyRoomEditorObjectEditUI : used, subscribe
+    MyRoomEditorPropEditingManager "1" *--> "n" SpawnablePropBase : manage
+    MyRoomEditorPropEditingManager "1" *--> "n" IMyRoomEditorEditableObject : manage
+      
 ```
 <br><br>
 
@@ -211,73 +183,69 @@ classDiagram
 ```mermaid
 classDiagram
 direction LR
-class MyRoomEditorPropEditor {
-<<abstract>>
-+ Enable()
-+ Disable()
-+ Setup(IMyRoomEditorEditableObject) bool
-+ CleanUp()
-+ OnPointerDown()
-+ OnPointerUp()
-+ OnCancel()
-+ OnRightClick()
-}
+    class MyRoomEditorPropEditingManager {
+        // 편집 상태 관리자
+    }
+    
+    class MyRoomEditorPropEditor {
+    <<abstract>>
+    # InputUtils : MyRoomEditorInputUtils
+    # SelectedObject : IMyRoomEditorEditableObject
+    # CachedPosition : Vector3
+    # CachedRotation : Quaternion
+    # CachedParent : SpawnablePropBase
+    
+    ### Public Abstract Method List()  
+    + Enable()
+    + Disable()
+    + Setup(IMyRoomEditorEditableObject) bool
+    + CleanUp()
+    + OnPointerDown()
+    + OnPointerUp()
+    + OnCancel()
+    + OnRightClick()
+    }
 
     class MyRoomEditorPropSelector {
-        - List<RaycastHit> _raycastHits
-        - RaycastHit _closestHit
-        + Enable()
-        + Disable()
-        + Setup(IMyRoomEditorEditableObject) bool
-        + CleanUp()
-        + OnPointerDown()
-        + OnCancel()
-        + OnRightClick()
+        + OnObjectSelected : event Action[IMyRoomEditorEditableObject]
+        + OnReleaseSelect: event Action
     }
 
     class MyRoomEditorPropMover {
-        - Transform defaultPropTransform
-        - GameObject moveArrow
-        - Material arrowMaterial
-        - IMoveableProp _moveableProp
-        - IRotatableProp _rotatableProp
-        + Enable()
-        + Disable()
-        + Setup(IMyRoomEditorEditableObject) bool
-        + CleanUp()
-        + OnPointerDown()
-        + OnCancel()
-        + OnRightClick()
+        + OnUpdatePlacementProp : event Action
+        + OnFinishMove : event Action
     }
 
     class MyRoomEditorPropRotator {
-        - GameObject rotateArrow
-        - Material rotateMaterial
-        - IRotatableProp _rotatableProp
-        + Enable()
-        + Disable()
-        + Setup(IMyRoomEditorEditableObject) bool
-        + CleanUp()
-        + OnPointerDown()
-        + OnCancel()
-        + OnRightClick()
+        + OnUpdatePlacementProp : event Action
+        + OnFinishRotate : event Action
     }
 
     class MyRoomEditorInteractionManager {
-        - IMyRoomInteractionInteractor _interactor
-        + UploadImage(Action<string>)
+        + UploadImage(Action[string] imageUploadedCallback)
+    }
+    
+    class IMyRoomInteractionInteractor {
+        // 외부커맨드, API, 네트워크 연동 클래스
+    }
+    
+    class MyRoomEditorInputUtils{
+        // 조작 유틸리티 클래스
     }
 
-    class MyRoomEditorPropEditingManager {
-        // 편집 상태 관리자 (관계 표시용)
-    }
-
-    MyRoomEditorPropSelector --> MyRoomEditorPropEditor : extends
-    MyRoomEditorPropMover --> MyRoomEditorPropEditor : extends
-    MyRoomEditorPropRotator --> MyRoomEditorPropEditor : extends
-    MyRoomEditorPropEditingManager --> MyRoomEditorPropEditor : uses
-    MyRoomEditorPropEditingManager --> MyRoomEditorInteractionManager : uses
-    MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
+    MyRoomEditorPropSelector --|> MyRoomEditorPropEditor : extend
+    MyRoomEditorPropMover --|> MyRoomEditorPropEditor : extend
+    MyRoomEditorPropRotator --|> MyRoomEditorPropEditor : extend
+    
+    MyRoomEditorPropEditingManager o--> MyRoomEditorPropEditor : used
+    MyRoomEditorPropEditingManager o--> MyRoomEditorInteractionManager : used
+    MyRoomEditorPropEditingManager o--> MyRoomEditorPropSelector : subscribe
+    MyRoomEditorPropEditingManager o--> MyRoomEditorPropMover : subscribe
+    MyRoomEditorPropEditingManager o--> MyRoomEditorPropRotator : subscribe
+    
+    MyRoomEditorPropEditor o--> MyRoomEditorInputUtils : use
+    
+    MyRoomEditorInteractionManager o--> IMyRoomInteractionInteractor : use
 ```
 <br><br>
 
@@ -294,36 +262,69 @@ class MyRoomEditorPropEditor {
 ```mermaid
 classDiagram
 direction LR
+    class MyRoomEditorInput{
+        // InputAction 설정 클래스
+    }
+
     class MyRoomEditorInputController {
-        + Enable()
-        + Disable()
-        // InputAction 이벤트를 디스패처로 전달
+        + EnableAll()
+        + DisableAll()
     }
 
     class MyRoomEditorCameraInputDispatcher {
-        + Enable()
-        + Disable()
-        // 카메라 조작 이벤트 처리 (WASD, 마우스)
+        + OnCameraMoveDirection : event Action[Vector2]
+        + OnCameraMoved : event Action[bool]
+        + OnCameraEngage : event Action
+        + OnCameraDisengage : event Action
+        + OnCameraZoom : event Action[float]
+        + OnCameraMoveStarted()
+        + OnCameraMovePerformed(Vector2)
+        + OnCameraMoveStopped()
+        + OnCameraEngageStarted()
+        + OnCameraDisengaged()
+        + OnCameraZoomed(float)
     }
 
     class MyRoomEditorEditingInputDispatcher {
-        + Enable()
-        + Disable()
-        // 편집 관련 입력 이벤트 처리
+        + OnPointerDownEvent : event Action
+        + OnPointerUpEvent : event Action
+        + OnCancelEvent : event Action
+        + OnRightClickEvent : event Action
+        + OnDeletePressEvent : event Action
+        + OnPointerDown()
+        + OnPointerUp()
+        + OnCanceled()
+        + OnRightClicked()
+        + OnDeletePressed()
     }
 
     class MyRoomEditorInputUtils {
-        + VerifyUIInteraction() bool
-        + GetRaycastHit() bool
+        + GetRaycastHit(out RaycastHit, LayerMask, SpawnablePropBase) bool
+        + GetRaycastHit(out RaycastHit, LayerMask, int)
         + PointerDelta() Vector2
         + IsPointerOnUI() bool
     }
+    
+    class MyRoomEditorCameraController {
+        // 카메라 제어 컨트롤러
+    }
+    
+    class MyRoomEditorState {
+        // 에디터 상태 관리자
+    }
+    
+    MyRoomEditorInputController o--> MyRoomEditorInput : subscribe
+    MyRoomEditorInputController o--> MyRoomEditorCameraInputDispatcher : use
+    MyRoomEditorInputController o--> MyRoomEditorEditingInputDispatcher : use
 
-    MyRoomEditorInputController --> MyRoomEditorCameraInputDispatcher : delegates
-    MyRoomEditorInputController --> MyRoomEditorEditingInputDispatcher : delegates
-    MyRoomEditorCameraInputDispatcher --> MyRoomEditorInputUtils : uses
-    MyRoomEditorEditingInputDispatcher --> MyRoomEditorInputUtils : uses
-    MyRoomEditorPropEditor --> MyRoomEditorInputUtils : injects
+    MyRoomEditorState o--> MyRoomEditorEditingInputDispatcher : subscribe
+    
+    
+    MyRoomEditorPropEditor o--> MyRoomEditorInputUtils : use
+    MyRoomEditorPropEditingManager o--> MyRoomEditorInputUtils : use
+    MyRoomEditorPlacementManager o--> MyRoomEditorInputUtils : use
+    
+    MyRoomEditorCameraController o--> MyRoomEditorCameraInputDispatcher : subscribe
 ```
 <br><br>
 
@@ -341,11 +342,29 @@ direction LR
 ```mermaid
 classDiagram
 direction LR
+
+    class PropEditingState {
+        + Setup()
+        + Default()
+        + Selected()
+        + Valid()
+        + Invalid()
+    }
+    
     class SpawnablePropBase {
         <<abstract>>
-        + Id : string
+        + PlacementType: PlacementType
+        + PropNameKey : string
+        + Id: string
         + ParentProp : SpawnablePropBase
-        + GetGameObject() GameObject
+        # MyRoomPropData : MyRoomProp
+        # MyRoomPlacePropData : MyRoomPlaceProp
+        # CurrentColor : MyRoomPropColor
+        # SetupPropHighlight()
+        + SetPropInfo(MyRoomProp)
+        + RegisterProp(MyRoomEditorPropEditingManager)
+        + GetPlacePropInfo() : MyRoomPlaceProp
+        + GetPlacePropId() : string
         + AddChildProp(SpawnablePropBase)
         + RemoveChildProp(SpawnablePropBase)
         + SetPropParent(SpawnablePropBase)
@@ -354,42 +373,76 @@ direction LR
 
     class SpawnableFloorAndCeilProp {
         // 바닥/천장 배치 오브젝트
+        // Interface정의에 따라 기능 implement
     }
 
     class SpawnableWallProp {
         // 벽 배치 오브젝트
+        // Interface정의에 따라 기능 implement
     }
 
     class SpawnablePhotoFrameProp {
         // 사진 프레임 오브젝트
+        // Interface정의에 따라 기능 implement
     }
 
     class SpawnableScreenProp {
         // 스크린 오브젝트
+        // Interface정의에 따라 기능 implement
     }
-
-    class PropEditingState {
-        + Select()
-        + Deselect()
-        // Material을 통한 상태 표현
+    
+    class PropComponent{
+        // SpawnableFllorAncCeilProp
+        // SpawnableWallProp
+        // SpawnablePhotoFrameProp
+        // SpawnableScreenProp
     }
-
-    SpawnableFloorAndCeilProp --> SpawnablePropBase : extends
-    SpawnableWallProp --> SpawnablePropBase : extends
-    SpawnablePhotoFrameProp --> SpawnablePropBase : extends
-    SpawnableScreenProp --> SpawnablePropBase : extends
-    SpawnablePropBase --> PropEditingState : has
+    
+    class IColorEditableProp{
+        // 컬러 변경 가능한 프랍 기능 정의 interface
+    }
+    
+    class IMoveableProp{
+        // 이동 가능한 프랍 기능 정의 interface
+    }
+    
+    class IRotatableProp{
+        // 회전 가능한 프랍 기능 정의 interface
+    }
+    
+    class IPhotoFrameProp{
+        // 사진 업로드 가능한 프랍 기능 정의 interface
+    }
+    
+    class IScreenProp{
+        // 파일 뷰어 기능 가능한 프랍 기능 정의 interface
+    }
+    
+    PropEditingState <--* SpawnableFloorAndCeilProp : manage
+    PropEditingState <--* SpawnableWallProp : manage
+    PropEditingState <--* SpawnablePhotoFrameProp : manage
+    PropEditingState <--* SpawnableScreenProp : managed
+    SpawnableFloorAndCeilProp --|> SpawnablePropBase : extend
+    SpawnableWallProp --|> SpawnablePropBase : extend
+    SpawnablePhotoFrameProp --|> SpawnablePropBase : extend
+    SpawnableScreenProp --|> SpawnablePropBase : extend
+    
+    PropComponent ..|> IColorEditableProp : implement
+    PropComponent ..|> IMoveableProp : implement
+    PropComponent ..|> IRotatableProp : implement
+    PropComponent ..|> IPhotoFrameProp : implement
+    PropComponent ..|> IScreenProp : implement
 ```
 <br><br>
 
-### 오브젝트 동작 및 정의 Interface 
+### 오브젝트 동작 및 정의 Interface
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
 |**IMyRoomEditorEditableObject**<br>*<<interface>>*| ️💡 편집 가능한 오브젝트 정의 및 기능 정의 |
-|**IColorEditableProp** <br> *<<interface>>* <br> -->IMyRoomEditorEditableObject | ️💡 색상 편집 가능한 오브젝트 정의. 컬러 리스트 제공 및 색상 적용 기능 정의. |
-|**IMoveableProp** <br> *<<interface>>* <br> -->IMyRoomEditorEditableObject | ️💡 이동 가능한 오브젝트 정의. 배치 영역 검증 및 위치 변경 기능 정의. |
-|**IRotateableProp** <br> *<<interface>>* <br> -->IMyRoomEditorEditableObject | ️💡회전 가능한 오브젝트 정의. 자유 회전 및 스냅 회전 기능 정의. |
+|**IColorEditableProp** <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡 색상 편집 가능한 오브젝트 정의. 컬러 리스트 제공 및 색상 적용 기능 정의. |
+|**IMoveableProp** <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡 이동 가능한 오브젝트 정의. 배치 영역 검증 및 위치 변경 기능 정의. |
+|**IRotateableProp** <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡회전 가능한 오브젝트 정의. 자유 회전 및 스냅 회전 기능 정의. |
 {{< /table >}}
 {{< table "table-striped">}}
 | 클래스 | 역할 |
@@ -403,59 +456,77 @@ classDiagram
 direction LR
     class IMyRoomEditorEditableObject {
         <<interface>>
-        + GameObject GetGameObject
-        + bool IsEditable
-        + event Action<bool> OnSelectionChangedEvent
-        + void Deselected()
-        + bool IsMovableProp(out IMoveableProp)
-        + bool IsRotatableProp(out IRotatableProp)
-        + bool IsColorEditableProp(out IColorEditableProp)
+        + PropNameKey() string
+        + Delete()
+        + IsEditableColor(out IColorEditableProp) bool
+        + IsMoveableProp(out IMoveableProp) bool
+        + IsRotatableProp(out IRotatableProp) bool
+        + IsPhotoFrameProp(out IPhotoFrameProp) bool
+        + IsScreenProp(out IScreenProp) bool
+        + Focused()
+        + UnFocused()
+        + Selected()
+        + DeSelected()
+        + GetGizmoPositionAndRotation(): (Vector3, Quaternion)
+        + GetPlacePropInfo() MyRoomPlaceProp
+        + GetPlacePropId() string
     }
 
     class IColorEditableProp {
         <<interface>>
-        + List<Color> GetColorList()
-        + int GetColorIndex()
-        + void SetColor(int index)
+        + GetColorList() List[MyRoomPropColor]
+        + SetColor(Material, int)
     }
 
     class IMoveableProp {
         <<interface>>
-        + SpawnablePropBase PropBaseComponent
-        + Vector3 GetPosition()
-        + void Move(Vector3 position)
-        + (Vector3, Quaternion) GetGizmoPositionAndRotation()
-        + bool IsPlaceableArea(Vector3 point, IPlaceableArea area)
+        + PropBaseComponent() SpawnablePropBase
+        + GetPosition() Vector3
+        + Move(Vector3)
+        + IsPlaceableArea(Vector3, IPlaceableArea) bool
     }
 
     class IRotatableProp {
         <<interface>>
-        + Quaternion GetRotation()
-        + void SetRotation(Quaternion rotation)
-        + void RotationBySnapValue(float snapValue)
-        + (Vector3, Quaternion) GetGizmoPositionAndRotation()
+        + GetRotation() Quaternion
+        + SetRotation(Quaternion)
+        + RotationBySnapValue(float)
     }
 
     class IInteractableProp {
         <<interface>>
-        // 특수 인터렉션 정의
+        + Interact()
     }
 
     class IPhotoFrameProp {
         <<interface>>
-        + void SetImage(string url)
+        + OnCompleteUpload(string)
+        + ReserveCompletedApplyImageCallback(Action[MyRoomPlaceProp])
     }
 
     class IScreenProp {
         <<interface>>
-        // 스크린 인터렉션 정의
     }
 
-    IColorEditableProp --> IMyRoomEditorEditableObject : extends
-    IMoveableProp --> IMyRoomEditorEditableObject : extends
-    IRotatableProp --> IMyRoomEditorEditableObject : extends
-    IPhotoFrameProp --> IInteractableProp : extends
-    IScreenProp --> IInteractableProp : extends
+    class PropComponent{
+        // SpawnableFllorAncCeilProp
+        // SpawnableWallProp
+        // SpawnablePhotoFrameProp
+        // SpawnableScreenProp
+    }
+    
+    IColorEditableProp --|> IMyRoomEditorEditableObject : extends
+    IMoveableProp --|> IMyRoomEditorEditableObject : extends
+    IRotatableProp --|> IMyRoomEditorEditableObject : extends
+    IPhotoFrameProp --|> IInteractableProp : extends
+    IScreenProp --|> IInteractableProp : extends
+    
+    PropComponent ..|> IColorEditableProp : implement
+    PropComponent ..|> IMoveableProp : implement
+    PropComponent ..|> IRotatableProp : implement
+    PropComponent ..|> IPhotoFrameProp : implement
+    PropComponent ..|> IScreenProp : implement
+    
 ```
 <br><br>
 
@@ -464,7 +535,7 @@ direction LR
 | 클래스 | 역할 |
 |-----|-----|
 |**IPlaceableArea**<br>*<<interface>>*| ️💡 배치 영역 정의 및 배치 영역 기능 정의. |
-|**PlacementAreaProp** <br> -->IPlaceableArea <br> -->IColorEditableProp | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
+|**PlacementAreaProp** <br> -->IPlaceableArea | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
 |**PlacementAreaInProp** <br> -->IPlaceableArea | ️💡 책상, 탁자, 데크 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.<br> 💡 부모 오브젝트 내 자식 오브젝트 처리. |
 {{< /table >}}<br>
 ```mermaid
@@ -472,10 +543,9 @@ classDiagram
 direction LR
     class IPlaceableArea {
         <<interface>>
-        + bool IsPlaceable(Vector3 point)
-        + Vector3 GetPlacementPosition(Vector3 point)
-        + Quaternion GetPlacementRotation()
-        + string GetPlacePropId()
+        + GetPlacementType() PlacementType
+        + GetPlacementRotation() Quaternion
+        + IsPlacementAreaInProp(out SpawnablePropBase) bool
     }
 
     class PlacementAreaProp {
@@ -484,11 +554,36 @@ direction LR
 
     class PlacementAreaInProp {
         // 책상, 탁자 등 오브젝트 위 배치 영역
+        + SetPlacementAreaInProp(SpawnablePropBase)
     }
 
-    PlacementAreaProp --> IPlaceableArea : implements
-    PlacementAreaProp --> IColorEditableProp : implements
-    PlacementAreaInProp --> IPlaceableArea : implements
+    class PropComponent{
+        // SpawnableFllorAncCeilProp
+        // SpawnableWallProp
+        // SpawnablePhotoFrameProp
+        // SpawnableScreenProp
+    }
+    
+    class MyRoomEditorInputUtils{
+        // 조작 유틸리티 클래스
+    }
+    
+    class MyRoomEditorPlacementManager{
+        // 프랍 생성 및 배치 기능 클래스
+    }
+    
+    class MyRoomEditorPropMover{
+        // 프랍 이동 기능 클래스
+    }
+    
+
+    PlacementAreaProp ..|> IPlaceableArea : implements
+    PlacementAreaInProp ..|> IPlaceableArea : implements
+
+    PropComponent ..> IPlaceableArea : dependency
+    MyRoomEditorInputUtils ..> IPlaceableArea : dependency
+    MyRoomEditorPlacementManager ..> IPlaceableArea : dependency
+    MyRoomEditorPropMover ..> IPlaceableArea : dependency
 ```
 <br><br>
 
@@ -506,25 +601,39 @@ classDiagram
     direction LR
 
     class MyRoomEditorObjectEditUI {
-        + ShowEditUI(IMyRoomEditorEditableObject)
-        + HideEditUI()
-        // 편집 기능 버튼 관리
+        + OnClickDeleteEvent : event Action
+        + OnClickEditColorEvent : event Action
+        + OnSelectColorToChange : event Action[int]
+        + OnClickMoveEvent : event Action
+        + OnClickRotateQuarterEvent : event Action
+        + OnClickRotateFreeEvent : event Action
+        + OnClickUploadPhotoEvent : event Action
+        + ShowSelectedPropMenu(IMyRoomEditorEditableObject)
+        + HideMenu()
+        + DrawColorList(List[MyRoomPropColor])
     }
 
     class MyRoomEditorColorSelectUI {
-        + ShowColorOptions(List<Color> colors)
-        + HideColorOptions()
-        // 색상 선택 UI 관리
+        + OnSelectedColor: event Action[int]
+        + DrawColorList(List[MyRoomPropColor], int)
+        
     }
 
     class MyRoomEditorColorEditItem {
-        + SetColor(Color color)
-        + OnColorSelected event
-        // 개별 색상 항목 UI
+        + OnSelectMaterialColorEvent: event Action[int]
+        + Initialize(int)
+        + Selected()
+        + SetItemColor(Color)
+        + Release()
+    }
+
+    class MyRoomEditorPropEditingManager {
+        // 편집 상태 관리자
     }
 
     MyRoomEditorObjectEditUI --> MyRoomEditorColorSelectUI : uses
-    MyRoomEditorColorSelectUI --> MyRoomEditorColorEditItem : manages
+    MyRoomEditorColorSelectUI "1" --> "n" MyRoomEditorColorEditItem : manages
+    MyRoomEditorPropEditingManager o--> MyRoomEditorObjectEditUI : use, subscribe
 ```
 <br><br>
 
