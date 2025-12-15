@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 425
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `IScreenProp`는 실시간 파일 공유 모듈을 정의하는 인터페이스입니다.

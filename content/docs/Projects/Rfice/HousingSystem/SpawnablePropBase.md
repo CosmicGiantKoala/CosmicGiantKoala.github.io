@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 414
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `SpawnablePropBase`는 모든 배치 가능한 오브젝트의 abstract 클래스입니다. 공용 Property 데이터 설정, 상태 정보 관리, 부모-자식 오브젝트 관계 구성, 상태 표현 등 공통 로직을 처리합니다.

@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 413
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorInputUtils`는 입력 유틸리티 클래스입니다. UI 검증, Raycast 실행, 포인터 델타 계산 등 입력 관련 헬퍼 함수를 제공합니다.

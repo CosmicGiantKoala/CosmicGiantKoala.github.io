@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 415
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `SpawnableWallProp`는 벽에 배치되는 일반적인 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 벽(Wall)에 배치 가능한 오브젝트의 구현을 제공합니다.

@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 409
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorInteractionManager`는 오브젝트의 특수 인터렉션을 담당하는 클래스입니다. `MyRoomEditorPropEditingManager`를 통해 특정 인터렉션 호출을 처리하며, 외부 API 및 네트워크 연동을 담당합니다.

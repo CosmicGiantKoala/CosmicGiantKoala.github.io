@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 410
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorInputController`는 `InputAction`을 통해 발생하는 입력 이벤트를 각각의 `Dispatcher`로 전달하는 클래스입니다. 시스템 활성화 상태 기반 `InputAction` 토글을 담당합니다.

@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 419
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `IMyRoomEditorEditableObject`는 편집 가능한 오브젝트를 정의하는 인터페이스입니다. 오브젝트의 기본 속성과 편집 관련 기능들을 정의합니다.

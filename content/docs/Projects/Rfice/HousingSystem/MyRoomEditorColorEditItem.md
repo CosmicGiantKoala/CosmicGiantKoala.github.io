@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 431
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorColorEditItem`은 선택 가능한 색상 항목을 나타내는 UI 컴포넌트입니다. 개별 색상을 표시하고 선택 상태를 관리합니다.

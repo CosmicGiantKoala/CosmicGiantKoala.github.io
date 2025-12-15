@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 423
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `IInteractableProp`는 특수한 인터렉션이 가능한 오브젝트를 정의하는 인터페이스입니다.

@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 408
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorPropRotator`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 회전을 담당하는 클래스입니다. InputUtils를 통해 초기 마우스 상태를 캐싱하고 마우스의 이동범위만큼 오브젝트를 좌/우로 회전시킵니다.

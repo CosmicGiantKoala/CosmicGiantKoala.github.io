@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 403
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorPlacementManager`는 `MyRoomEditorState`를 상속받아 오브젝트의 생성 및 배치 상태를 관리하는 클래스입니다. Raycast를 이용해 사용자의 입력에 따라 오브젝트 배치 위치를 검증하고, 배치 상태에서 이동 및 회전 처리를 담당합니다.

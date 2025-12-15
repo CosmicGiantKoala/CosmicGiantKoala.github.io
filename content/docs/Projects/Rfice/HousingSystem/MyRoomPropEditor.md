@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 405
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorPropEditor`는 각각의 편집 기능에서 사용되는 공통 메서드와 멤버를 정의하는 추상 클래스입니다. `MyRoomEditorPropEditingManager`를 통해 받은 입력 및 UI 동작에 대한 처리를 서브클래스에서 구현합니다.

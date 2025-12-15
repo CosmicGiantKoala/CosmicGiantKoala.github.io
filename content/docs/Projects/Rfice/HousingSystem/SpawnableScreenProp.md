@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 417
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `SpawnableScreenProp`는 스크린 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 벽에 배치되는 스크린의 특수 기능을 구현하며, 개인공간에서 실시간 파일 공유 기능 모듈(NetworkedScreen)을 사용할 수 있게 설정합니다.

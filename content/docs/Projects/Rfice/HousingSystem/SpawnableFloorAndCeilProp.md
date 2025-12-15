@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 415
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `SpawnableFloorAndCeilProp`는 바닥과 천장에 배치되는 일반적인 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 바닥(Floor)과 천장(Ceiling)에 배치 가능한 오브젝트의 기본 구현을 제공합니다.

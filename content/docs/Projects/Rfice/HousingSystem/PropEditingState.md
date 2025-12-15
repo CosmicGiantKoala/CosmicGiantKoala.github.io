@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 418
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `PropEditingState`는 오브젝트 편집 상태에 따라 오브젝트의 Material 효과를 표현하는 클래스입니다. Shader 키워드를 사용하여 오브젝트의 하이라이트 상태를 시각적으로 표현합니다.

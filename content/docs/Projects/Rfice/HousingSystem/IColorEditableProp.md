@@ -8,6 +8,7 @@ draft = false
 toc = true
 weight = 420
 +++
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 
 ## 개요
 

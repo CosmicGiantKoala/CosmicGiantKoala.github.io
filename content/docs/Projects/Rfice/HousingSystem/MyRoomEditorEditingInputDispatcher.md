@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 412
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorEdittingInputDispatcher`는 편집 관련 입력 이벤트를 처리하는 클래스입니다. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리를 담당합니다.

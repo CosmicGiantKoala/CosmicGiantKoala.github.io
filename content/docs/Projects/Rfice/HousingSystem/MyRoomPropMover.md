@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 407
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorPropMover`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 이동을 담당하는 클래스입니다. Raycast를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생시킵니다.

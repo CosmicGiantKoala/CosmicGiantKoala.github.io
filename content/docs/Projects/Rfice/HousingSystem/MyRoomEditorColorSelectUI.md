@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 430
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorColorSelectUI`는 색상 선택 UI를 처리하는 클래스입니다. 사용할 수 있는 색상 옵션을 표시하고 선택 이벤트 처리합니다.

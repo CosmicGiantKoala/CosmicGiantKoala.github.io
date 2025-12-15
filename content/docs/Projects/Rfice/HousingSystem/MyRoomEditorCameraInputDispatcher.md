@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 411
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorCameraInputDispatcher`는 카메라 조작 이벤트를 처리하는 클래스입니다. WASD 이동, 마우스 회전, 줌 등 카메라 컨트롤 이벤트 관리를 담당합니다.

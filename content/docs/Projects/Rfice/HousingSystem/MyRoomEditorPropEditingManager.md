@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 404
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `MyRoomEditorPropEditingManager`는 `MyRoomEditorState`를 상속받아 오브젝트의 편집 상태를 관리하는 클래스입니다. 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행하며, 서브 에디터들과 UI 이벤트를 통해 편집 동작을 처리합니다.

@@ -8,7 +8,7 @@ draft = false
 toc = true
 weight = 416
 +++
-
+#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
 `SpawnablePhotoFrame` (SpawnablePhotoFrameProp)는 사진 프레임 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 벽에 배치되는 사진 프레임의 특수 기능을 구현합니다.
