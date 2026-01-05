@@ -8,10 +8,10 @@ draft = false
 toc = true
 weight = 407
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
+
 ## 개요
 
-`MyRoomEditorPropMover`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 이동을 담당하는 클래스입니다. Raycast를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생시킵니다.
+`MyRoomEditorPropMover`는 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속받아 오브젝트의 이동을 담당하는 클래스. Raycast를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생.
 
 ## 주요 역할
 
@@ -25,228 +25,144 @@ weight = 407
 
 ### 이벤트
 ```csharp
-public event Action OnUpdatePlacementProp;
+/// <summary>
+/// 오브젝트 이동 완료시 발생되는 이벤트
+/// </summary>
 public event Action OnFinishMove;
 ```
 
 ### 필드
 ```csharp
+/// <summary>
+/// 이동 시 부모가 없을 때 사용할 기본 트랜스폼.
+/// </summary>
 [SerializeField]
 private Transform defaultPropTransform;
 
+/// <summary>
+/// 이동 방향을 표시하는 화살표 기즈모 오브젝트.
+/// </summary>
 [SerializeField]
 private GameObject moveArrow;
 
-[SerializeField]
-private Material arrowMaterial;
-
+/// <summary>
+/// 우클릭 시 회전 스냅 값 (45도 단위).
+/// </summary>
 [SerializeField]
 private float rotateSnapStepValue = 45;
 
+/// <summary>
+/// 이동 가능한 프로퍼티 인터페이스 참조.
+/// </summary>
 private IMoveableProp _moveableProp;
+
+/// <summary>
+/// 회전 가능한 프로퍼티 인터페이스 참조 (optinal).
+/// </summary>
 private IRotatableProp _rotatableProp;
+
+/// <summary>
+/// 이동 감지 코루틴 참조.
+/// </summary>
 private Coroutine _detector;
+
+/// <summary>
+/// 레이캐스트 타겟 레이어 마스크.
+/// </summary>
 private int _targetLayer;
+
+/// <summary>
+/// 현재 위치가 배치 가능한지 여부.
+/// </summary>
 private bool _isPlaceable;
-private readonly int _rotateAnglePropertyId = Shader.PropertyToID("_Angle");
+
+/// <summary>
+/// 회전 불가능한 오브젝트의 초기 회전 값 캐시.
+/// </summary>
 private Quaternion _nonRotatablePropCachedRotation;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 이동할 오브젝트 설정 메서드.
+/// </summary>
+/// <param name="setUpObject">설정할 편집 가능 오브젝트</param>
+/// <returns>설정 성공 여부</returns>
+public override bool Setup(IMyRoomEditorEditableObject setUpObject)
+
+/// <summary>
+/// 이동 모드 활성화 메서드.
+/// </summary>
+public override void Enable()
+
+/// <summary>
+/// 마우스 클릭 이벤트 핸들러.
+/// </summary>
+public override void OnPointerDown()
+
+/// <summary>
+/// 오브젝트 이동 상태일때 활성화 되는 이동감지 코루틴.
+/// </summary>
 private IEnumerator CoDetectMove()
+
+/// <summary>
+/// 배치 가능한 히트 포인트인지 확인하는 메서드.
+/// </summary>
+/// <returns>배치 가능 여부</returns>
 private bool PlaceableHitPoint()
-private void SetGizmo()
+
+/// <summary>
+/// 이동 확정 메서드.
+/// </summary>
 private void MoveAccept()
+
+/// <summary>
+/// 오브젝트 부모 관계 설정 메서드.
+/// </summary>
 private void SetPropParent()
+
+/// <summary>
+/// 이동 동작 해제 메서드.
+/// </summary>
 private void ReleaseMovementBehaviour()
+
+/// <summary>
+/// 이동 취소 이벤트 핸들러 (ESC 키).
+/// </summary>
+public override void OnCancel()
 ```
 
 ## 코드 스니펫
 
-### 전체 클래스 코드
+### 이동 모드 시작 프로세스
 ```csharp
-using System;
-using System.Collections;
-using UnityEngine;
-
-namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
+public override bool Setup(IMyRoomEditorEditableObject setUpObject)
 {
-    public class MyRoomEditorPropMover : MyRoomEditorPropEditor
+    if (!setUpObject.IsMovableProp(out _moveableProp)) return false; // 이동 가능한 프로퍼티인지 확인, 아니면 false 반환
+    SelectedObject = setUpObject; // 선택된 오브젝트 설정
+    CachedPosition = _moveableProp.GetPosition(); // 초기 위치 캐시
+    CachedParent = _moveableProp.PropBaseComponent.ParentProp; // 초기 부모 캐시
+    if (_moveableProp.IsRotatableProp(out _rotatableProp)) // 회전 가능한 프로퍼티인지 확인
     {
-        [SerializeField]
-        private Transform defaultPropTransform;
-        
-        [SerializeField]
-        private GameObject moveArrow; 
-        
-        [SerializeField]
-        private Material arrowMaterial;
-            
-        [SerializeField]
-        private float rotateSnapStepValue = 45;
-
-        public event Action OnUpdatePlacementProp; 
-        public event Action OnFinishMove;
-        private IMoveableProp _moveableProp;
-        private IRotatableProp _rotatableProp;
-        private Coroutine _detector;
-        private int _targetLayer;
-        private bool _isPlaceable;
-        private readonly int _rotateAnglePropertyId = Shader.PropertyToID("_Angle");
-        private Quaternion _nonRotatablePropCachedRotation;
-        private void Awake()
-        {
-            _targetLayer = 1 << LayerMask.NameToLayer("Wall") | 
-                           1 << LayerMask.NameToLayer("Ground");
-        }
-
-        public override void Enable()
-        {
-            Debug.Log($"MoveStart");
-            _detector = StartCoroutine(CoDetectMove());
-            moveArrow.SetActive(true);
-            SetGizmo();
-        }
-
-        public override void Disable()
-        {
-            StopCoroutine(_detector);
-        }
-
-        public override bool Setup(IMyRoomEditorEditableObject setUpObject)
-        {
-            if (!setUpObject.IsMovableProp(out _moveableProp)) return false;
-            SelectedObject = setUpObject;
-            CachedPosition = _moveableProp.GetPosition();
-            CachedParent = _moveableProp.PropBaseComponent.ParentProp;
-            if (_moveableProp.IsRotatableProp(out _rotatableProp))
-            {
-                CachedRotation = _rotatableProp.GetRotation();
-            }
-            else
-            {
-                _nonRotatablePropCachedRotation = _moveableProp.PropBaseComponent.transform.rotation;
-            }
-            return true;
-        }
-
-        public override void CleanUp()
-        {
-            _moveableProp = null;
-            _rotatableProp = null;
-            SelectedObject = null;
-            _isPlaceable = false;
-            CachedParent = null;
-        }
-
-        public override void OnPointerDown()
-        {
-            if (InputUtils.IsPointerOnUI()) return;
-            if (!_isPlaceable) return;
-            MoveAccept();
-        }
-
-        public override void OnPointerUp()
-        {
-        }
-
-        public override void OnCancel()
-        {
-            _moveableProp.Move(CachedPosition);
-            _moveableProp.PropBaseComponent.SetPropParent(CachedParent);
-            if (_rotatableProp != null)
-            {
-                _rotatableProp?.SetRotation(CachedRotation);
-            }
-            else
-            {
-                _moveableProp.PropBaseComponent.transform.rotation = _nonRotatablePropCachedRotation;
-            }
-            ReleaseMovementBehaviour();
-            Debug.Log("MoveCanceled");
-        }
-
-        public override void OnRightClick()
-        {
-            _rotatableProp?.RotationBySnapValue(rotateSnapStepValue);
-        }
-
-        private IEnumerator CoDetectMove()
-        {
-            while (true)
-            {
-                _isPlaceable = PlaceableHitPoint();
-                yield return null;
-            }
-        }
-
-        private bool PlaceableHitPoint()
-        {
-            SetGizmo();
-            if (!InputUtils.GetRaycastHit(out var raycastHit, _targetLayer, _moveableProp.PropBaseComponent)) return false;
-            if (!raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea) ||
-                !_moveableProp.IsPlaceableArea(raycastHit.point, placeableArea)) return false;
-            return true;
-        }
-
-        private void SetGizmo()
-        {
-            var pivotPoint = _moveableProp.GetGizmoPositionAndRotation();
-            moveArrow.transform.position = pivotPoint.Item1;
-            moveArrow.transform.rotation = pivotPoint.Item2;
-        }
-
-        private void MoveAccept()
-        {
-            SetPropParent();
-            ReleaseMovementBehaviour();
-            OnUpdatePlacementProp?.Invoke();
-        }
-
-        private void SetPropParent()
-        {
-            if (CachedParent == null)
-            {
-                if (_moveableProp.PropBaseComponent.ParentProp == null) return;
-                _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent);
-                Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Changed Parent {_moveableProp.PropBaseComponent.ParentProp.Id}");
-            }
-            else
-            {
-                if (_moveableProp.PropBaseComponent.ParentProp == null)
-                {
-                    CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent);
-                    _moveableProp.PropBaseComponent.transform.parent = defaultPropTransform;
-                    _moveableProp.PropBaseComponent.ClearPropParent();
-                    Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Release Parent");
-                }
-                else
-                {
-                    if (_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId() ==
-                        CachedParent.GetPlacePropId()) return;
-                    _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent);
-                    CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent);
-                    Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId()} Added Child {_moveableProp.PropBaseComponent.GetPlacePropId()}");
-                    Debug.Log($"[MyRoomEditorPropMover] {CachedParent.GetPlacePropId()} Remove Child {_moveableProp.PropBaseComponent.GetPlacePropId()}");
-                }
-            }
-        }
-
-        private void ReleaseMovementBehaviour()
-        {
-            StopCoroutine(_detector);
-            SelectedObject.Deselected();
-            CleanUp();
-            moveArrow.SetActive(false);
-            Debug.Log("MovementReleased");
-            OnFinishMove?.Invoke();
-        }
+        CachedRotation = _rotatableProp.GetRotation(); // 회전 값 캐시
     }
+    else // 회전 불가능한 경우
+    {
+        _nonRotatablePropCachedRotation = _moveableProp.PropBaseComponent.transform.rotation; // 회전 값 캐시
+    }
+    return true; // 설정 성공
+}
+
+public override void Enable()
+{
+_detector = StartCoroutine(CoDetectMove()); // 이동 감지 코루틴 시작
+moveArrow.SetActive(true); // 이동 화살표 기즈모 활성화
+SetGizmo(); // 기즈모 위치 설정
 }
 ```
 
-### 이동 감지 코루틴
+### 이동 감지 및 배치검증 프로세스
 ```csharp
 private IEnumerator CoDetectMove()
 {
@@ -256,49 +172,68 @@ private IEnumerator CoDetectMove()
         yield return null;
     }
 }
-```
 
-### 배치 검증 및 이동 로직
-```csharp
 private bool PlaceableHitPoint()
 {
-    SetGizmo();
-    if (!InputUtils.GetRaycastHit(out var raycastHit, _targetLayer, _moveableProp.PropBaseComponent)) return false;
-    if (!raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea) ||
-        !_moveableProp.IsPlaceableArea(raycastHit.point, placeableArea)) return false;
-    return true;
+    SetGizmo(); // 기즈모 설정
+    if (!InputUtils.GetRaycastHit(out var raycastHit, _targetLayer, _moveableProp.PropBaseComponent)) return false; // 레이캐스트 실패 시 false
+    if (!raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea) || // 배치 영역 컴포넌트 확인
+        !_moveableProp.IsPlaceableArea(raycastHit.point, placeableArea)) return false; // 배치 가능성 확인 실패 시 false
+    return true; // 배치 가능
 }
 ```
 
-### 부모 설정 로직
+### 이동 적용 프로세스
 ```csharp
+public override void OnPointerDown()
+{
+    if (InputUtils.IsPointerOnUI()) return; // UI 위에서 클릭했으면 무시
+    if (!_isPlaceable) return; // 배치 불가능한 위치면 무시
+    MoveAccept(); // 이동 확정
+}
+
+private void MoveAccept()
+{
+    SetPropParent(); // 부모 관계 설정
+    ReleaseMovementBehaviour(); // 이동 동작 해제
+}
+
 private void SetPropParent()
 {
-    if (CachedParent == null)
+    if (CachedParent == null) // 캐시된 부모가 없는 경우
     {
-        if (_moveableProp.PropBaseComponent.ParentProp == null) return;
-        _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent);
-        Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Changed Parent {_moveableProp.PropBaseComponent.ParentProp.Id}");
+        if (_moveableProp.PropBaseComponent.ParentProp == null) return; // 현재 부모도 없으면 리턴
+        _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent); // 현재 부모에 자식 추가
+        Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Changed Parent {_moveableProp.PropBaseComponent.ParentProp.Id}"); // 부모 변경 로그
     }
-    else
+    else // 캐시된 부모가 있는 경우
     {
-        if (_moveableProp.PropBaseComponent.ParentProp == null)
+        if (_moveableProp.PropBaseComponent.ParentProp == null) // 현재 부모가 없는 경우
         {
-            CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent);
-            _moveableProp.PropBaseComponent.transform.parent = defaultPropTransform;
-            _moveableProp.PropBaseComponent.ClearPropParent();
-            Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Release Parent");
+            CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent); // 캐시된 부모에서 자식 제거
+            _moveableProp.PropBaseComponent.transform.parent = defaultPropTransform; // 기본 트랜스폼으로 부모 설정
+            _moveableProp.PropBaseComponent.ClearPropParent(); // 부모 관계 클리어
+            Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.Id} Release Parent"); // 부모 해제 로그
         }
-        else
+        else // 현재 부모가 있는 경우
         {
-            if (_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId() ==
-                CachedParent.GetPlacePropId()) return;
-            _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent);
-            CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent);
-            Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId()} Added Child {_moveableProp.PropBaseComponent.GetPlacePropId()}");
-            Debug.Log($"[MyRoomEditorPropMover] {CachedParent.GetPlacePropId()} Remove Child {_moveableProp.PropBaseComponent.GetPlacePropId()}");
+            if (_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId() == // 현재 부모와 캐시된 부모가 같은지 확인
+                CachedParent.GetPlacePropId()) return; // 같으면 리턴
+            _moveableProp.PropBaseComponent.ParentProp.AddChildProp(_moveableProp.PropBaseComponent); // 현재 부모에 자식 추가
+            CachedParent.RemoveChildProp(_moveableProp.PropBaseComponent); // 캐시된 부모에서 자식 제거
+            Debug.Log($"[MyRoomEditorPropMover] {_moveableProp.PropBaseComponent.ParentProp.GetPlacePropId()} Added Child {_moveableProp.PropBaseComponent.GetPlacePropId()}"); // 자식 추가 로그
+            Debug.Log($"[MyRoomEditorPropMover] {CachedParent.GetPlacePropId()} Remove Child {_moveableProp.PropBaseComponent.GetPlacePropId()}"); // 자식 제거 로그
         }
     }
+}
+
+private void ReleaseMovementBehaviour()
+{
+    StopCoroutine(_detector); // 감지 코루틴 중지
+    SelectedObject.Deselected(); // 선택 해제
+    CleanUp(); // 리소스 정리
+    moveArrow.SetActive(false); // 화살표 기즈모 비활성화
+    OnFinishMove?.Invoke(); // 이동 완료 이벤트 호출
 }
 ```
 
@@ -325,15 +260,8 @@ private void SetPropParent()
 - 부모 변경 시 기존 부모에서 제거하고 새 부모에 추가
 - 독립 배치 시 부모 관계 해제
 
-## 의존성
-
-- `MyRoomEditorInputUtils`: Raycast 및 입력 처리
-- `IMoveableProp`: 이동 가능한 오브젝트 인터페이스
-- `IRotatableProp`: 회전 가능한 오브젝트 인터페이스
-- `IPlaceableArea`: 배치 영역 인터페이스
-
 ## 관련 클래스
-
-- **부모 클래스**: `MyRoomEditorPropEditor`
-- **사용자**: `MyRoomEditorPropEditingManager`
-- **관련 인터페이스**: `IMoveableProp`, `IRotatableProp`, `IPlaceableArea`
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): Raycast 및 입력 처리
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/): 부모 클래스
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 사용 클래스
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/), [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 검증 및 기능 인터페이스

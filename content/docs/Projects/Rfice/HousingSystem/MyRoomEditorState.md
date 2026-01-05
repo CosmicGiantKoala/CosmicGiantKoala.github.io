@@ -17,7 +17,7 @@ weight = 402
 
 - **상태 관리**: `MyRoomEditorStateEnum`에 따라 상태를 전환하고 관리.
 - **입력 처리**: [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)를 통해 편집 관련 입력 이벤트를 처리.
-- **상태별 로직**: 서브클래스에서 구현되는 추상 메서드를 통해 상태별 동작을 정의.
+- **상태별 프로세스**: 서브클래스에서 구현되는 추상 메서드를 통해 상태별 동작을 정의.
 - **의존성 주입**: Zenject를 사용한 객체 간 의존성 주입.
 
 ## 주요 멤버
@@ -26,7 +26,7 @@ weight = 402
 ```csharp
 /// <summary>
 /// 상태 변경을 처리하는 핸들러. Zenject를 통해 주입되며, 상태 전환 이벤트를 관리.
-/// 이 클래스가 특정 상태로 전환될 때 필요한 로직을 수행.
+/// 이 클래스가 특정 상태로 전환될 때 필요한 프로세스을 수행.
 /// </summary>
 [Inject]
 protected MyRoomEditorStateHandle MyRoomEditorStateHandle;
@@ -63,7 +63,7 @@ protected abstract void OnPointerUp();
 
 /// <summary>
 /// 취소 입력 (예: ESC 키)이 발생했을 때 호출되는 메서드.
-/// 현재 작업을 취소하거나 이전 상태로 돌아가는 로직을 구현.
+/// 현재 작업을 취소하거나 이전 상태로 돌아가는 프로세스를 구현.
 /// </summary>
 protected abstract void OnCancel();
 
@@ -75,25 +75,24 @@ protected abstract void OnRightClick();
 
 /// <summary>
 /// 이 상태가 활성화될 때 호출되는 메서드.
-/// 상태별 초기화 로직을 수행 (예: UI 표시, 입력 설정 등).
+/// 상태별 초기화 프로세스를 수행 (예: UI 표시, 입력 설정 등).
 /// </summary>
 protected abstract void Enable();
 
 /// <summary>
 /// 이 상태가 비활성화될 때 호출되는 메서드.
-/// 상태별 정리 로직을 수행 (예: UI 숨김, 리소스 해제 등).
+/// 상태별 정리 프로세스를 수행 (예: UI 숨김, 리소스 해제 등).
 /// </summary>
 protected abstract void Disable();
 ```
 
 ## 코드 스니펫
 
-### 상태 변경 로직
+### 상태 변경 프로세스
 ```csharp
 /// <summary>
 /// 서브클래스에서 상태 변경을 요청할 때 호출되는 protected 메서드.
 /// 상태 머신을 통해 전역 상태를 변경하며, 모든 상태 클래스의 OnChangedState가 호출됨.
-/// 예를 들어, 배치 완료 후 편집 모드로 전환할 때 사용.
 /// </summary>
 /// <param name="state">전환할 목표 상태 (MyRoomEditorStateEnum 값)</param>
 protected void ChangeState(MyRoomEditorStateEnum state)
@@ -105,7 +104,7 @@ protected void ChangeState(MyRoomEditorStateEnum state)
 /// 상태 변경 이벤트가 발생할 때 호출되는 private 메서드.
 /// 현재 상태가 이 클래스의 targetState와 일치하는지 확인하여
 /// 입력 이벤트 구독/해제와 함께 Enable/Disable 메서드를 호출.
-/// 상태 머신 패턴의 핵심 로직으로, 상태별 동작을 자동으로 관리.
+/// 상태 머신 패턴의 핵심 프로세스로, 상태별 동작을 자동으로 관리.
 /// </summary>
 /// <param name="state">새로 변경된 전역 상태</param>
 private void OnChangedState(MyRoomEditorStateEnum state)
@@ -114,13 +113,13 @@ private void OnChangedState(MyRoomEditorStateEnum state)
     if (state == targetState)
     {
         InputEnable(); // 입력 이벤트 구독
-        Enable(); // 서브클래스별 활성화 로직 실행
+        Enable(); // 서브클래스별 활성화 프로세스 실행
     }
     // 일치하지 않으면 비활성화
     else
     {
         InputDisable(); // 입력이벤트 해제
-        Disable(); // 서브클래스별 비활성화 로직 실행
+        Disable(); // 서브클래스별 비활성화 프로세스 실행
     }
 }
 ```
@@ -145,12 +144,12 @@ public class MyRoomEditorPlacementManager : MyRoomEditorState
 {
     protected override void Enable()
     {
-        // 배치 모드 활성화 로직
+        // 배치 모드 활성화 프로세스
     }
 
     protected override void Disable()
     {
-        // 배치 모드 비활성화 로직
+        // 배치 모드 비활성화 프로세스
     }
 
     // ... 다른 추상 메서드 구현

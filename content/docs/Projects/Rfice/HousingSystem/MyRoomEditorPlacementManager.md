@@ -139,7 +139,7 @@ private void ReleasePlacementBehaviour()
 
 ## 코드 스니펫
 
-### 오브젝트 배치 로직
+### 오브젝트 배치 프로세스
 ```csharp
 public void SetPlacementTarget(GameObject targetObject)
 {

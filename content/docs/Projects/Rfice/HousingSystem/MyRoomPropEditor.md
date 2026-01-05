@@ -68,14 +68,14 @@ protected SpawnablePropBase CachedParent;
 /// <summary>
 /// 에디터를 활성화하는 메서드.
 /// 이벤트 등록, UI 표시, 편집 준비 작업을 수행.
-/// 서브클래스에서 구체적인 활성화 로직을 구현.
+/// 서브클래스에서 구체적인 활성화 프로세스를 구현.
 /// </summary>
 public abstract void Enable();
 
 /// <summary>
 /// 에디터를 비활성화하는 메서드.
 /// 이벤트 해제, UI 숨김, 편집 종료 작업을 수행.
-/// 서브클래스에서 구체적인 비활성화 로직을 구현.
+/// 서브클래스에서 구체적인 비활성화 프로세스 구현.
 /// </summary>
 public abstract void Disable();
 
@@ -121,9 +121,9 @@ public abstract void OnRightClick();
 ## 상속 구조
 
 `MyRoomEditorPropEditor`의 서브클래스.
-- [`MyRoomPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/): 오브젝트 선택 로직 구현.
-- [`MyRoomPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/): 오브젝트 이동 로직 구현.
-- [`MyRoomPropRotator`](/docs/projects/rfice/housingsystem/myroomproprotator/): 오브젝트 회전 로직 구현.
+- [`MyRoomPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/): 오브젝트 선택 프로세스 구현.
+- [`MyRoomPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/): 오브젝트 이동 프로세스 구현.
+- [`MyRoomPropRotator`](/docs/projects/rfice/housingsystem/myroomproprotator/): 오브젝트 회전 프로세스 구현.
 
 ## 주요 기능 설명
 
@@ -136,7 +136,7 @@ public abstract void OnRightClick();
 ### 공통 동작 순서
 1. **Setup(IMyRoomEditorEditableObject setUpObject)**: 편집할 오브젝트 설정 및 초기화
 2. **Enable()**: 에디터 활성화 및 이벤트 등록
-3. **편집 작업 수행**: 서브클래스별 로직 실행
+3. **편집 작업 수행**: 서브클래스별 프로세스 실행
 4. **Disable()**: 에디터 비활성화 및 이벤트 해제
 5. **CleanUp()**: 상태 정리 및 리소스 해제
 

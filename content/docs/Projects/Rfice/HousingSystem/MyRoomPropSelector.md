@@ -11,7 +11,7 @@ weight = 406
 
 ## 개요
 
-`MyRoomEditorPropSelector`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 선택을 담당하는 클래스. Raycast를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생시킴.
+`MyRoomEditorPropSelector`는 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속받아 오브젝트의 선택을 담당하는 클래스. Raycast를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생시킴.
 
 ## 주요 역할
 
@@ -78,7 +78,7 @@ private void ReleaseSelect()
 
 ## 코드 스니펫
 
-### 오브젝트 감지 코루틴
+### 오브젝트 감지 프로세스
 ```csharp
 
 private IEnumerator CoDetectObject()
@@ -133,7 +133,7 @@ private bool IsSelectedObject([CanBeNull] IMyRoomEditorEditableObject focusedObj
 }
 ```
 
-### 선택 처리 로직
+### 선택 처리 프로세스
 ```csharp
 public override void OnPointerDown()
 {
@@ -175,7 +175,7 @@ private void ReleaseSelect()
 - **Selected**: 클릭으로 선택됨 (편집 가능 상태)
 - **Unfocused**: 마우스가 오브젝트에서 벗어남
 
-### 선택 로직
+### 선택 프로세스
 1. 같은 오브젝트 재클릭 시 선택 해제
 2. 다른 오브젝트 클릭 시 이전 선택 해제 후 새 오브젝트 선택
 3. 배치 영역(벽, 바닥) 클릭 시 선택 해제

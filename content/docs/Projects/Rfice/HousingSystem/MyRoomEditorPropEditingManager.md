@@ -198,7 +198,7 @@ private void OnFinishRotate()
 
 ## 코드 스니펫
 
-### 삭제 처리 로직
+### 삭제 처리 프로세스
 ```csharp
 private void OnDeleteEvent()
 {
@@ -237,7 +237,7 @@ private void SearchChildDeletedTarget(string parentId)
 }
 ```
 
-### 오브젝트 색상 변경 로직(material변경)
+### 오브젝트 색상 변경 프로세스(material변경)
 ```csharp
 private void OnActiveChangeColorTool()
 {
