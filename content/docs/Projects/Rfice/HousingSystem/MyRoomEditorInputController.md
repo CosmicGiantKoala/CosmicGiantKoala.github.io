@@ -8,14 +8,14 @@ draft = false
 toc = true
 weight = 410
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
+
 ## 개요
 
-`MyRoomEditorInputController`는 `InputAction`을 통해 발생하는 입력 이벤트를 각각의 `Dispatcher`로 전달하는 클래스입니다. 시스템 활성화 상태 기반 `InputAction` 토글을 담당합니다.
+`MyRoomEditorInputController`는 `InputAction`을 통해 발생하는 입력 이벤트를 각각의 `Dispatcher`로 전달하는 클래스. 시스템 활성화 상태 기반 `InputAction` 토글을 담당.
 
 ## 주요 역할
 
-- **입력 이벤트 중계**: InputAction 이벤트를 적절한 Dispatcher로 라우팅
+- **입력 이벤트 중계**: InputAction 이벤트를 적절한 Dispatcher로 전달
 - **시스템 토글**: 에디터 활성화/비활성화에 따른 입력 시스템 전환
 - **안전 영역 검증**: 포인터가 화면 안전 영역 내에 있는지 검증
 - **입력 구분**: 카메라 조작과 편집 입력을 분리하여 처리
@@ -24,248 +24,66 @@ weight = 410
 
 ### 필드
 ```csharp
+/// <summary>
+/// 어플리케이션 기본 입력 시스템.
+/// </summary>
 [Inject]
 private RficeAction _rficeInput;
 
+/// <summary>
+/// MyRoom 에디터 시스템 전용 입력 액션
+/// </summary>
 [Inject]
 private MyRoomEditorInput _myRoomInput;
 
+/// <summary>
+/// 카메라 관련 입력 이벤트를 처리하는 클래스
+/// </summary>
 [Inject]
 private MyRoomEditorCameraInputDispatcher _cameraInputDispatcher;
 
+/// <summary>
+/// 오브젝트 편집 관련 입력 이벤트를 처리하는 클래스
+/// </summary>
 [Inject]
 private MyRoomEditorEdittingInputDispatcher _edittingDispatcher;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 모든 MyRoom 에디터 입력을 활성화하는 메서드.
+/// 기본 게임 입력을 비활성화하고 에디터 입력을 활성화.
+/// </summary>
 public void EnableAll()
+
+/// <summary>
+/// 모든 MyRoom 에디터 입력을 비활성화하는 메서드.
+/// 기본 게임 입력을 활성화하고 에디터 입력을 비활성화.
+/// </summary>
 public void DisableAll()
+
+/// <summary>
+/// 입력 이벤트를 구독하는 메서드.
+/// 각 InputAction의 이벤트에 핸들러를 등록하여 입력 처리 시작.
+/// </summary>
 private void InputEventSubscribe()
+
+/// <summary>
+/// 입력 이벤트를 구독 해제하는 메서드.
+/// 각 InputAction의 이벤트에서 핸들러를 제거하여 입력 처리 중지.
+/// </summary>
 private void InputEventUnsubscribe()
+
+/// <summary>
+/// 포인터가 화면 안전 영역 내에 있는지 검증하는 메서드.
+/// 노치나 시스템 UI 영역을 제외한 안전 영역 내 입력만 처리.
+/// </summary>
+/// <returns>포인터가 안전 영역 내에 있으면 true, 아니면 false</returns>
 private bool IsPointerInsideScreen()
 ```
 
 ## 코드 스니펫
-
-### 전체 클래스 코드
-```csharp
-using Dev.Scripts.Rsup.Presentation.Dispatchers;
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using Zenject;
-
-namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
-{
-    public class MyRoomEditorInputController : MonoBehaviour
-    {
-        [Inject]
-        private RficeAction _rficeInput;
-
-        [Inject]
-        private MyRoomEditorInput _myRoomInput;
-
-        [Inject]
-        private MyRoomEditorCameraInputDispatcher _cameraInputDispatcher;
-
-        [Inject]
-        private MyRoomEditorEdittingInputDispatcher _edittingDispatcher;
-
-        private void EnableRficeInput() => _rficeInput.Enable();
-        private void DisableRficeInput() => _rficeInput.Disable();
-        private void EnableCameraMove() => _myRoomInput.MyRoomEditorCamera.CameraMove.Enable();
-        private void DisableCameraMove() => _myRoomInput.MyRoomEditorCamera.CameraMove.Disable();
-        private void EnableCameraRotate() => _myRoomInput.MyRoomEditorCamera.CameraEngage.Enable();
-        private void DisableCameraRotate() => _myRoomInput.MyRoomEditorCamera.CameraEngage.Disable();
-        private void EnableCameraRotateVector() => _myRoomInput.MyRoomEditorCamera.CameraRotationVector.Enable();
-        private void DisableCameraRotateVector() => _myRoomInput.MyRoomEditorCamera.CameraRotationVector.Disable();
-        private void EnableCameraZoom() => _myRoomInput.MyRoomEditorCamera.CameraZoom.Enable();
-        private void DisableCameraZoom() => _myRoomInput.MyRoomEditorCamera.CameraZoom.Disable();
-        private void EnablePointerDown() => _myRoomInput.MyRoomEditorEditting.PointerDown.Enable();
-        private void DisablePointerDown() => _myRoomInput.MyRoomEditorEditting.PointerDown.Disable();
-        private void EnablePointerUp() => _myRoomInput.MyRoomEditorEditting.PointerUp.Enable();
-        private void DisablePointerUp() => _myRoomInput.MyRoomEditorEditting.PointerUp.Disable();
-        private void EnableRightClick() => _myRoomInput.MyRoomEditorEditting.RightClick.Enable();
-        private void DisableRightClick() => _myRoomInput.MyRoomEditorEditting.RightClick.Disable();
-        private void EnableDelete()=> _myRoomInput.MyRoomEditorEditting.Delete.Enable();
-        private void DisableDelete() => _myRoomInput.MyRoomEditorEditting.Delete.Disable();
-        private Vector2 CameraMoveValue() => _myRoomInput.MyRoomEditorCamera.CameraMove.ReadValue<Vector2>();
-        private float CameraZoomValue() => _myRoomInput.MyRoomEditorCamera.CameraZoom.ReadValue<float>();
-
-        private void Awake()
-        {
-            InputEventSubscribe();
-        }
-
-        private void OnDestroy()
-        {
-            InputEventUnsubscribe();
-        }
-
-        public void EnableAll()
-        {
-            DisableRficeInput();
-            _myRoomInput.Enable();
-
-            EnableCameraMove();
-            EnableCameraRotate();
-            EnableCameraZoom();
-            EnablePointerDown();
-        }
-
-        public void DisableAll()
-        {
-            EnableRficeInput();
-            _myRoomInput.Disable();
-
-            DisableCameraMove();
-            DisableCameraRotate();
-            DisableCameraZoom();
-            DisablePointerDown();
-        }
-
-        private void InputEventSubscribe()
-        {
-            //CameraMove
-            _myRoomInput.MyRoomEditorCamera.CameraMove.started += OnCameraMoveStart;
-            _myRoomInput.MyRoomEditorCamera.CameraMove.performed += OnCameraMovePerform;
-            _myRoomInput.MyRoomEditorCamera.CameraMove.canceled += OnCameraMoveStop;
-
-            //CameraRotate
-            _myRoomInput.MyRoomEditorCamera.CameraEngage.started += OnCameraControlStarted;
-            _myRoomInput.MyRoomEditorCamera.CameraDisengage.performed += OnCameraControlCanceled;
-
-            //CameraZoom
-            _myRoomInput.MyRoomEditorCamera.CameraZoom.performed += OnCameraZoomWheel;
-
-            //Pointer
-            _myRoomInput.MyRoomEditorEditting.PointerDown.started += OnPointerDown;
-            _myRoomInput.MyRoomEditorEditting.PointerUp.performed += OnPointerUp;
-            
-            //Shortcut
-            _myRoomInput.MyRoomEditorEditting.Cancel.started += OnCancel;
-            _myRoomInput.MyRoomEditorEditting.RightClick.started += OnRightClick;
-            _myRoomInput.MyRoomEditorEditting.Delete.started += OnDeletePress;
-
-        }
-
-        private void InputEventUnsubscribe()
-        {
-            //cameraMove
-            _myRoomInput.MyRoomEditorCamera.CameraMove.started -= OnCameraMoveStart;
-            _myRoomInput.MyRoomEditorCamera.CameraMove.performed -= OnCameraMovePerform;
-            _myRoomInput.MyRoomEditorCamera.CameraMove.canceled -= OnCameraMoveStop;
-
-            //CameraRotate
-            _myRoomInput.MyRoomEditorCamera.CameraEngage.started -= OnCameraControlStarted;
-            _myRoomInput.MyRoomEditorCamera.CameraDisengage.performed -= OnCameraControlCanceled;
-
-            //CameraZoom
-            _myRoomInput.MyRoomEditorCamera.CameraZoom.performed -= OnCameraZoomWheel;
-            
-            //Pointer
-            _myRoomInput.MyRoomEditorEditting.PointerDown.started -= OnPointerDown;
-            _myRoomInput.MyRoomEditorEditting.PointerUp.performed -= OnPointerUp;
-            
-            //Shortcut
-            _myRoomInput.MyRoomEditorEditting.Cancel.started -= OnCancel;
-            _myRoomInput.MyRoomEditorEditting.RightClick.started -= OnRightClick;
-            _myRoomInput.MyRoomEditorEditting.Delete.started -= OnDeletePress;
-        }
-
-        private void OnCameraMoveStart(InputAction.CallbackContext context)
-        {
-            _cameraInputDispatcher.OnCameraMoveStarted();
-        }
-
-        private void OnCameraMovePerform(InputAction.CallbackContext context)
-        {
-            _cameraInputDispatcher.OnCameraMovePerformed(CameraMoveValue());
-        }
-
-        private void OnCameraMoveStop(InputAction.CallbackContext context)
-        {
-            _cameraInputDispatcher.OnCameraMoveStopped();
-        }
-
-        private void OnCameraControlStarted(InputAction.CallbackContext context)
-        {
-            if (!IsPointerInsideScreen()) return;
-            EnableCameraRotateVector();
-            _cameraInputDispatcher.OnCameraEngageStarted();
-        }
-
-        private void OnCameraControlCanceled(InputAction.CallbackContext context)
-        {
-            DisableCameraRotateVector();
-            _cameraInputDispatcher.OnCameraDisengaged();
-        }
-
-        private void OnCameraZoomWheel(InputAction.CallbackContext context)
-        {
-            _cameraInputDispatcher.OnCameraZoomed(CameraZoomValue());
-        }
-
-        private void OnPointerDown(InputAction.CallbackContext context)
-        {
-            if (IsPointerInsideScreen() == false) return;
-            _edittingDispatcher.OnPointerDown();
-        }
-
-        private void OnPointerUp(InputAction.CallbackContext context)
-        {
-            _edittingDispatcher.OnPointerUp();
-        }
-
-        private void OnCancel(InputAction.CallbackContext context)
-        {
-            _edittingDispatcher.OnCanceled();
-        }
-
-        private void OnRightClick(InputAction.CallbackContext context)
-        {
-            _edittingDispatcher.OnRightClicked();
-        }
-
-        private void OnDeletePress(InputAction.CallbackContext context)
-        {
-            _edittingDispatcher.OnDeletePressed();
-        }
-
-        private bool IsPointerInsideScreen()
-        {
-            var pointer = InputSystem.GetDevice<Pointer>();
-            return pointer == null || Screen.safeArea.Contains(pointer.position.ReadValue());
-        }
-    }
-}
-```
-
-### 입력 활성화/비활성화
-```csharp
-public void EnableAll()
-{
-    DisableRficeInput();
-    _myRoomInput.Enable();
-
-    EnableCameraMove();
-    EnableCameraRotate();
-    EnableCameraZoom();
-    EnablePointerDown();
-}
-
-public void DisableAll()
-{
-    EnableRficeInput();
-    _myRoomInput.Disable();
-
-    DisableCameraMove();
-    DisableCameraRotate();
-    DisableCameraZoom();
-    DisablePointerDown();
-}
-```
 
 ### 안전 영역 검증
 ```csharp
@@ -280,23 +98,23 @@ private bool IsPointerInsideScreen()
 ```csharp
 private void InputEventSubscribe()
 {
-    //CameraMove
+    // 카메라 이동 입력 이벤트 구독
     _myRoomInput.MyRoomEditorCamera.CameraMove.started += OnCameraMoveStart;
     _myRoomInput.MyRoomEditorCamera.CameraMove.performed += OnCameraMovePerform;
     _myRoomInput.MyRoomEditorCamera.CameraMove.canceled += OnCameraMoveStop;
 
-    //CameraRotate
+    // 카메라 회전 입력 이벤트 구독
     _myRoomInput.MyRoomEditorCamera.CameraEngage.started += OnCameraControlStarted;
     _myRoomInput.MyRoomEditorCamera.CameraDisengage.performed += OnCameraControlCanceled;
 
-    //CameraZoom
+    // 카메라 줌 입력 이벤트 구독
     _myRoomInput.MyRoomEditorCamera.CameraZoom.performed += OnCameraZoomWheel;
 
-    //Pointer
+    // 포인터 입력 이벤트 구독
     _myRoomInput.MyRoomEditorEditting.PointerDown.started += OnPointerDown;
     _myRoomInput.MyRoomEditorEditting.PointerUp.performed += OnPointerUp;
     
-    //Shortcut
+    // 단축키 입력 이벤트 구독
     _myRoomInput.MyRoomEditorEditting.Cancel.started += OnCancel;
     _myRoomInput.MyRoomEditorEditting.RightClick.started += OnRightClick;
     _myRoomInput.MyRoomEditorEditting.Delete.started += OnDeletePress;
@@ -322,14 +140,9 @@ private void InputEventSubscribe()
 - 각 입력 이벤트를 적절한 Dispatcher로 전달
 - Dispatcher가 실제 비즈니스 로직 처리
 
-## 의존성
+## 관련 클래스
 
 - `RficeAction`: 기본 게임 입력 액션
 - `MyRoomEditorInput`: 에디터 전용 입력 액션
-- `MyRoomEditorCameraInputDispatcher`: 카메라 입력 이벤트 처리
-- `MyRoomEditorEdittingInputDispatcher`: 편집 입력 이벤트 처리
-
-## 관련 클래스
-
-- **Dispatcher들**: `MyRoomEditorCameraInputDispatcher`, `MyRoomEditorEdittingInputDispatcher`
-- **입력 액션**: `MyRoomEditorInput`, `RficeAction`
+- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/): 카메라 입력 이벤트 처리
+- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/): 편집 입력 이벤트 처리

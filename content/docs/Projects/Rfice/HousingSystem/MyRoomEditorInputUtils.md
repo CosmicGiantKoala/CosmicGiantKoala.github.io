@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 413
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`MyRoomEditorInputUtils`는 입력 유틸리티 클래스입니다. UI 검증, Raycast 실행, 포인터 델타 계산 등 입력 관련 헬퍼 함수를 제공합니다.
+`MyRoomEditorInputUtils`는 입력 유틸리티 클래스. UI 검증, Raycast 실행, 포인터 델타 계산 등 입력 관련 헬퍼 함수를 제공.
 
 ## 주요 역할
 
@@ -24,202 +23,176 @@ weight = 413
 
 ### 필드
 ```csharp
+/// <summary>
+/// Raycast를 수행할 카메라: 화면 좌표를 3D 공간으로 변환
+/// </summary>
 [SerializeField]
 private Camera raycastCamera;
 
+/// <summary>
+/// Raycast 최대 거리: 이 거리 이상의 충돌은 무시
+/// </summary>
 [SerializeField]
 private float raycastMaxDistance = 50f;
 
+/// <summary>
+/// Raycast 최소 거리: 이 거리 이하의 충돌은 무시 (너무 가까운 충돌 방지)
+/// </summary>
 [SerializeField]
 private float raycastMinDistance = 0.5f;
 
+/// <summary>
+/// 현재 이벤트 시스템: UI 검증에 사용
+/// </summary>
 private EventSystem _eventSystem = EventSystem.current;
+
+/// <summary>
+/// Raycast 결과 최대 개수 제한
+/// </summary>
 private const int RaycastLimit = 10;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 특정 오브젝트를 무시한 Raycast 결과를 반환하는 메서드.
+/// ignoreObject를 제외한 가장 가까운 충돌을 찾아 반환.
+/// </summary>
+/// <param name="raycastHit">반환받을 RaycastHit 구조체</param>
+/// <param name="targetLayerMask">Raycast 대상 레이어 마스크</param>
+/// <param name="ignoreObject">Raycast 결과에서 무시할 SpawnablePropBase 오브젝트</param>
+/// <returns>유효한 충돌이 있으면 true, 없으면 false</returns>
 public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, SpawnablePropBase ignoreObject)
+        
+
+/// <summary>
+/// 우선순위 레이어를 기반으로 Raycast 결과를 반환하는 메서드.
+/// priorityLayer의 오브젝트를 우선 선택하며, 없으면 가장 가까운 오브젝트 선택.
+/// </summary>
+/// <param name="raycastHit">반환받을 RaycastHit 구조체</param>
+/// <param name="targetLayerMask">Raycast 대상 레이어 마스크</param>
+/// <param name="priorityLayer">우선시할 레이어 (-1이면 우선순위 없음)</param>
+/// <returns>유효한 충돌이 있으면 true, 없으면 false</returns>
 public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, int priorityLayer)
+
+/// <summary>
+/// Raycast 결과에서 무시할 오브젝트를 제거하는 메서드.
+/// IPlaceableArea 인터페이스를 구현한 오브젝트 중 ignoreObject와 다른 경우만 유지.
+/// </summary>
+/// <param name="raycastHits">필터링할 RaycastHit 배열</param>
+/// <param name="ignoreObject">무시할 SpawnablePropBase 오브젝트</param>
+/// <returns>필터링된 RaycastHit 배열</returns>
+private RaycastHit[] RemoveIgnoring(RaycastHit[] raycastHits, SpawnablePropBase ignoreObject)
+
+/// <summary>
+/// 현재 포인터의 화면 좌표를 반환하는 메서드.
+/// Raycast를 위한 시작점으로 사용.
+/// </summary>
+/// <returns>포인터 화면 좌표</returns>
 public Vector2 PointerDelta()
+
+/// <summary>
+/// 포인터가 UI 요소 위에 있는지 검증하는 메서드.
+/// GraphicRaycaster를 사용하여 UI 요소에 대한 Raycast 수행.
+/// </summary>
+/// <returns>포인터가 UI 위에 있으면 true, 없으면 false</returns>
 public bool IsPointerOnUI()
 ```
 
 ## 코드 스니펫
 
-### 전체 클래스 코드
-```csharp
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-
-namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
-{
-    public class MyRoomEditorInputUtils : MonoBehaviour
-    {
-        [SerializeField]
-        private Camera raycastCamera;
-
-        [SerializeField]
-        private float raycastMaxDistance = 50f;
-
-        [SerializeField]
-        private float raycastMinDistance = 0.5f;
-
-        private EventSystem _eventSystem = EventSystem.current;
-        private const int RaycastLimit = 10;
-
-        public Vector2 PointerDelta()
-        {
-            return InputSystem.GetDevice<Pointer>().delta.ReadValue();
-        }
-
-        private Vector2 PointerPosition()
-        {
-            return InputSystem.GetDevice<Pointer>().position.ReadValue();
-        }
-        
-        /// <summary>
-        /// ignoreObject를 제외한 레이캐스트 반환
-        /// </summary>
-        /// <param name="raycastHit">반환받을 RaycastHit</param>
-        /// <param name="targetLayerMask">Raycast 대상 LayerMask</param>
-        /// <param name="ignoreObject">Raycast 결과에서 무시할 게임오브젝트</param>
-        public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, SpawnablePropBase ignoreObject)
-        {
-            var ray = raycastCamera.ScreenPointToRay(PointerPosition());
-            RaycastHit[] results = new RaycastHit[RaycastLimit];
-            var hitLength = Physics.RaycastNonAlloc(ray, results, raycastMaxDistance, targetLayerMask);
-            if (hitLength == 0)
-            {
-                raycastHit = new RaycastHit();
-                return false;
-            }
-
-            results = Array.FindAll(results, raycastHit => 
-                raycastHit.collider is BoxCollider
-                && raycastHit.distance > raycastMinDistance);
-
-            if (results.Length == 0)
-            {
-                raycastHit = new RaycastHit();
-                return false;
-            }
-
-            results = RemoveIgnoring(results, ignoreObject);
-            if (results.Length == 0)
-            {
-                raycastHit = new RaycastHit();
-                return false;
-                
-            }
-            Array.Sort(results, (raycast1, raycast2) => raycast1.distance.CompareTo(raycast2.distance));
-            
-            raycastHit = results.First();
-            return true;                
-        }
-
-        /// <summary>
-        /// priorityLayer를 바탕으로 우선순위 레이캐스트
-        /// </summary>
-        /// <param name="raycastHit">반환받을 RaycastHit</param>
-        /// <param name="targetLayerMask">Raycast 대상 LayerMask</param>
-        /// <param name="priorityLayer">여러 타겟이 Raycast에 감지될경우 우선시할 레이어</param>
-        public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, int priorityLayer)
-        {
-            var ray = raycastCamera.ScreenPointToRay(PointerPosition());
-            RaycastHit[] results = new RaycastHit[RaycastLimit];
-            var hitLength = Physics.RaycastNonAlloc(ray, results, raycastMaxDistance, targetLayerMask);
-            if (hitLength == 0)
-            {
-                raycastHit = new RaycastHit();
-                return false;
-            }
-
-            results = Array.FindAll(results, raycastHit => 
-                raycastHit.collider != null
-                && raycastHit.distance > raycastMinDistance);
-            if (results.Length == 0)
-            {
-                raycastHit = new RaycastHit();
-                return false;
-            }
-            Array.Sort(results, (raycast1, raycast2) => raycast1.distance.CompareTo(raycast2.distance));
-
-            if (priorityLayer == -1)
-            {
-                raycastHit = results.First();
-            }
-            else
-            {
-                var priorityRaycastHits = results.Where(hits => hits.transform.gameObject.layer == priorityLayer).ToArray();
-                raycastHit = priorityRaycastHits.Length != 0 ? priorityRaycastHits.First() : results.First();
-            }
-            return true;
-        }
-
-        private RaycastHit[] RemoveIgnoring(RaycastHit[] raycastHits, SpawnablePropBase ignoreObject)
-        {
-            var result = Array.FindAll(raycastHits, hit =>
-                hit.collider.TryGetComponent<IPlaceableArea>(out var area)
-                && (area.IsPlacementAreaInProp(out var propBase) == false || propBase != ignoreObject));
-            return result;
-        }
-
-        public bool IsPointerOnUI()
-        {
-            var graphicRaycaster = FindObjectsOfType<GraphicRaycaster>();
-            var pointerEvent = new PointerEventData(_eventSystem);
-            var raycastResult = new List<RaycastResult>();
-            pointerEvent.position = PointerPosition();
-            foreach (var raycaster in graphicRaycaster)
-            {
-                raycaster.Raycast(pointerEvent, raycastResult);
-            }
-
-            return raycastResult.Count > 0;
-        }
-    }
-}
-```
-
 ### 우선순위 기반 Raycast
 ```csharp
 public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, int priorityLayer)
 {
+    // 포인터 위치에서 카메라를 통해 Ray 생성
     var ray = raycastCamera.ScreenPointToRay(PointerPosition());
+
+    // 가비지 생성을 방지하기 위해 비할당 Raycast 사용
     RaycastHit[] results = new RaycastHit[RaycastLimit];
     var hitLength = Physics.RaycastNonAlloc(ray, results, raycastMaxDistance, targetLayerMask);
+
+    // 충돌이 없으면 실패 반환
     if (hitLength == 0)
     {
         raycastHit = new RaycastHit();
         return false;
     }
 
-    results = Array.FindAll(results, raycastHit => 
+    // 유효한 콜라이더를 가진 결과만 필터링하고 최소 거리 이상 확인
+    results = Array.FindAll(results, raycastHit =>
         raycastHit.collider != null
         && raycastHit.distance > raycastMinDistance);
+
+    // 필터링 후 결과가 없으면 실패 반환
     if (results.Length == 0)
     {
         raycastHit = new RaycastHit();
         return false;
     }
+
+    // 거리순으로 정렬
     Array.Sort(results, (raycast1, raycast2) => raycast1.distance.CompareTo(raycast2.distance));
 
+    // 우선순위 레이어가 지정되지 않은 경우
     if (priorityLayer == -1)
     {
         raycastHit = results.First();
     }
     else
     {
+        // 우선순위 레이어의 오브젝트들만 필터링
         var priorityRaycastHits = results.Where(hits => hits.transform.gameObject.layer == priorityLayer).ToArray();
+        // 우선순위 레이어 오브젝트가 있으면 첫 번째 선택, 없으면 전체 결과의 첫 번째 선택
         raycastHit = priorityRaycastHits.Length != 0 ? priorityRaycastHits.First() : results.First();
     }
+    return true;
+}
+```
+
+### 특정 오브젝트를 무시한 가장 가까운 오브젝트를 반환하는 Raycast
+```csharp
+public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, SpawnablePropBase ignoreObject)
+{
+    // 포인터 위치에서 카메라를 통해 Ray 생성
+    var ray = raycastCamera.ScreenPointToRay(PointerPosition());
+
+    // 가비지 생성을 방지하기 위해 비할당 Raycast 사용
+    RaycastHit[] results = new RaycastHit[RaycastLimit];
+    var hitLength = Physics.RaycastNonAlloc(ray, results, raycastMaxDistance, targetLayerMask);
+
+    // 충돌이 없으면 실패 반환
+    if (hitLength == 0)
+    {
+        raycastHit = new RaycastHit();
+        return false;
+    }
+
+    // BoxCollider만 허용하고 최소 거리 이상인 결과만 필터링
+    results = Array.FindAll(results, raycastHit =>
+        raycastHit.collider is BoxCollider
+        && raycastHit.distance > raycastMinDistance);
+
+    // 필터링 후 결과가 없으면 실패 반환
+    if (results.Length == 0)
+    {
+        raycastHit = new RaycastHit();
+        return false;
+    }
+
+    // 무시할 오브젝트 제거
+    results = RemoveIgnoring(results, ignoreObject);
+
+    // 무시 후 결과가 없으면 실패 반환
+    if (results.Length == 0)
+    {
+        raycastHit = new RaycastHit();
+        return false;
+    }
+
+    // 거리순으로 정렬하여 가장 가까운 충돌 선택
+    Array.Sort(results, (raycast1, raycast2) => raycast1.distance.CompareTo(raycast2.distance));
+    raycastHit = results.First();
     return true;
 }
 ```
@@ -228,15 +201,21 @@ public bool GetRaycastHit(out RaycastHit raycastHit, LayerMask targetLayerMask, 
 ```csharp
 public bool IsPointerOnUI()
 {
+    // 씬의 모든 GraphicRaycaster를 찾음
     var graphicRaycaster = FindObjectsOfType<GraphicRaycaster>();
+
+    // 포인터 이벤트 데이터 생성
     var pointerEvent = new PointerEventData(_eventSystem);
     var raycastResult = new List<RaycastResult>();
     pointerEvent.position = PointerPosition();
+
+    // 각 Raycaster에 대해 Raycast 수행
     foreach (var raycaster in graphicRaycaster)
     {
         raycaster.Raycast(pointerEvent, raycastResult);
     }
 
+    // Raycast 결과가 있으면 UI 위에 있는 것으로 판단
     return raycastResult.Count > 0;
 }
 ```
@@ -255,7 +234,7 @@ private RaycastHit[] RemoveIgnoring(RaycastHit[] raycastHits, SpawnablePropBase 
 ## 주요 기능 설명
 
 ### Raycast 수행
-- **Physics.RaycastNonAlloc**: 가비지 생성 방지를 위한 비할당 Raycast
+- [`Physics.RaycastNonAlloc`](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.RaycastNonAlloc.html): 가비지 생성 방지를 위한 비할당 Raycast
 - **결과 제한**: 최대 10개의 충돌 결과만 처리
 - **거리 필터링**: 최소/최대 거리 기반 필터링
 
@@ -271,14 +250,3 @@ private RaycastHit[] RemoveIgnoring(RaycastHit[] raycastHits, SpawnablePropBase 
 ### UI 검증
 - **GraphicRaycaster 사용**: UI 요소에 대한 Raycast
 - **모든 Raycaster 검색**: 씬의 모든 GraphicRaycaster 확인
-
-## 의존성
-
-- `Camera`: Raycast를 위한 카메라
-- `EventSystem`: UI 이벤트 시스템
-- `InputSystem`: 포인터 입력 디바이스
-
-## 관련 클래스
-
-- **사용자**: 모든 편집 관련 클래스들
-- **관련 인터페이스**: `IPlaceableArea`

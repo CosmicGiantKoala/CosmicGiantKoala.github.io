@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 412
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`MyRoomEditorEdittingInputDispatcher`는 편집 관련 입력 이벤트를 처리하는 클래스입니다. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리를 담당합니다.
+`MyRoomEditorEdittingInputDispatcher`는 편집 관련 입력 이벤트를 처리하는 클래스. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리를 담당.
 
 ## 주요 역할
 
@@ -23,67 +22,61 @@ weight = 412
 
 ### 이벤트
 ```csharp
+/// <summary>
+/// 마우스 버튼이 눌렸을 때 발생
+/// </summary>
 public event Action OnPointerDownEvent;
+
+/// <summary>
+/// 마우스 버튼이 떼어졌을 때 발생
+/// </summary>
 public event Action OnPointerUpEvent;
+
+/// <summary>
+/// ESC 키 등 취소 입력 시 발생
+/// </summary>
 public event Action OnCancelEvent;
+
+/// <summary>
+/// 마우스 우클릭 시 발생
+/// </summary>
 public event Action OnRightClickEvent;
+
+/// <summary>
+/// Delete 키 등 삭제 입력 시 발생
+/// </summary>
 public event Action OnDeletePressEvent;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 마우스 버튼이 눌렸음을 이벤트로 전달.
+/// </summary>
 public void OnPointerDown()
+
+/// <summary>
+/// 마우스 버튼이 떼어졌음을 이벤트로 전달.
+/// </summary>
 public void OnPointerUp()
+
+/// <summary>
+/// ESC 키 등 취소 입력을 이벤트로 전달.
+/// </summary>
 public void OnCanceled()
+
+/// <summary>
+/// 마우스 우클릭 입력을 이벤트로 전달.
+/// </summary>
 public void OnRightClicked()
+
+/// <summary>
+/// Delete 키 등 삭제 입력을 이벤트로 전달.
+/// </summary>
 public void OnDeletePressed()
 ```
 
 ## 코드 스니펫
-
-### 전체 클래스 코드
-```csharp
-using System;
-using UnityEngine;
-
-namespace Dev.Scripts.Rsup.Presentation.Dispatchers
-{
-    public class MyRoomEditorEdittingInputDispatcher
-    {
-        public event Action OnPointerDownEvent;
-        public event Action OnPointerUpEvent;
-        public event Action OnCancelEvent;
-        public event Action OnRightClickEvent;
-        public event Action OnDeletePressEvent;
-        
-        public void OnPointerDown()
-        {
-            OnPointerDownEvent?.Invoke();
-        }
-
-        public void OnPointerUp()
-        {
-            OnPointerUpEvent?.Invoke();
-        }
-
-        public void OnCanceled()
-        {
-            OnCancelEvent?.Invoke();
-        }
-
-        public void OnRightClicked()
-        {
-            OnRightClickEvent?.Invoke();
-        }
-
-        public void OnDeletePressed()
-        {
-            OnDeletePressEvent?.Invoke();
-        }
-
-    }
-}
-```
 
 ### 이벤트 호출 메서드들
 ```csharp
@@ -123,16 +116,10 @@ public void OnDeletePressed()
 - **OnDeletePressEvent**: 삭제 명령 (Delete 키)
 
 ### 이벤트 흐름
-1. `MyRoomEditorInputController`에서 입력 감지
+1. [`MyRoomEditorInputController`](/docs/projects/rfice/housingsystem/myroomeditorinputcontroller/)에서 입력 감지
 2. 해당 이벤트 메서드 호출
 3. 등록된 이벤트 핸들러 실행
 
-## 의존성
-
-- **InputController**: `MyRoomEditorInputController`에서 이벤트 호출
-- **State Managers**: `MyRoomEditorState` 서브클래스들이 이벤트 구독
-
 ## 관련 클래스
-
-- **호출자**: `MyRoomEditorInputController`
-- **구독자**: `MyRoomEditorState`, `MyRoomEditorPropEditingManager` 등
+- [`MyRoomEditorInputController`](/docs/projects/rfice/housingsystem/myroomeditorinputcontroller/): 이벤트 메서드 호출자
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/): 편집 입력 이벤트 리스너
