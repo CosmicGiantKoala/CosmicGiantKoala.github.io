@@ -8,30 +8,47 @@ draft = false
 toc = true
 weight = 406
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
+
 ## 개요
 
-`MyRoomEditorPropSelector`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 선택을 담당하는 클래스입니다. Raycast를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생시킵니다.
+`MyRoomEditorPropSelector`는 `MyRoomEditorPropEditor`를 상속받아 오브젝트의 선택을 담당하는 클래스. Raycast를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생시킴.
 
 ## 주요 역할
 
-- **오브젝트 감지**: 실시간으로 마우스 포인터 아래의 편집 가능 오브젝트 감지
-- **선택 처리**: 클릭을 통해 오브젝트 선택 및 선택 해제
-- **포커스 관리**: 오브젝트에 대한 포커스 상태 관리 (Focused/Unfocused)
-- **레이어 우선순위**: Prop 레이어를 우선적으로 처리하는 레이어 마스크 관리
+- **오브젝트 감지**: 실시간으로 마우스 포인터 아래의 편집 가능 오브젝트 감지.
+- **선택 처리**: 클릭을 통해 오브젝트 선택 및 선택 해제.
+- **포커스 관리**: 오브젝트에 대한 포커스 상태 관리 (Focused/Unfocused).
+- **레이어 우선순위**: Prop 레이어를 우선적으로 처리하는 레이어 마스크 관리.
 
 ## 주요 멤버
 
 ### 이벤트
 ```csharp
+/// <summary>
+/// 오브젝트 선택시 호출되는 이벤트.
+/// 선택된 오브젝트의 정보가 필요한 클래스에서 해당 이벤트 구독하여 사용.
+/// </summary>
 public event Action<IMyRoomEditorEditableObject> OnObjectSelect;
+
+/// <summary>
+/// 오브젝트 선택 해제시 호출되는 이벤트.
+/// </summary>
 public event Action OnReleaseSelect;
 ```
 
 ### 필드
 ```csharp
+/// <summary>
+/// 오브젝트 감지 상태일때 실행되는 코루틴 참조.
+/// </summary>
 private Coroutine _detector;
+
+/// <summary>
+/// 현재 포커스된 오브젝트 참조.
+/// </summary>
 private IMyRoomEditorEditableObject _focusedObject;
+
+/// 레이케스트 타겟 레이어, 우선순위 레이어, 레이어 상수 이름 
 private int _targetLayer;
 private int _firstPriorityLayer;
 private const string MyRoomPropLayerNameKey = "MyRoomProp";
@@ -41,216 +58,78 @@ private const string MyRoomGroundLayerNameKey = "Ground";
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// Raycast 오브젝트 감지 코루틴.
+/// </summary>
 private IEnumerator CoDetectObject()
+
+/// <summary>
+/// 오브젝트가 선택되었는지 확인하는 메서드.
+/// </summary>
+/// <param name="focusedObject">확인할 오브젝트</param>
+/// <returns>선택 여부</returns>
 private bool IsSelectedObject(IMyRoomEditorEditableObject focusedObject)
+
+/// <summary>
+/// 오브젝트 선택 해제 메서드.
+/// </summary>
 private void ReleaseSelect()
 ```
 
 ## 코드 스니펫
 
-### 전체 클래스 코드
+### 오브젝트 감지 코루틴
 ```csharp
-using System;
-using System.Collections;
-using JetBrains.Annotations;
-using UnityEngine;
 
-namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
+private IEnumerator CoDetectObject()
 {
-    public class MyRoomEditorPropSelector : MyRoomEditorPropEditor
+    while (true) // 무한 루프
     {
-        public event Action<IMyRoomEditorEditableObject> OnObjectSelect;
-        public event Action OnReleaseSelect;
-        
-        private Coroutine _detector;
-        private IMyRoomEditorEditableObject _focusedObject;
-        private int _targetLayer;
-        private int _firstPriorityLayer;
-        private const string MyRoomPropLayerNameKey = "MyRoomProp";
-        private const string MyRoomWallLayerNameKey = "Wall";
-        private const string MyRoomGroundLayerNameKey = "Ground";
-        
-        private void Awake()
-        {
-            _targetLayer =  1 << LayerMask.NameToLayer(MyRoomWallLayerNameKey) |
-                            1 << LayerMask.NameToLayer(MyRoomPropLayerNameKey) |
-                            1 << LayerMask.NameToLayer(MyRoomGroundLayerNameKey);
-            
-            _firstPriorityLayer = LayerMask.NameToLayer(MyRoomPropLayerNameKey);
-        }
+        yield return null; // 다음 프레임까지 대기
 
-        public override void Enable()
+        if (InputUtils.GetRaycastHit(out RaycastHit hits, _targetLayer, _firstPriorityLayer)) // 레이캐스트 수행
         {
-            _detector = StartCoroutine(CoDetectObject());
-        }
-
-        public override void Disable()
-        {
-            if (_detector != null)
+            if (hits.transform.TryGetComponent(out IMyRoomEditorEditableObject focusedObject) // 히트된 오브젝트에 편집 가능 컴포넌트가 있고
+                && InputUtils.IsPointerOnUI() == false) // UI 위가 아니면
             {
-                StopCoroutine(_detector);
-            }
-
-            _focusedObject?.Deselected();
-            _focusedObject = null;
-            SelectedObject = null;
-        }
-
-        public override bool Setup(IMyRoomEditorEditableObject setUpObject)
-        {
-            return true;
-        }
-
-        public override void CleanUp()
-        {
-            ReleaseSelect();
-        }
-
-        public override void OnPointerDown()
-        {
-            if (InputUtils.IsPointerOnUI()) return;
-            //현재는 벽에대한 편집 기능이 없어 벽 클릭시 선택이 Release되게함
-            if (_focusedObject == null || _focusedObject.IsPlacementArea(out var area))
-            {
-                ReleaseSelect();
-            }
-            else
-            {
-                if (_focusedObject.Equals(SelectedObject))
+                if (focusedObject.Equals(_focusedObject)) continue; // 같은 오브젝트면 스킵
+                if (IsSelectedObject(focusedObject)) // 선택된 오브젝트인지 확인
                 {
-                    ReleaseSelect();
-                    return;
+                    _focusedObject?.Unfocused(); // 이전 포커스 해제
+                    _focusedObject = focusedObject; // 포커스 설정
                 }
-                SelectedObject?.Deselected();
-                SelectedObject = _focusedObject;
-                SelectedObject.Selected();
-                Debug.Log($"[MyRoomEditorPropSelector] Object Selected {SelectedObject.GetPlacePropId()}");
-                OnObjectSelect?.Invoke(SelectedObject);
-            }
-        }
-
-        public override void OnPointerUp()
-        {
-        }
-
-        public override void OnCancel()
-        {
-            ReleaseSelect();
-        }
-
-        public override void OnRightClick()
-        {
-        }
-
-        private IEnumerator CoDetectObject()
-        {
-            while (true)
-            {
-                yield return null;
-
-                if (InputUtils.GetRaycastHit(out RaycastHit hits, _targetLayer, _firstPriorityLayer))
+                else // 선택되지 않은 오브젝트
                 {
-                    if (hits.transform.TryGetComponent(out IMyRoomEditorEditableObject focusedObject)
-                        && InputUtils.IsPointerOnUI() == false)
+                    if (IsSelectedObject(_focusedObject) == false) // 이전 포커스 오브젝트가 선택되지 않았으면
                     {
-                        if (focusedObject.Equals(_focusedObject)) continue;
-                        if (IsSelectedObject(focusedObject))
-                        {
-                            _focusedObject?.Unfocused();
-                            _focusedObject = focusedObject;
-                        }
-                        else
-                        {
-                            if (IsSelectedObject(_focusedObject) == false)
-                            {
-                                _focusedObject?.Unfocused();
-                            }
-                            _focusedObject = focusedObject;
-                            _focusedObject.Focused();
-                        }
+                        _focusedObject?.Unfocused(); // 포커스 해제
                     }
-                    else
-                    {
-                        //Unfocus조건
-                        //1. 선택된 오브젝트는 Unfocus되지 않는다.
-                        //2. 선택된 오브젝트가 아니며 포커싱 중인 오브젝트가 있는 경우는 Unfocus 한다.
-                        if (IsSelectedObject(_focusedObject))
-                        {
-                            _focusedObject = null;
-                        }
-                        else
-                        {
-                            _focusedObject?.Unfocused();
-                            _focusedObject = null;
-                        }
-                    }
+                    _focusedObject = focusedObject; // 새로운 포커스 설정
+                    _focusedObject.Focused(); // 포커스 상태로 설정
                 }
             }
-        }
-
-        private bool IsSelectedObject([CanBeNull] IMyRoomEditorEditableObject focusedObject)
-        {
-            return focusedObject != null && focusedObject.Equals(SelectedObject);
-        }
-
-        private void ReleaseSelect()
-        {
-            SelectedObject?.Deselected();
-            SelectedObject = null;
-            _focusedObject?.Deselected();
-            _focusedObject = null;
-            OnReleaseSelect?.Invoke();
+            else // 편집 가능 오브젝트가 아니거나 UI 위면
+            {
+                //Unfocus조건 // Unfocus 조건 설명
+                //1. 선택된 오브젝트는 Unfocus되지 않는다. // 선택된 오브젝트는 포커스 유지
+                //2. 선택된 오브젝트가 아니며 포커싱 중인 오브젝트가 있는 경우는 Unfocus 한다. // 선택되지 않은 포커스 오브젝트는 해제
+                if (IsSelectedObject(_focusedObject)) // 포커스 오브젝트가 선택된 상태면
+                {
+                    _focusedObject = null; // 참조만 해제 (선택 상태 유지)
+                }
+                else // 포커스만 된 상태면
+                {
+                    _focusedObject?.Unfocused(); // 포커스 해제
+                    _focusedObject = null; // 참조 해제
+                }
+            }
         }
     }
 }
-```
 
-### 오브젝트 감지 코루틴
-```csharp
-private IEnumerator CoDetectObject()
+private bool IsSelectedObject([CanBeNull] IMyRoomEditorEditableObject focusedObject)
 {
-    while (true)
-    {
-        yield return null;
-
-        if (InputUtils.GetRaycastHit(out RaycastHit hits, _targetLayer, _firstPriorityLayer))
-        {
-            if (hits.transform.TryGetComponent(out IMyRoomEditorEditableObject focusedObject)
-                && InputUtils.IsPointerOnUI() == false)
-            {
-                if (focusedObject.Equals(_focusedObject)) continue;
-                if (IsSelectedObject(focusedObject))
-                {
-                    _focusedObject?.Unfocused();
-                    _focusedObject = focusedObject;
-                }
-                else
-                {
-                    if (IsSelectedObject(_focusedObject) == false)
-                    {
-                        _focusedObject?.Unfocused();
-                    }
-                    _focusedObject = focusedObject;
-                    _focusedObject.Focused();
-                }
-            }
-            else
-            {
-                //Unfocus조건
-                //1. 선택된 오브젝트는 Unfocus되지 않는다.
-                //2. 선택된 오브젝트가 아니며 포커싱 중인 오브젝트가 있는 경우는 Unfocus 한다.
-                if (IsSelectedObject(_focusedObject))
-                {
-                    _focusedObject = null;
-                }
-                else
-                {
-                    _focusedObject?.Unfocused();
-                    _focusedObject = null;
-                }
-            }
-        }
-    }
+    return focusedObject != null && focusedObject.Equals(SelectedObject); // 널이 아니고 선택된 오브젝트와 같으면 true
 }
 ```
 
@@ -258,33 +137,38 @@ private IEnumerator CoDetectObject()
 ```csharp
 public override void OnPointerDown()
 {
-    if (InputUtils.IsPointerOnUI()) return;
-    //현재는 벽에대한 편집 기능이 없어 벽 클릭시 선택이 Release되게함
-    if (_focusedObject == null || _focusedObject.IsPlacementArea(out var area))
+    if (InputUtils.IsPointerOnUI()) return; // UI 위에서 클릭했으면 무시
+    //현재는 벽에대한 편집 기능이 없어 벽 클릭시 선택이 Release되게함 // 현재 벽 편집 기능이 없으므로 벽 클릭 시 선택 해제
+    if (_focusedObject == null || _focusedObject.IsPlacementArea(out var area)) // 포커스 오브젝트가 없거나 배치 영역이면
     {
-        ReleaseSelect();
+        ReleaseSelect(); // 선택 해제
     }
-    else
+    else // 편집 가능한 오브젝트가 포커스된 경우
     {
-        if (_focusedObject.Equals(SelectedObject))
+        if (_focusedObject.Equals(SelectedObject)) // 같은 오브젝트를 다시 클릭했으면
         {
-            ReleaseSelect();
-            return;
+            ReleaseSelect(); // 선택 해제
+            return; // 메서드 종료
         }
-        SelectedObject?.Deselected();
-        SelectedObject = _focusedObject;
-        SelectedObject.Selected();
-        Debug.Log($"[MyRoomEditorPropSelector] Object Selected {SelectedObject.GetPlacePropId()}");
-        OnObjectSelect?.Invoke(SelectedObject);
+        SelectedObject?.Deselected(); // 이전 선택 오브젝트 선택 해제
+        SelectedObject = _focusedObject; // 새로운 오브젝트 선택
+        SelectedObject.Selected(); // 선택 상태로 설정
+        Debug.Log($"[MyRoomEditorPropSelector] Object Selected {SelectedObject.GetPlacePropId()}"); // 선택 로그 출력
+        OnObjectSelect?.Invoke(SelectedObject); // 선택 이벤트 호출
     }
+}
+
+private void ReleaseSelect()
+{
+    SelectedObject?.Deselected(); // 선택된 오브젝트 선택 해제
+    SelectedObject = null; // 선택 오브젝트 참조 해제
+    _focusedObject?.Deselected(); // 포커스 오브젝트 선택 해제 (안전하게)
+    _focusedObject = null; // 포커스 오브젝트 참조 해제
+    OnReleaseSelect?.Invoke(); // 선택 해제 이벤트 호출
 }
 ```
 
 ## 주요 기능 설명
-
-### 레이어 관리
-- **타겟 레이어**: Wall, MyRoomProp, Ground 레이어 포함
-- **우선순위 레이어**: MyRoomProp 레이어를 최우선으로 처리
 
 ### 오브젝트 상태
 - **Focused**: 마우스가 오브젝트 위에 있음 (시각적 피드백)
@@ -302,13 +186,9 @@ public override void OnPointerDown()
 - UI 위에서는 감지하지 않음
 - 선택된 오브젝트는 계속 선택 상태 유지
 
-## 의존성
-
-- `MyRoomEditorInputUtils`: Raycast 및 UI 감지 유틸리티
-- `IMyRoomEditorEditableObject`: 편집 가능한 오브젝트 인터페이스
-
 ## 관련 클래스
 
-- **부모 클래스**: `MyRoomEditorPropEditor`
-- **사용자**: `MyRoomEditorPropEditingManager`
-- **관련 인터페이스**: `IMyRoomEditorEditableObject`, `IPlaceableArea`
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): Raycast 및 UI 감지 유틸리티
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트 인터페이스
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 입력 전달 및 이벤트 리스너
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/): 부모 클래스
