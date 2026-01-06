@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 417
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`SpawnableScreenProp`는 스크린 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 벽에 배치되는 스크린의 특수 기능을 구현하며, 개인공간에서 실시간 파일 공유 기능 모듈(NetworkedScreen)을 사용할 수 있게 설정합니다.
+`SpawnableScreenProp`는 스크린 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 벽에 배치되는 스크린의 특수 기능을 구현하며, 개인공간에서 실시간 파일 공유 기능 모듈(NetworkedScreen)을 사용할 수 있게 설정.
 
 ## 주요 역할
 
@@ -22,41 +21,88 @@ weight = 417
 
 ## 구현 인터페이스
 
-- `IMoveableProp`: 이동 기능
-- `IScreenProp`: 스크린 특수 기능
-- `IInteractableProp`: 상호작용 기능 (상속)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
+- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 상호작용 기능
+- [`IScreenProp`](/docs/projects/rfice/housingsystem/iscreenprop/): 스크린 특수 기능
 
 ## 주요 컴포넌트
 
 ### 필드
 ```csharp
+/// <summary>
+/// 스크린 표면 트랜스폼: 파일 공유 UI 표시 위치
+/// </summary>
 [SerializeField]
 private Transform screenPropTr;
 public Transform ScreenHandlerTr => screenPropTr;
 
-private Collider _collider;
-private int _targetLayer;
-private Vector3 _extentsCorrection;
+/// <summary>
+/// 편집 상태 컴포넌트: 하이라이트 상태 관리
+/// </summary>
 private PropEditingState _propEditingState;
 ```
 
-### 특수 기능
-- **ScreenHandlerTr**: 스크린 표면의 트랜스폼 (파일 공유 UI 표시용)
-- **NetworkedScreen**: 실시간 파일 공유 모듈과 연동
+### 주요 메서드
+```csharp
+/// <summary>
+/// 오브젝트 삭제 메서드.
+/// 이벤트 구독 해제 후 게임 오브젝트를 파괴.
+/// </summary>
+public void Delete()
 
-## 특징
+/// <summary>
+/// 하이라이트 상태를 설정하는 추상 메서드 구현.
+/// PropEditingState의 초기 설정을 수행.
+/// </summary>
+protected override void SetupPropHighlight()
 
-### 편집 가능성
-- **색상 편집**: 불가능
-- **이동**: 가능 (벽면 이동)
-- **회전**: 불가능 (벽면 고정)
-- **스크린**: 가능 (특수 인터랙션)
+/// <summary>
+/// 포커스 상태로 변경하는 메서드.
+/// 유효한 상태의 하이라이트를 표시.
+/// </summary>
+public void Focused()
 
-### Interact 메서드
-현재 빈 구현이지만, NetworkedScreen 모듈 초기화나 파일 공유 시작 등의 기능을 추가할 수 있습니다.
+/// <summary>
+/// 포커스 해제 상태로 변경하는 메서드.
+/// 기본 하이라이트 상태로 복원.
+/// </summary>
+public void Unfocused()
 
-### 벽 배치
-SpawnableWallProp과 동일하게 벽면에 배치되며 방향별 기즈모 계산을 수행합니다.
+/// <summary>
+/// 선택 상태로 변경하는 메서드.
+/// 선택된 상태의 하이라이트를 표시.
+/// </summary>
+public void Selected()
+
+/// <summary>
+/// 선택 해제 상태로 변경하는 메서드.
+/// 기본 하이라이트 상태로 복원.
+/// </summary>
+public void Deselected()
+
+/// <summary>
+/// 배치 가능 영역인지 검증하고 배치하는 메서드.
+/// 히트 포인트로 이동 후 배치 타입 검증 및 부모 관계 설정.
+/// </summary>
+/// <param name="hitPosition">배치할 히트 포인트 위치</param>
+/// <param name="area">배치 영역 인터페이스</param>
+/// <returns>배치 가능한 경우 true</returns>
+public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
+
+/// <summary>
+/// 오브젝트를 지정된 위치로 이동하는 메서드.
+/// </summary>
+/// <param name="position">이동할 목표 위치</param>
+public void Move(Vector3 position)
+
+/// <summary>
+/// 기즈모의 위치와 회전을 계산하여 반환하는 메서드.
+/// 배치 타입에 따라 오브젝트 위쪽(Floor) 또는 아래쪽(Ceiling)에 기즈모 배치.
+/// </summary>
+/// <returns>기즈모 위치와 회전 튜플</returns>
+public (Vector3, Quaternion) GetGizmoPositionAndRotation()
+```
 
 ## 사용 예시
 
@@ -69,6 +115,7 @@ var screenTransform = screenProp.ScreenHandlerTr;
 
 ## 의존성
 
-- **NetworkedScreen 모듈**: 실시간 파일 공유 기능
-- **PropEditingState**: 하이라이트 관리
-- **Collider**: 기즈모 계산용
+- [`NetworkedScreen`](/docs/projects/rfice/incomplete/fileshare/): 실시간 파일 공유 모듈
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 구현된 인터페이스

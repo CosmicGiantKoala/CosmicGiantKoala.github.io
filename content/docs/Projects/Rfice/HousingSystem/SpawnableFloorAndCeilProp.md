@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 415
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`SpawnableFloorAndCeilProp`는 바닥과 천장에 배치되는 일반적인 오브젝트 클래스입니다. `SpawnablePropBase`를 상속받아 바닥(Floor)과 천장(Ceiling)에 배치 가능한 오브젝트의 기본 구현을 제공합니다.
+`SpawnableFloorAndCeilProp`는 바닥과 천장에 배치되는 일반적인 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 바닥(Floor)과 천장(Ceiling)에 배치 가능한 오브젝트의 기본 구현을 제공.
 
 ## 주요 역할
 
@@ -22,261 +21,118 @@ weight = 415
 
 ## 구현 인터페이스
 
-- `IColorEditableProp`: 색상 편집 기능
-- `IMoveableProp`: 이동 기능
-- `IRotatableProp`: 회전 기능
-- `IMyRoomEditorEditableObject`: 편집 가능한 오브젝트
+- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 편집 기능
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 기능
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 
 ## 주요 멤버
 
 ### 필드
 ```csharp
-private Collider _collider;
+/// <summary>
+/// 편집 상태 컴포넌트: 하이라이트 상태 관리
+/// </summary>
 private PropEditingState _propEditingState;
+
+/// <summary>
+/// Material 변경 헬퍼: 색상 변경 처리
+/// </summary>
 private MyRoomMaterialChangeHelper _materialChangeHelper;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 오브젝트 삭제 메서드.
+/// 이벤트 구독 해제 후 게임 오브젝트를 파괴.
+/// </summary>
 public void Delete()
+
+/// <summary>
+/// 하이라이트 상태를 설정하는 추상 메서드 구현.
+/// PropEditingState의 초기 설정을 수행.
+/// </summary>
 protected override void SetupPropHighlight()
+
+/// <summary>
+/// 포커스 상태로 변경하는 메서드.
+/// 유효한 상태의 하이라이트를 표시.
+/// </summary>
 public void Focused()
+
+/// <summary>
+/// 포커스 해제 상태로 변경하는 메서드.
+/// 기본 하이라이트 상태로 복원.
+/// </summary>
 public void Unfocused()
+
+/// <summary>
+/// 선택 상태로 변경하는 메서드.
+/// 선택된 상태의 하이라이트를 표시.
+/// </summary>
 public void Selected()
+
+/// <summary>
+/// 선택 해제 상태로 변경하는 메서드.
+/// 기본 하이라이트 상태로 복원.
+/// </summary>
 public void Deselected()
+
+/// <summary>
+/// 배치 가능 영역인지 검증하고 배치하는 메서드.
+/// 히트 포인트로 이동 후 배치 타입 검증 및 부모 관계 설정.
+/// </summary>
+/// <param name="hitPosition">배치할 히트 포인트 위치</param>
+/// <param name="area">배치 영역 인터페이스</param>
+/// <returns>배치 가능한 경우 true</returns>
 public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
+
+/// <summary>
+/// 오브젝트를 지정된 위치로 이동하는 메서드.
+/// </summary>
+/// <param name="position">이동할 목표 위치</param>
 public void Move(Vector3 position)
-public Quaternion GetRotation()
-public void SetRotation(Quaternion rotation)
-public void RotationBySnapValue(float snapStepValue)
+
+/// <summary>
+/// 사용 가능한 색상 리스트를 반환하는 메서드.
+/// </summary>
+/// <returns>색상 리스트 (없으면 빈 리스트)</returns>
 public List<MyRoomPropColor> GetColorList()
+
+ /// <summary>
+/// 색상을 변경하는 메서드.
+/// Material을 복제하여 적용하고 선택 상태로 하이라이트 변경.
+/// </summary>
+/// <param name="mat">적용할 Material</param>
+/// <param name="colorIndex">색상 인덱스</param>
 public void SetColor(Material mat, int colorIndex)
+
+/// <summary>
+/// 기즈모의 위치와 회전을 계산하여 반환하는 메서드.
+/// 배치 타입에 따라 오브젝트 위쪽(Floor) 또는 아래쪽(Ceiling)에 기즈모 배치.
+/// </summary>
+/// <returns>기즈모 위치와 회전 튜플</returns>
 public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 ```
 
 ## 코드 스니펫
 
-### 전체 클래스 코드
-```csharp
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Dev.Scripts.Rsup.Domain.Entities.MyRoom;
-using Dev.Scripts.Rsup.Scenes.MyRoomEditor;
-using UnityEngine;
-
-namespace Dev.Scripts.Rsup.Scenes.Components.MyRoomEditor
-{
-    public class SpawnableFloorAndCeilProp : SpawnablePropBase, IColorEditableProp, IMoveableProp, IRotatableProp
-    {
-        private Collider _collider;
-        private PropEditingState _propEditingState;
-        private MyRoomMaterialChangeHelper _materialChangeHelper;
-
-        private void Awake()
-        {
-            _collider = GetComponent<Collider>();
-            _propEditingState = gameObject.AddComponent<PropEditingState>();
-            _materialChangeHelper = GetComponentInChildren<MyRoomMaterialChangeHelper>();
-            if (_materialChangeHelper != null)
-            {
-                _materialChangeHelper.OnChangedMaterial += SetupPropHighlight;
-            }
-            else
-            {
-                SetupPropHighlight();
-            }
-        }
-        
-        public void Delete()
-        {
-            if (_materialChangeHelper != null) _materialChangeHelper.OnChangedMaterial -= SetupPropHighlight;
-            Debug.Log($"[SpawnableFloorAndCeilProp] Destroy {GetPlacePropId()}");
-            Destroy(gameObject);
-        }
-        
-        public override IMyRoomEditorEditableObject GetEditableObject() => this;
-
-        #region EditableProperties
-        public bool IsEditableColor(out IColorEditableProp prop)
-        {
-            if (MyRoomPropData.CheckColorVariation()
-                && MyRoomPropData.colorList.Count > 0
-                && _materialChangeHelper != null)
-            {
-                prop = this;
-                return true;
-            }
-            else
-            {
-                prop = null;
-                return false;
-            }
-        }
-
-        public bool IsMovableProp(out IMoveableProp prop)
-        {
-            prop = this;
-            return true;
-        }
-
-        public bool IsRotatableProp(out IRotatableProp prop)
-        {
-            prop = this;
-            return true;
-        }
-        
-        public bool IsPlacementArea(out IPlaceableArea area)
-        {
-            area = null;
-            return false;
-        }
-
-        public bool IsPhotoFrameProp(out IPhotoFrameProp prop)
-        {
-            prop = null;
-            return false;
-        }
-
-        #endregion
-        
-        #region HighlightSetting
-        protected override void SetupPropHighlight()
-        {
-            _propEditingState.Setup();
-        }
-
-        public void Focused()
-        {
-            _propEditingState.Valid();
-        }
-
-        public void Unfocused()
-        {
-            _propEditingState.Default();
-        }
-
-        public void Selected()
-        {
-            _propEditingState.Selected();
-        }
-
-        public void Deselected()
-        {
-            _propEditingState.Default();
-        }
-        #endregion
-        
-        #region Movement Implementation
-        public SpawnablePropBase PropBaseComponent => this;
-        public bool  IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
-        {
-            Move(hitPosition);
-            if (area.GetPlacementType() != PlacementType)
-            {
-                _propEditingState.Invalid();
-                return false;
-            }
-            if (area.IsPlacementAreaInProp(out var parent))
-            {
-                SetPropParent(parent);
-            }
-            else
-            {
-                ClearPropParent();
-            }
-
-            _propEditingState.Valid();
-            return true;
-        }
-
-        public Vector3 GetPosition() => transform.position;
-        public void Move(Vector3 position)
-        {
-            transform.position = position;
-        }
-        #endregion
-        
-        #region Rotation Implementation
-        public Quaternion GetRotation() => transform.rotation;
-        public void SetRotation(Quaternion rotation)
-        {
-            transform.rotation = rotation;
-        }
-        public void RotationBySnapValue(float snapStepValue)
-        {
-            var currentRot = transform.eulerAngles.y;
-            var targetRot = Mathf.Round((currentRot + snapStepValue) / snapStepValue) * snapStepValue;
-            transform.rotation = Quaternion.Euler(0,targetRot,0);
-        }
-        #endregion
-        
-        #region Change Color Implementation
-        public List<MyRoomPropColor> GetColorList()
-        {
-            return MyRoomPropData.colorList ?? new List<MyRoomPropColor>();
-        }
-        public void SetColor(Material mat, int colorIndex)
-        {
-            var cloneMat = new Material(mat);
-            _materialChangeHelper.ChangeMaterial(cloneMat);
-            _propEditingState.Selected();
-            CurrentColor = GetColorList()[colorIndex];
-        }
-        #endregion
-        public (Vector3,Quaternion) GetGizmoPositionAndRotation()
-        {
-            var bounds = _collider.bounds;
-            var gizmoRotation = Quaternion.Euler(0, 0, 0);
-            Vector3 offsetDirection = PlacementType switch
-            {
-                PlacementType.Floor => (Vector3.up * bounds.size.y), 
-                PlacementType.Ceiling => (Vector3.down * bounds.size.y),
-                _ => Vector3.zero
-            };
-            Vector3 offset = transform.position + offsetDirection; 
-            return (offset, gizmoRotation);
-        }
-
-        public bool Equals(IMyRoomEditorEditableObject other)
-        {
-            return other != null && GetPlacePropId() == other.GetPlacePropId();            
-        }
-
-        
-
-    }
-}
-```
-
-### 초기화 및 설정
-```csharp
-private void Awake()
-{
-    _collider = GetComponent<Collider>();
-    _propEditingState = gameObject.AddComponent<PropEditingState>();
-    _materialChangeHelper = GetComponentInChildren<MyRoomMaterialChangeHelper>();
-    if (_materialChangeHelper != null)
-    {
-        _materialChangeHelper.OnChangedMaterial += SetupPropHighlight;
-    }
-    else
-    {
-        SetupPropHighlight();
-    }
-}
-```
-
 ### 배치 가능성 검증
 ```csharp
 public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
 {
+    // 히트 포인트로 즉시 이동
     Move(hitPosition);
+
+    // 배치 타입 검증
     if (area.GetPlacementType() != PlacementType)
     {
         _propEditingState.Invalid();
         return false;
     }
+
+    // 부모 관계 설정 (배치 영역이 다른 오브젝트 위인 경우)
     if (area.IsPlacementAreaInProp(out var parent))
     {
         SetPropParent(parent);
@@ -286,8 +142,14 @@ public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
         ClearPropParent();
     }
 
+    // 유효한 배치 상태 표시
     _propEditingState.Valid();
     return true;
+}
+
+public void Move(Vector3 position)
+{
+    transform.position = position;
 }
 ```
 
@@ -298,6 +160,25 @@ public void RotationBySnapValue(float snapStepValue)
     var currentRot = transform.eulerAngles.y;
     var targetRot = Mathf.Round((currentRot + snapStepValue) / snapStepValue) * snapStepValue;
     transform.rotation = Quaternion.Euler(0,targetRot,0);
+}
+```
+
+### 색상 변경 가능 검증
+```csharp
+public bool IsEditableColor(out IColorEditableProp prop)
+{
+    if (MyRoomPropData.CheckColorVariation()
+        && MyRoomPropData.colorList.Count > 0
+        && _materialChangeHelper != null)
+    {
+        prop = this;
+        return true;
+    }
+    else
+    {
+        prop = null;
+        return false;
+    }
 }
 ```
 
@@ -314,17 +195,20 @@ public void SetColor(Material mat, int colorIndex)
 
 ### 기즈모 위치 계산
 ```csharp
-public (Vector3,Quaternion) GetGizmoPositionAndRotation()
+public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 {
     var bounds = _collider.bounds;
     var gizmoRotation = Quaternion.Euler(0, 0, 0);
+
+    // 배치 타입에 따른 오프셋 방향 계산
     Vector3 offsetDirection = PlacementType switch
     {
-        PlacementType.Floor => (Vector3.up * bounds.size.y), 
-        PlacementType.Ceiling => (Vector3.down * bounds.size.y),
+        PlacementType.Floor => (Vector3.up * bounds.size.y),    // 오브젝트 위쪽
+        PlacementType.Ceiling => (Vector3.down * bounds.size.y), // 오브젝트 아래쪽
         _ => Vector3.zero
     };
-    Vector3 offset = transform.position + offsetDirection; 
+
+    Vector3 offset = transform.position + offsetDirection;
     return (offset, gizmoRotation);
 }
 ```
@@ -358,14 +242,8 @@ public (Vector3,Quaternion) GetGizmoPositionAndRotation()
 - **Ceiling**: 오브젝트 아래쪽 (bounds.height만큼 아래)
 - 기즈모는 수직 방향으로 표시
 
-## 의존성
-
-- **PropEditingState**: 하이라이트 상태 관리
-- **MyRoomMaterialChangeHelper**: Material 변경 처리
-- **Collider**: 기즈모 위치 계산용
-
 ## 관련 클래스
-
-- **부모 클래스**: `SpawnablePropBase`
-- **관련 컴포넌트**: `MyRoomMaterialChangeHelper`
-- **사용 인터페이스**: `IColorEditableProp`, `IMoveableProp`, `IRotatableProp`
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
+- `MyRoomMaterialChangeHelper`: Material 변경 처리
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스
+- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/), [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 구현된 인터페이스

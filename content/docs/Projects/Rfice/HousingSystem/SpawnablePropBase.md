@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 414
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`SpawnablePropBase`는 모든 배치 가능한 오브젝트의 abstract 클래스입니다. 공용 Property 데이터 설정, 상태 정보 관리, 부모-자식 오브젝트 관계 구성, 상태 표현 등 공통 로직을 처리합니다.
+`SpawnablePropBase`는 모든 배치 가능한 오브젝트의 abstract 클래스. 공용 Property 데이터 설정, 상태 정보 관리, 부모-자식 오브젝트 관계 구성, 상태 표현 등 공통 로직을 처리.
 
 ## 주요 역할
 
@@ -25,180 +24,118 @@ weight = 414
 
 ### 속성
 ```csharp
+/// <summary>
+/// 배치 타입: Floor, Ceiling, Wall 등 오브젝트가 배치될 수 있는 표면 타입
+/// </summary>
 public PlacementType PlacementType { get; private set; }
+
+/// <summary>
+/// 메인 카테고리: 오브젝트의 주요 분류
+/// </summary>
 public MyRoomPropMainCategory GetMainCategory { get; private set; }
+
+/// <summary>
+/// 특성: 오브젝트의 추가 기능
+/// </summary>
 public Feature PropFeature { get; private set; }
+
+/// <summary>
+/// 이름 키: 로컬라이징을 위한 오브젝트 이름 식별자
+/// </summary>
 public string PropNameKey { get; private set; }
+
+/// <summary>
+/// 고유 ID: 오브젝트 식별자
+/// </summary>
 public string Id { get; private set; }
+
+/// <summary>
+/// 오브젝트 기본 정보: ID, 타입, 카테고리, 색상 리스트 등
+/// </summary>
 protected MyRoomProp MyRoomPropData { get; private set; }
+
+/// <summary>
+/// 배치 정보: 위치, 회전, 색상, 부모 관계 등
+/// </summary>
 protected MyRoomPlaceProp MyRoomPlacePropData { get; private set; }
+
+/// <summary>
+/// 현재 색상: 적용된 색상 정보 (null 가능)
+/// </summary>
 protected MyRoomPropColor CurrentColor { get; set; }
+
+/// <summary>
+/// 부모 오브젝트: 이 오브젝트가 부착된 부모 SpawnablePropBase (null 가능)
+/// </summary>
 public SpawnablePropBase ParentProp { get; private set; }
+
+/// <summary>
+/// 자식 오브젝트 리스트: 이 오브젝트 위에 배치된 자식 오브젝트들
+/// </summary>
 private List<SpawnablePropBase> _childrenProps = new();
 ```
 
 ### 추상 메서드
 ```csharp
+/// <summary>
+/// 편집 가능한 오브젝트 인터페이스를 반환하는 추상 메서드
+/// 서브클래스에서 구체적인 구현체를 반환
+/// </summary>
 public abstract IMyRoomEditorEditableObject GetEditableObject();
+
+/// <summary>
+/// 하이라이트 설정을 위한 추상 메서드
+/// 서브클래스에서 PropEditingState 등의 시각적 피드백을 설정
+/// </summary>
 protected abstract void SetupPropHighlight();
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 오브젝트 기본 정보를 설정하는 메서드.
+/// MyRoomProp 데이터로부터 ID, 타입, 카테고리 등의 속성을 초기화.
+/// </summary>
+/// <param name="propInfo">설정할 오브젝트 기본 정보</param>
 public void SetPropInfo(MyRoomProp propInfo)
+
+/// <summary>
+/// 배치 정보를 설정하는 메서드.
+/// 위치, 회전, 색상 등의 배치 데이터를 적용하고, 관련 컴포넌트를 초기화.
+/// </summary>
+/// <param name="placePropInfo">설정할 배치 정보</param>
 public void SetPlacePropInfo(MyRoomPlaceProp placePropInfo)
+
+/// <summary>
+/// 현재 배치 정보를 조회하는 메서드.
+/// Transform으로부터 최신 위치/회전을 가져와 배치 정보를 업데이트하여 반환.
+/// </summary>
+/// <returns>업데이트된 배치 정보</returns>
 public MyRoomPlaceProp GetPlacePropInfo()
+
+/// <summary>
+/// 자식 오브젝트를 추가하는 메서드.
+/// 이미 추가된 오브젝트는 중복 추가하지 않음.
+/// </summary>
+/// <param name="childProp">추가할 자식 오브젝트</param>
 public void AddChildProp(SpawnablePropBase childProp)
+
+/// <summary>
+/// 자식 오브젝트를 제거하는 메서드.
+/// </summary>
+/// <param name="childProp">제거할 자식 오브젝트</param>
 public void RemoveChildProp(SpawnablePropBase childProp)
 ```
 
 ## 코드 스니펫
 
-### 전체 클래스 코드
-```csharp
-using System.Collections.Generic;
-using System.Linq;
-using Dev.Scripts.Rsup.Domain.Entities.MyRoom;
-using Dev.Scripts.Rsup.Scenes.Components.MyRoomEditor;
-using Dev.Scripts.Rsup.Scenes.MyRoomEditor;
-using UnityEngine;
-
-public abstract class SpawnablePropBase : MonoBehaviour
-{
-    public PlacementType PlacementType { get; private set; }
-    public MyRoomPropMainCategory GetMainCategory { get; private set; }
-    public Feature PropFeature { get; private set; }
-    public string PropNameKey { get; private set; }
-    public string Id { get; private set; }
-    protected MyRoomProp MyRoomPropData { get; private set; }
-    protected MyRoomPlaceProp MyRoomPlacePropData { get; private set; }
-    protected MyRoomPropColor CurrentColor { get; set; }
-    public SpawnablePropBase ParentProp { get; private set; }
-    private List<SpawnablePropBase> _childrenProps = new ();
-    
-    public abstract IMyRoomEditorEditableObject GetEditableObject();
-    protected abstract void SetupPropHighlight();
-
-    public void SetPropInfo(MyRoomProp propInfo)
-    {
-        Id = propInfo.id;
-        PlacementType = propInfo.placementType;
-        GetMainCategory = propInfo.mainCategory;
-        PropNameKey = propInfo.nameKey;
-        PropFeature = propInfo.feature;
-        MyRoomPropData = propInfo;
-    }
-
-    public void SetPlacePropInfo(MyRoomPlaceProp placePropInfo)
-    {
-        MyRoomPlacePropData = placePropInfo;
-        if (MyRoomPropData.CheckColorVariation())
-        {
-            if (string.IsNullOrEmpty(placePropInfo.colorKey))
-            {
-                CurrentColor = null;
-            }
-            else
-            {
-                CurrentColor = MyRoomPropData.colorList.FirstOrDefault(key => key.materialKey == placePropInfo.colorKey);
-            }
-        }
-        SetupPropHighlight();
-        SetupAdditivePlaceArea();
-
-        if (TryGetComponent(out IInteractableProp interactableProp))
-        {
-            interactableProp.Interact();
-        }
-    }
-
-    public void RegisterProp(MyRoomEditorPropEditingManager manager)
-    {
-        manager.RegisterProp(this);
-    }
-
-    public MyRoomPlaceProp GetPlacePropInfo()
-    {
-        MyRoomPlacePropData.position = transform.position;
-        MyRoomPlacePropData.rotation = transform.rotation.eulerAngles;
-        MyRoomPlacePropData.colorKey = CurrentColor != null ? CurrentColor.materialKey : string.Empty;
-        MyRoomPlacePropData.prop = MyRoomPropData;
-        if (ParentProp != null)
-        {
-            MyRoomPlacePropData.parentPropId = ParentProp.GetPlacePropId();
-            UpdatePositionToAbsoluteWorldPosition();
-        }
-
-        if (_childrenProps.Count > 0)
-        {
-            _childrenProps.ForEach(x => x.UpdatePositionToAbsoluteWorldPosition());
-        }
-
-        return MyRoomPlacePropData;
-    }
-
-    public void UpdatePositionToAbsoluteWorldPosition()
-    {
-        if (transform.parent == null) return;
-        var absolutePos = transform.parent.localToWorldMatrix.MultiplyPoint3x4(transform.localPosition);
-        MyRoomPlacePropData.position = absolutePos;
-    }
-
-    public string GetPlacePropId()
-    {
-        return MyRoomPlacePropData.id;
-    }
-
-    private void SetupAdditivePlaceArea()
-    {
-        var placementAreaInProps = GetComponentsInChildren<PlacementAreaInProp>();
-        if (placementAreaInProps == null) return;
-        foreach (var areaInProp in placementAreaInProps)
-        {
-            areaInProp.SetPlacementAreaInProp(this);
-        }
-    }
-
-    public void AddChildProp(SpawnablePropBase childProp)
-    {
-        if (_childrenProps.Any(x => x.MyRoomPlacePropData.id == childProp.MyRoomPlacePropData.id))
-        {
-            Debug.Log($"Already Set Child Prop : {childProp.GetPlacePropId()}");
-            return;
-        }
-        
-        _childrenProps.Add(childProp);
-        childProp.transform.parent = transform;
-        childProp.MyRoomPlacePropData.parentPropId = MyRoomPlacePropData.id;
-        childProp.ParentProp = this;
-        Debug.Log($"[SpawnablePropBase] Prop: {GetPlacePropId()} Add Child Prop : {childProp.GetPlacePropId()}");
-    }
-
-    public void RemoveChildProp(SpawnablePropBase childProp)
-    {
-        if (_childrenProps.All(x => x.MyRoomPlacePropData.id != childProp.MyRoomPlacePropData.id)) return;
-        _childrenProps.Remove(childProp);
-        Debug.Log($"[SpawnablePropBase] Prop: {GetPlacePropId()} Remove Child Prop : {childProp.GetPlacePropId()}");
-    }
-
-    public void SetPropParent(SpawnablePropBase propParent)
-    {
-        ParentProp = propParent;
-    }
-
-    public void ClearPropParent()
-    {
-        ParentProp = null;
-        if (MyRoomPlacePropData != null) MyRoomPlacePropData.parentPropId = null;
-    }
-}
-```
-
-### 배치 정보 설정
+### 배치된 오브젝트 초기화
 ```csharp
 public void SetPlacePropInfo(MyRoomPlaceProp placePropInfo)
 {
     MyRoomPlacePropData = placePropInfo;
+
+    // 색상 변형을 지원하는 경우 현재 색상 설정
     if (MyRoomPropData.CheckColorVariation())
     {
         if (string.IsNullOrEmpty(placePropInfo.colorKey))
@@ -207,57 +144,69 @@ public void SetPlacePropInfo(MyRoomPlaceProp placePropInfo)
         }
         else
         {
+            // 색상 키에 해당하는 색상 정보를 찾아 설정
             CurrentColor = MyRoomPropData.colorList.FirstOrDefault(key => key.materialKey == placePropInfo.colorKey);
         }
     }
+
+    // 하이라이트 설정 (서브클래스 구현)
     SetupPropHighlight();
+
+    // 추가 배치 영역 설정
     SetupAdditivePlaceArea();
 
+    // 인터랙터블 컴포넌트가 있으면 초기화 실행
     if (TryGetComponent(out IInteractableProp interactableProp))
     {
         interactableProp.Interact();
     }
 }
+
+private void SetupAdditivePlaceArea()
+{
+    var placementAreaInProps = GetComponentsInChildren<PlacementAreaInProp>();
+    if (placementAreaInProps == null) return;
+
+    foreach (var areaInProp in placementAreaInProps)
+    {
+        areaInProp.SetPlacementAreaInProp(this);
+    }
+}
 ```
 
-### 자식 오브젝트 추가
+### 자식 오브젝트 추가/제거
 ```csharp
 public void AddChildProp(SpawnablePropBase childProp)
 {
+    // 이미 자식으로 등록된 경우 중복 추가 방지
     if (_childrenProps.Any(x => x.MyRoomPlacePropData.id == childProp.MyRoomPlacePropData.id))
     {
         Debug.Log($"Already Set Child Prop : {childProp.GetPlacePropId()}");
         return;
     }
-    
+
+    // 자식 리스트에 추가
     _childrenProps.Add(childProp);
+
+    // Transform 부모 설정
     childProp.transform.parent = transform;
+
+    // 배치 데이터에 부모 ID 설정
     childProp.MyRoomPlacePropData.parentPropId = MyRoomPlacePropData.id;
+
+    // 자식의 부모 참조 설정
     childProp.ParentProp = this;
+
     Debug.Log($"[SpawnablePropBase] Prop: {GetPlacePropId()} Add Child Prop : {childProp.GetPlacePropId()}");
 }
-```
 
-### 배치 정보 조회
-```csharp
-public MyRoomPlaceProp GetPlacePropInfo()
+public void RemoveChildProp(SpawnablePropBase childProp)
 {
-    MyRoomPlacePropData.position = transform.position;
-    MyRoomPlacePropData.rotation = transform.rotation.eulerAngles;
-    MyRoomPlacePropData.colorKey = CurrentColor != null ? CurrentColor.materialKey : string.Empty;
-    MyRoomPlacePropData.prop = MyRoomPropData;
-    if (ParentProp != null)
-    {
-        MyRoomPlacePropData.parentPropId = ParentProp.GetPlacePropId();
-        UpdatePositionToAbsoluteWorldPosition();
-    }
+    // 존재하지 않는 자식은 무시
+    if (_childrenProps.All(x => x.MyRoomPlacePropData.id != childProp.MyRoomPlacePropData.id)) return;
 
-    if (_childrenProps.Count > 0)
-    {
-        _childrenProps.ForEach(x => x.UpdatePositionToAbsoluteWorldPosition());
-    }
-
-    return MyRoomPlacePropData;
+    _childrenProps.Remove(childProp);
+    Debug.Log($"[SpawnablePropBase] Prop: {GetPlacePropId()} Remove Child Prop : {childProp.GetPlacePropId()}");
 }
 ```
 
@@ -284,20 +233,17 @@ public MyRoomPlaceProp GetPlacePropInfo()
 
 ## 상속 구조
 
-`SpawnablePropBase`는 다음과 같은 서브클래스를 가집니다:
-- `SpawnableFloorAndCeilProp`: 바닥/천장 배치 오브젝트
-- `SpawnableWallProp`: 벽 배치 오브젝트
-- `SpawnablePhotoFrameProp`: 사진 프레임 오브젝트
-- `SpawnableScreenProp`: 스크린 오브젝트
+`SpawnablePropBase`는 다음과 같은 서브클래스 가짐.
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/): 바닥/천장 배치 오브젝트
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/): 벽 배치 오브젝트
+- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/): 사진 프레임 오브젝트
+- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/): 스크린 오브젝트
 
-## 의존성
+## 관련 클래스
 
 - `MyRoomProp`: 오브젝트 기본 정보
 - `MyRoomPlaceProp`: 배치 정보
 - `MyRoomPropColor`: 색상 정보
-- `IInteractableProp`: 인터랙션 인터페이스
-
-## 관련 클래스
-
-- **관리자**: `MyRoomEditorPropEditingManager`
-- **인터페이스**: `IMyRoomEditorEditableObject`, `IInteractableProp`
+- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 인터랙션 인터페이스
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 관리자
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/), [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/) : 의존 인터페이스
