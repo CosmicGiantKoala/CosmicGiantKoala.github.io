@@ -8,35 +8,24 @@ draft = false
 toc = true
 weight = 420
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 
 ## 개요
 
-`IColorEditableProp`는 색상 편집 가능한 오브젝트를 정의하는 인터페이스입니다. 색상 리스트 제공 및 색상 적용 기능을 정의합니다.
+`IColorEditableProp`는 색상 편집 가능한 오브젝트를 정의하는 인터페이스. 색상 리스트 제공 및 색상 적용 기능을 정의.
 
 ## 인터페이스 멤버
 
 ### 메서드
 ```csharp
+/// <summary>
+/// 오브젝트가 지원하는 색상 리스트 반환
+/// </summary>
 List<MyRoomPropColor> GetColorList();
+
+/// <summary>
+/// 지정된 인덱스의 색상을 Material로 적용
+/// </summary>
 void SetColor(Material mat, int colorIndex);
-```
-
-## 코드 스니펫
-
-```csharp
-using System.Collections.Generic;
-using Dev.Scripts.Rsup.Domain.Entities.MyRoom;
-using UnityEngine;
-
-namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
-{
-    public interface IColorEditableProp : IMyRoomEditorEditableObject
-    {
-        public List<MyRoomPropColor> GetColorList();
-        public void SetColor(Material mat, int colorIndex);
-    }
-}
 ```
 
 ## 주요 기능 설명
@@ -44,10 +33,10 @@ namespace Dev.Scripts.Rsup.Scenes.MyRoomEditor
 - **GetColorList**: 오브젝트가 지원하는 색상 리스트 반환
 - **SetColor**: 지정된 인덱스의 색상을 Material로 적용
 
-## 상속 관계
+## 상속 관계 및 구현체
 
-- `IMyRoomEditorEditableObject`를 확장
-- 색상 편집이 가능한 오브젝트들에서 구현
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)를 확장
+- 색상 편집이 가능한 오브젝트들에서 구현([`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/), [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/))
 
 ## 사용 예시
 

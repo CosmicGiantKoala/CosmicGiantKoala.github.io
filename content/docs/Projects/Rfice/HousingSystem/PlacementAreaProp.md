@@ -8,10 +8,9 @@ draft = false
 toc = true
 weight = 427
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`PlacementAreaProp`는 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스입니다. 오브젝트가 배치될 수 있는 공간의 범위와 규칙을 지정합니다.
+`PlacementAreaProp`는 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. 오브젝트가 배치될 수 있는 공간의 범위와 규칙을 지정.
 
 ## 주요 역할
 
@@ -23,34 +22,56 @@ weight = 427
 
 ### 필드
 ```csharp
+/// <summary>
+/// 배치 영역 타입 (바닥, 벽, 천장 등)
+/// </summary>
 [SerializeField]
 private PlacementType placementAreaType;
 
+/// <summary>
+/// 배치 시 적용될 회전 값
+/// </summary>
 [SerializeField]
 private Quaternion propRotation;
-
-private MyRoomPlaceProp _placePropInfo;
 ```
 
 ### 주요 메서드
 ```csharp
+/// <summary>
+/// 배치 영역 타입을 반환.
+/// </summary>
 public PlacementType GetPlacementType()
+
+/// <summary>
+/// 배치 시 적용될 회전 값을 반환.
+/// </summary>
 public Quaternion GetPlacementRotation()
+
+/// <summary>
+/// 해당 컴포넌트가 `PlacementAreaInProp`(오브젝트 중복배치 영역)인지 확인하고 부모 오브젝트 반환
+/// </summary>
 public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 ```
 
-## 코드 스니펫
+## 구현 인터페이스
 
-### 주요 구현
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 인터페이스
+
+## 사용 예시
+
 ```csharp
-public PlacementType GetPlacementType() => placementAreaType;
-public Quaternion GetPlacementRotation() => propRotation;
+// 배치 영역 타입 확인
+var placementType = placementArea.GetPlacementType();
+var rotation = placementArea.GetPlacementRotation();
 
-public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
+// 오브젝트 위 배치 영역인지 확인
+if (placementArea.IsPlacementAreaInProp(out var parentProp))
 {
-    baseProp = null;
-    return false;
+    Debug.Log($"배치 영역은 {parentProp.PropNameKey} 위에 있습니다.");
 }
 ```
 
-배치 영역 타입에 따라 Floor, Ceiling, Wall 등으로 설정되며, 배치 시 적용될 회전 값을 제공합니다.
+## 관련 클래스
+
+- [`PlacementType`](/docs/projects/rfice/housingsystem/placementtype/): 배치 타입 열거형
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 인터페이스

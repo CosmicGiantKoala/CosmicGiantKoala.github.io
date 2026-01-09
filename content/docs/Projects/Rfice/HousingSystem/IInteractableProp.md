@@ -8,27 +8,36 @@ draft = false
 toc = true
 weight = 423
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`IInteractableProp`는 특수한 인터렉션이 가능한 오브젝트를 정의하는 인터페이스입니다.
+`IInteractableProp`는 특수한 인터렉션이 가능한 오브젝트를 정의하는 인터페이스.
 
 ## 인터페이스 멤버
 
+### 메서드
 ```csharp
+/// <summary>
+/// 특수 인터랙션 실행
+/// </summary>
 void Interact();
 ```
 
-## 코드 스니펫
-
-```csharp
-namespace Dev.Scripts.Rsup.Scenes.Components.MyRoomEditor
-{
-    public interface IInteractableProp
-    {
-        public void Interact();
-    }
-}
-```
+## 주요 기능 설명
 
 - **Interact**: 특수 인터랙션 실행
+
+## 상속 관계 및 구현체
+
+- 이동이 가능한 오브젝트들에서 구현([`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/), [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/))
+- **확장 인터페이스들**:
+    - [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/): 사진 프레임 기능
+    - [`IScreenProp`](/docs/projects/rfice/housingsystem/iscreenprop/): 공유 오브젝트 기능
+
+## 사용 예시
+
+```csharp
+if (TryGetComponent(out IInteractableProp interactableProp))
+{
+    interactableProp.Interact();
+}
+```
