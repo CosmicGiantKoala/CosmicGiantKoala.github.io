@@ -8,17 +8,21 @@ draft = false
 toc = true
 weight = 421
 +++
-#### **(본 문서는 AI로 작성된 프로토타입 문서입니다.)**
 ## 개요
 
-`IMoveableProp`는 이동 가능한 오브젝트를 정의하는 인터페이스. 배치 영역 검증 및 위치 변경 기능을 정의.
+`IMoveableProp` 인터페이스는 MyRoom 에디터에서 이동 가능한 프로퍼티를 정의합니다. 이 인터페이스를 구현하는 클래스는 위치 이동 및 배치 가능 영역 검사를 수행할 수 있습니다.
 
-## 인터페이스 멤버
+## 역할
 
+- MyRoomEditor에서 오브젝트의 이동 기능 제공
+- 배치 가능 영역 내에서의 위치 검증
+
+
+## 멤버
 ### 속성
 ```csharp
 /// <summary>
-/// 이동 가능한 오브젝트의 기본 컴포넌트
+/// 이동 가능한 프로퍼티의 기본 컴포넌트 참조.
 /// </summary>
 SpawnablePropBase PropBaseComponent { get; }
 ```
@@ -26,28 +30,43 @@ SpawnablePropBase PropBaseComponent { get; }
 ### 메서드
 ```csharp
 /// <summary>
-/// 현재 위치 반환
+/// 프로퍼티의 현재 위치를 반환합니다.
 /// </summary>
-Vector3 GetPosition();
+/// <returns>현재 위치 Vector3</returns>
+Vector3 GetPosition()
 
 /// <summary>
-/// 지정된 위치로 이동
+/// 프로퍼티를 지정된 위치로 이동합니다.
 /// </summary>
-void Move(Vector3 pos);
+/// <param name="pos">이동할 목표 위치</param>
+void Move(Vector3 pos)
 
 /// <summary>
-/// 대상 위치가 배치 가능한 영역인지 검증
+/// 지정된 위치가 배치 가능 영역 내에 있는지 검사합니다.
 /// </summary>
-bool IsPlaceableArea(Vector3 targetPos, IPlaceableArea placeableArea);
+/// <param name="targetPos">검사할 목표 위치</param>
+/// <param name="placeableArea">배치 가능 영역 인터페이스</param>
+/// <returns>배치 가능한 경우 true</returns>
+bool IsPlaceableArea(Vector3 targetPos, IPlaceableArea placeableArea)
 ```
 
-## 주요 기능 설명
+## 기능 설명
 
-- **PropBaseComponent**: 이동 가능한 오브젝트의 기본 컴포넌트 반환
-- **GetPosition**: 현재 위치 반환
-- **Move**: 지정된 위치로 이동
-- **IsPlaceableArea**: 대상 위치가 배치 가능한 영역인지 검증
+### 위치 관리
+- `GetPosition()`으로 현재 위치 조회
+- `Move()`로 새로운 위치로 이동
 
+### 배치 영역 검사
+- `IsPlaceableArea()`로 목표 위치의 유효성 검증
+- 배치 가능 영역 인터페이스와 연동하여 안전한 이동 보장
+
+### 프로퍼티 참조
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase) 속성으로 기본 프로퍼티 컴포넌트 접근
+
+## 의존성/상속 관계
+
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject)를 상속받음.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase), [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/) 클래스에 의존.
 
 ## 상속 관계 및 구현체
 
@@ -56,14 +75,34 @@ bool IsPlaceableArea(Vector3 targetPos, IPlaceableArea placeableArea);
 
 ## 사용 예시
 
+### 이동 가능 여부 확인
 ```csharp
 if (editableObject.IsMovableProp(out IMoveableProp movableProp))
 {
     Vector3 currentPos = movableProp.GetPosition();
-    Vector3 newPos = currentPos + Vector3.forward;
-    
-    if (movableProp.IsPlaceableArea(newPos, placeableArea))
-    {
-        movableProp.Move(newPos);
-    }
+    // 이동 UI 표시
 }
+```
+
+### 위치 이동
+```csharp
+movableProp.Move(targetPosition);
+```
+
+### 배치 영역 검사
+```csharp
+if (movableProp.IsPlaceableArea(newPosition, placeableArea))
+{
+    movableProp.Move(newPosition);
+}
+```
+
+## 관련 클래스
+
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea)
+- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementManager)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/) 

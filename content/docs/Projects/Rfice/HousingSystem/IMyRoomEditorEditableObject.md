@@ -11,21 +11,19 @@ weight = 419
 
 ## 개요
 
-`IMyRoomEditorEditableObject`는 편집 가능한 오브젝트를 정의하는 인터페이스. 오브젝트의 기본 속성과 편집 관련 기능들을 정의.
+`IMyRoomEditorEditableObject` 인터페이스는 MyRoomEditor에서 편집 가능한 객체의 기본 동작을 정의합니다.
 
-## 주요 역할
+## 역할
 
-- **속성 정의**: 오브젝트의 기본 명령 정의.
-- **기능 검증**: 다양한 편집 기능 지원 여부 확인 및 인터페이스 반환.
-- **상태 관리**: 선택, 포커스 등의 상태 변경 명령 정의.
-- **데이터 접근**: 배치 정보 및 기즈모 정보 제공 명령 정의.
+- MyRoomEditor에서 편집 가능한 객체의 표준 인터페이스 제공
+- 객체의 선택/해제, 포커스 상태 관리
+- 다양한 편집 기능(색상, 이동, 회전 등)의 지원 여부 검사
 
-## 인터페이스 멤버
-
+## 멤버
 ### 속성
 ```csharp
 /// <summary>
-/// 로컬라이징용 오브젝트의 이름 키 반환
+/// 로컬라이징용 객체의 이름 키.
 /// </summary>
 string PropNameKey { get; }
 ```
@@ -33,103 +31,116 @@ string PropNameKey { get; }
 ### 메서드
 ```csharp
 /// <summary>
-/// 오브젝트 삭제 처리
+/// 객체를 삭제합니다.
 /// </summary>
-void Delete();
+void Delete()
 
 /// <summary>
-/// 색상 편집 가능 여부 및 인터페이스 반환
+/// 색상 편집이 가능한지 검사하고 인터페이스를 반환합니다.
 /// </summary>
-bool IsEditableColor(out IColorEditableProp prop);
+/// <param name="prop">색상 편집 인터페이스 출력</param>
+/// <returns>색상 편집 가능한 경우 true</returns>
+bool IsEditableColor(out IColorEditableProp prop)
 
 /// <summary>
-/// 이동 가능 여부 및 인터페이스 반환
+/// 이동이 가능한지 검사하고 인터페이스를 반환합니다.
 /// </summary>
-bool IsMovableProp(out IMoveableProp prop);
+/// <param name="prop">이동 인터페이스 출력</param>
+/// <returns>이동 가능한 경우 true</returns>
+bool IsMovableProp(out IMoveableProp prop)
 
 /// <summary>
-/// 회전 가능 여부 및 인터페이스 반환
+/// 회전이 가능한지 검사하고 인터페이스를 반환합니다.
 /// </summary>
-bool IsRotatableProp(out IRotatableProp prop);
+/// <param name="prop">회전 인터페이스 출력</param>
+/// <returns>회전 가능한 경우 true</returns>
+bool IsRotatableProp(out IRotatableProp prop)
 
 /// <summary>
-/// 사진 프레임 여부 및 인터페이스 반환
+/// 포토프레임 프로퍼티인지 검사하고 인터페이스를 반환합니다.
 /// </summary>
-bool IsPhotoFrameProp(out IPhotoFrameProp prop);
+/// <param name="prop">포토프레임 인터페이스 출력</param>
+/// <returns>포토프레임인 경우 true</returns>
+bool IsPhotoFrameProp(out IPhotoFrameProp prop)
 
 /// <summary>
-/// 배치 영역 여부 및 인터페이스 반환
+/// 배치 영역인지 검사하고 인터페이스를 반환합니다.
 /// </summary>
-bool IsPlacementArea(out IPlaceableArea area);
+/// <param name="area">배치 영역 인터페이스 출력</param>
+/// <returns>배치 영역인 경우 true</returns>
+bool IsPlacementArea(out IPlaceableArea area)
 
 /// <summary>
-/// 오브젝트가 포커스될 때 호출
+/// 객체가 포커스되었을 때 호출됩니다.
 /// </summary>
-void Focused();
+void Focused()
 
 /// <summary>
-/// 오브젝트가 포커스 해제될 때 호출
+/// 객체의 포커스가 해제되었을 때 호출됩니다.
 /// </summary>
-void Unfocused();
+void Unfocused()
 
 /// <summary>
-/// 오브젝트가 선택될 때 호출
+/// 객체가 선택되었을 때 호출됩니다.
 /// </summary>
-void Selected();
+void Selected()
 
 /// <summary>
-/// 오브젝트가 선택 해제될 때 호출
+/// 객체의 선택이 해제되었을 때 호출됩니다.
 /// </summary>
-void Deselected();
+void Deselected()
 
 /// <summary>
-/// 기즈모 표시를 위한 위치 및 회전 정보 반환
+/// 기즈모의 위치와 회전을 반환합니다.
 /// </summary>
-(Vector3, Quaternion) GetGizmoPositionAndRotation();
+/// <returns>위치와 회전의 튜플</returns>
+(Vector3, Quaternion) GetGizmoPositionAndRotation()
 
 /// <summary>
-/// 오브젝트의 배치 정보 반환
+/// 배치된 오브젝트 정보를 반환합니다.
 /// </summary>
-MyRoomPlaceProp GetPlacePropInfo();
+/// <returns>MyRoomPlaceProp 정보</returns>
+MyRoomPlaceProp GetPlacePropInfo()
 
 /// <summary>
-/// 배치된 오브젝트의 고유 ID 반환
+/// 배치된 오브젝트 ID를 반환합니다.
 /// </summary>
-string GetPlacePropId();
+/// <returns>오브젝트 ID 문자열</returns>
+string GetPlacePropId()
 ```
 
-## 주요 기능 설명
+## 기능 설명
+### 오브젝트 관리
+- `Delete()`로 오브젝트 삭제
+- `PropNameKey`로 로컬라이징된 이름 제공
 
-### 기능 검증 메서드들
-- **IsEditableColor**: 색상 편집 가능 여부 및 인터페이스 반환
-- **IsMovableProp**: 이동 가능 여부 및 인터페이스 반환
-- **IsRotatableProp**: 회전 가능 여부 및 인터페이스 반환
-- **IsPhotoFrameProp**: 사진 프레임 여부 및 인터페이스 반환
-- **IsPlacementArea**: 배치 영역 여부 및 인터페이스 반환
+### 편집 기능 검사
+- 각 편집 기능(색상, 이동, 회전 등)에 대한 지원 여부 검사
+- 지원되는 경우 해당 인터페이스 반환
+- `IsEditableColor(out IColorEditableProp prop)`: 색상 편집 가능 여부 및 인터페이스 반환
+- `IsMovableProp(out IMoveableProp prop)`: 이동 가능 여부 및 인터페이스 반환
+- `IsRotatableProp(out IRotatableProp prop)`: 회전 가능 여부 및 인터페이스 반환
+- `IsPhotoFrameProp(out IPhotoFrameProp prop)`: 사진 프레임 여부 및 인터페이스 반환
+- `IsPlacementArea(out IPlaceableArea area)`: 배치 영역 여부 및 인터페이스 반환
 
-### 상태 관리 메서드들
-- **Focused**: 오브젝트가 포커스될 때 호출
-- **Unfocused**: 오브젝트가 포커스 해제될 때 호출
-- **Selected**: 오브젝트가 선택될 때 호출
-- **Deselected**: 오브젝트가 선택 해제될 때 호출
+### 상태 관리
+- `Focused()`/`Unfocused()`: 포커스 상태 전환
+- `Selected()`/`Deselected()`: 선택 상태 전환
 
-### 데이터 접근 메서드들
-- **PropNameKey**: 오브젝트의 이름 키 (로컬라이제이션용)
-- **GetGizmoPositionAndRotation**: 기즈모 표시를 위한 위치 및 회전 정보 반환
-- **GetPlacePropInfo**: 배치된 오브젝트의 정보 반환
-- **GetPlacePropId**: 배치된 오브젝트의 고유 ID 반환
+### 기즈모 및 배치 정보
+- `GetGizmoPositionAndRotation()`: 편집 기즈모 위치/회전 반환
+- `GetPlacePropInfo()`/`GetPlacePropId()`: 배치 정보 제공
 
-### 삭제
-- **Delete**: 오브젝트 삭제 처리
+## 의존성/상속 관계
 
-## 구현 클래스
+- `IEquatable<IMyRoomEditorEditableObject>`를 구현.
+- **확장 인터페이스들**:
+  - [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 변경 기능
+  - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
+  - [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 기능
+  - [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/): 사진 프레임 기능
+  - [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 기능
 
-이 인터페이스는 다음과 같은 클래스에서 구현.
-- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)의 서브클래스들
-- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
-- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
-- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)
-- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/)
 
 ## 사용 예시
 
@@ -163,12 +174,18 @@ editableObject.Deselected();
 
 ## 관련 클래스 및 인터페이스
 
-- [`IEquatable<IMyRoomEditorEditableObject>`](https://learn.microsoft.com/ko-kr/dotnet/api/system.iequatable-1?view=net-8.0): 동등성 비교를 위한 인터페이스
-- `MyRoomPlaceProp`: 배치 정보 데이터
-- **확장 인터페이스들**:
-  - [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 편집 기능
-  - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
-  - [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 기능
-  - [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/): 사진 프레임 기능
-  - [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 기능
-
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)
+- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/)
+- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/)
+- [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/)
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/)
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)
+- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorInteractionManager)
+- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementManager)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`MyRoomEditorPropSelector`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropSelector)

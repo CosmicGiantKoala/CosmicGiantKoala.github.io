@@ -11,39 +11,66 @@ weight = 420
 
 ## 개요
 
-`IColorEditableProp`는 색상 편집 가능한 오브젝트를 정의하는 인터페이스. 색상 리스트 제공 및 색상 적용 기능을 정의.
+`IColorEditableProp` 인터페이스는 MyRoom 에디터에서 색상 편집이 가능한 프로퍼티를 정의합니다. 이 인터페이스를 구현하는 클래스는 색상 목록을 제공하고 색상을 설정할 수 있습니다.
 
-## 인터페이스 멤버
+## 역할
 
+- MyRoomEditor에서 색상 편집 기능을 제공하는 인터페이스 정의
+- 색상 목록 조회 및 색상 적용 기능 표준화
+
+## 멤버
 ### 메서드
 ```csharp
 /// <summary>
-/// 오브젝트가 지원하는 색상 리스트 반환
+/// 사용할 수 있는 색상 목록을 반환합니다.
 /// </summary>
-List<MyRoomPropColor> GetColorList();
+List<MyRoomPropColor> GetColorList()
 
 /// <summary>
-/// 지정된 인덱스의 색상을 Material로 적용
+/// 지정된 색상 인덱스로 머티리얼의 색상을 설정합니다.
 /// </summary>
-void SetColor(Material mat, int colorIndex);
+/// <param name="mat">색상을 적용할 머티리얼</param>
+/// <param name="colorIndex">색상 목록의 인덱스</param>
+void SetColor(Material mat, int colorIndex)
 ```
 
-## 주요 기능 설명
+## 기능 설명
 
-- **GetColorList**: 오브젝트가 지원하는 색상 리스트 반환
-- **SetColor**: 지정된 인덱스의 색상을 Material로 적용
+### 색상 목록 제공
+- `GetColorList()` 메서드로 편집 가능한 색상 목록을 반환
+- `MyRoomPropColor` 객체 리스트 형태로 색상 정보 제공
 
-## 상속 관계 및 구현체
+### 색상 적용
+- `SetColor()` 메서드로 지정된 머티리얼에 색상 적용
+- 색상 인덱스를 통해 목록에서 특정 색상을 선택하여 적용
 
-- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)를 확장
+## 의존성/상속 관계
+
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject)를 상속받음.
 - 색상 편집이 가능한 오브젝트들에서 구현([`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/), [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/))
 
 ## 사용 예시
 
+### 색상 편집 가능 여부 확인
 ```csharp
-if (editableObject.IsEditableColor(out IColorEditableProp colorProp))
+if (prop.TryGetComponent(out IMyRoomEditorEditableObject editableObject))
 {
-    var colors = colorProp.GetColorList();
-    // 첫 번째 색상 적용
-    colorProp.SetColor(colors[0].material, 0);
+    if (editableObject.IsEditableColor(out IColorEditableProp colorProp))
+    {
+        var colors = colorProp.GetColorList();
+        // 색상 목록을 UI에 표시
+    }
 }
+```
+
+### 색상 적용
+```csharp
+colorProp.SetColor(renderer.material, selectedColorIndex);
+```
+
+## 관련 클래스
+
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
