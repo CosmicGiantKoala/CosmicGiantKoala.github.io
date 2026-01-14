@@ -10,19 +10,16 @@ weight = 407
 +++
 
 ## 개요
+`MyRoomEditorPropMover`는 MyRoomEditor에서 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속 받아 오브젝트의 위치을 편집하는 클래스입니다. [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 활용해 `RaycastHit`을 검출하고 배치 영역을 검증하고 오브젝트의 위치를 변경합니다.
 
-`MyRoomEditorPropMover`는 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속받아 오브젝트의 이동을 담당하는 클래스. Raycast를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생.
+## 역할
+- 오브젝트의 이동 및 회전(자유회전이 아닌 스냅회전만 지원) 편집 기능 제공
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 활용한 `RaycastHit`으로 배치 가능 위치 검출
+- 이동 화살표 기즈모 표시 및 업데이트
+- 부모 프로퍼티 관계 관리
+- ESC 키로 이동 취소 및 원래 위치 복원
 
-## 주요 역할
-
-- **오브젝트 이동**: 실시간으로 마우스 위치에 따른 오브젝트 이동
-- **배치 검증**: 이동 중 실시간 배치 가능성 검증
-- **기즈모 표시**: 이동 방향을 나타내는 화살표 기즈모 표시
-- **회전 지원**: 이동 중 우클릭으로 스냅 회전
-- **실행 취소**: ESC 키로 이동 취소 및 원래 위치 복원
-
-## 주요 멤버
-
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
@@ -31,7 +28,7 @@ weight = 407
 public event Action OnFinishMove;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 이동 시 부모가 없을 때 사용할 기본 트랜스폼.
@@ -237,31 +234,78 @@ private void ReleaseMovementBehaviour()
 }
 ```
 
-## 주요 기능 설명
+## 기능 설명
+### 이동 편집 활성화
+- 이동 검출 코루틴 시작
+- 이동 화살표 기즈모 활성화
+- 기즈모 위치 및 회전 설정
 
 ### 이동 프로세스
-1. **Setup**: 이동 가능한 오브젝트 확인 및 초기 상태 캐시
-2. **Enable**: 이동 감지 코루틴 시작 및 기즈모 활성화
-3. **실시간 이동**: 마우스 위치에 따른 오브젝트 이동
-4. **배치 검증**: 실시간으로 배치 가능성 확인
-5. **클릭으로 확정**: 마우스 클릭 시 이동 완료
-6. **부모 관계 설정**: 오브젝트 계층 구조 업데이트
+1. `Setup(IMyRoomEditorEditableObject setUpObject)`: 이동 가능한 오브젝트 확인 및 초기 상태 캐시
+2. `Enable()`: 이동 감지 코루틴 시작 및 기즈모 활성화
+3. `CoDetectMove()`, `PlaceableHitPoint()`: 마우스 위치에 따른 오브젝트 이동 및 배치 가능성 확인
+4. `MoveAccept()`: 마우스 클릭 시 이동 완료
+5. `SetPropParent()`: 오브젝트 계층 구조 업데이트
+
+### 배치 위치 검출
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 통한 타겟 레이어(Wall, Ground) 히트 검출
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/) 인터페이스 확인
+- 배치 가능 영역 검증
 
 ### 기즈모 표시
-- 이동 방향을 나타내는 화살표 표시
-- 오브젝트의 기즈모 위치 및 회전에 따라 표시
-
-### 실행 취소
-- ESC 키로 이동 취소
-- 캐시된 위치, 회전, 부모 관계로 복원
+- 이동 화살표를 오브젝트의 기즈모 위치에 표시
+- 회전 값에 따라 화살표 방향 조정
 
 ### 부모 관계 관리
 - 오브젝트가 다른 오브젝트 위에 배치될 때 부모-자식 관계 설정
 - 부모 변경 시 기존 부모에서 제거하고 새 부모에 추가
 - 독립 배치 시 부모 관계 해제
 
+### 스냅 회전
+- 우클릭 시 지정된 스냅 값만큼 회전
+- 회전 가능 오브젝트에 한함
+
+### 실행 취소
+- ESC 키로 이동 취소
+- 캐시된 위치, 회전, 부모 관계로 복원
+
+## 의존성/상속 관계
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor)를 상속받음.
+- [`IMoveableProp`](/docs/projects/rfice/HousingSystem/IMoveableProp), [`IRotatableProp`](/docs/projects/rfice/HousingSystem/IRotateableProp), [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스 사용.
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
+
+## 사용 예시
+### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 이동 편집 모드 전환
+```csharp
+private void OnChangedEditMode(PropEditMode mode)
+{
+    editingMode = mode;
+    if (editingMode == PropEditMode.Disable)
+    {
+        CleanUpPropEditor();
+        return;
+    }
+    
+    propEditor?.Disable();
+    propEditor = SwitchPropEditor();
+    if(propEditor.Setup(_editingObject)) propEditor.Enable();
+}
+
+private MyRoomEditorPropEditor SwitchPropEditor()
+{
+    return editingMode switch
+    {
+        PropEditMode.Select => propSelector,
+        PropEditMode.Move => propMover,
+        PropEditMode.Rotate => propRotator,
+    };
+}
+```
+
 ## 관련 클래스
-- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): Raycast 및 입력 처리
-- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/): 부모 클래스
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 사용 클래스
-- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/), [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 검증 및 기능 인터페이스
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/)
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/)

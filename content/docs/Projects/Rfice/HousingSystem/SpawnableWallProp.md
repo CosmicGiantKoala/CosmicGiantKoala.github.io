@@ -9,18 +9,16 @@ toc = true
 weight = 415
 +++
 ## 개요
+`SpawnableWallProp`는 MyRoomEditor에서 벽을 배치되는 일반적인 오브젝트를 위한 클래스입니다.[`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받아 오브젝트 기본 기능과 이동, 색상 편집 등의 동작을 구체적으로 구현합니다.
 
-`SpawnableWallProp`는 벽에 배치되는 일반적인 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 벽(Wall)에 배치 가능한 오브젝트의 구현.
-
-## 주요 역할
-
-- **벽 배치 특화**: 벽면에 부착되는 오브젝트의 이동 및 배치
-- **방향 기반 기즈모**: 벽 방향에 따른 기즈모 위치 및 회전 계산
-- **색상 편집 지원**: Material 변경을 통한 색상 변경
-- **이동 제한**: 벽 오브젝트는 회전 불가 (벽면에 고정)
+## 역할
+- 벽 오브젝트의 기본 기능 제공
+- 이동, 색상 변경 인터페이스 구현
+- 하이라이트 상태 관리
+- 배치 검증 및 부모 관계 설정
+- 오브젝트 기즈모 위치 반환
 
 ## 구현 인터페이스
-
 - [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 편집 기능
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
@@ -208,16 +206,68 @@ public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 }
 ```
 
-## 특징
 
-### 회전 제한
-벽 오브젝트는 `IsRotatableProp`이 `false`를 반환하여 회전 기능을 비활성화.
+## 기능 설명
+### 편집 기능
+- 이동, 색상 변경 지원
+- 하이라이트 상태 표시
 
-### 배치 시 자동 회전
-배치 시 `area.GetPlacementRotation()`을 사용하여 벽면에 맞게 자동으로 회전.
+### 편집 가능성 검증
+- **색상 편집**: 색상 변경 인터페이스 지원 지원 + 오브젝트 데이터에 색상 리스트 존재
+- **이동 가능**: 이동 인터페이스 지원
+
+### 배치 프로세스
+1. **위치 이동**: 히트 포인트로 즉시 이동
+2. **타입 검증**: 배치 영역 타입과 PlacementType 일치 확인
+3. **부모 설정**: 배치 영역이 다른 오브젝트 위면 부모 관계 설정
+    - 오브젝트 슬롯 영역에 배치 시 부모 설정
+    - 룸 레벨 배치 시 부모 해제
+4. **시각 피드백**: 유효/무효에 따라 하이라이트 변경
+
+### 하이라이트 상태
+- **Focused**: 녹색 (Valid)
+- **Unfocused**: 기본 (Default)
+- **Selected**: 파란색 (Selected)
+- **Deselected**: 기본 (Default)
+
+### 기즈모 위치
+- 벽 구조물의 회전값에 맞춰 적합한 위치 반환
+- 기즈모는 수평 방향으로 표시
+
+### 기즈모 위치 계산
+```csharp
+public (Vector3,Quaternion) GetGizmoPositionAndRotation()
+{
+    var bounds = _collider.bounds;
+    var fixedRotation = transform.rotation.eulerAngles.y - 90;
+    var gizmoRotation = new Vector3(0, fixedRotation, 90);
+    var offsetDirection = fixedRotation switch
+    {
+        RightDirectionKey => (Vector3.right * bounds.size.x) + (Vector3.right *0.5f),
+        BackDirectionKey => (Vector3.back * bounds.size.z) + (Vector3.back *0.5f),
+        ForwardDirectionKey => (Vector3.forward * bounds.size.z) + (Vector3.forward *0.5f),
+        LeftDirectionKey => (Vector3.left * bounds.size.x) + (Vector3.left *0.5f),
+        _ => Vector3.zero
+    };
+    Vector3 offset = bounds.center + offsetDirection;
+    return (offset, Quaternion.Euler(gizmoRotation));
+}
+```
+
+### 벽 배치 특화
+- 배치 시 `area.GetPlacementRotation()`으로 벽면 방향 자동 설정
+- 기즈모는 벽 방향에 따라 오브젝트 측면에 배치
+- 회전은 불가능하여 벽면 고정 유지
+
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받음.
+- [`IColorEditableProp`](/docs/projects/rfice/HousingSystem/IColorEditableProp), [`IMoveableProp`](/docs/projects/rfice/HousingSystem/IMoveableProp) 인터페이스 구현.
+- [`PropEditingState`](/docs/projects/rfice/HousingSystem/PropEditingState)에 의존.
+
 
 ## 관련 클래스
-- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
-- `MyRoomMaterialChangeHelper`: Material 변경 처리
-- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스
-- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/), [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 구현된 인터페이스
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/)
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)
+- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)

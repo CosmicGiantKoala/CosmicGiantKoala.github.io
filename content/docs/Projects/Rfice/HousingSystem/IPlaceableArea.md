@@ -34,7 +34,7 @@ PlacementType GetPlacementType()
 Quaternion GetPlacementRotation()
 
 /// <summary>
-/// 배치 영역 내에 기존 프로퍼티가 있는지 검사합니다.
+/// 해당 영역이 오브젝트에 추가된 슬롯 영역임을 체크하고, 오브젝트 슬롯 영역 일시 영역을 소유한 SpawnablePropBase를 반환합니다.
 /// </summary>
 /// <param name="baseProp">영역 내 프로퍼티 출력</param>
 /// <returns>프로퍼티가 존재하면 true</returns>
@@ -51,8 +51,8 @@ bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 - `GetPlacementRotation()`으로 배치 시 회전 값 제공
 - 표면 방향에 맞는 적절한 회전 적용
 
-### 영역 검사
-- `IsPlacementAreaInProp()`으로 오브젝트 위의 배치영역인지 검사
+### 슬롯 배치 오브젝트 검사
+- `IsPlacementAreaInProp()`으로 해당 영역이 오브젝트 위의 배치 가능한 슬롯 영역인지 판단하고 슬롯 영역일시, 해당 슬롯을 소유한 오브젝트 반환
 - 중복 배치 및 충돌 검사에 사용
 
 ## 의존성/상속 관계
@@ -68,14 +68,14 @@ if (raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea)
 }
 ```
 
-### 오브젝트 위의 배치영역 확인
+### 배치영역이 오브젝트가 소유한 슬롯 영역인지 확인
 ```csharp
 if (editableObject.IsPlacementArea(out IPlaceableArea placeableArea))
 {
     if (placeableArea.IsPlacementAreaInProp(out SpawnablePropBase prop))
     {
         // 오브젝트 위 배치 영역 처리
-        Debug.Log("배치 영역 타입: " + type + ", 부모 오브젝트: " + prop.Id);
+        Debug.Log("배치 영역 타입: " + type + ", 오브젝트: " + prop.Id);
     }
 }
 ```

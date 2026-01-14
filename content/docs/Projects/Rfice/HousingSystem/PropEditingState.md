@@ -9,17 +9,15 @@ toc = true
 weight = 418
 +++
 ## 개요
+`PropEditingState`는 MyRoomEditor에서 오브젝트의 시각적 하이라이트 상태를 관리하는 클래스입니다. 머티리얼의 셰이더 키워드를 통해 선택, 유효성 등의 시각적 피드백을 제공합니다.
 
-`PropEditingState`는 오브젝트 편집 상태에 따라 오브젝트의 Material 효과를 표현하는 클래스. Shader 키워드를 사용하여 오브젝트의 하이라이트 상태를 시각적으로 표현.
+## 역할
+- 오브젝트의 하이라이트 상태 관리
+- 셰이더 키워드를 통한 시각적 피드백 제공
+- 편집 중 상태 표시 (선택됨, 유효함, 무효함 등)
 
-## 주요 역할
-
-- **Material 관리**: 오브젝트의 Renderer 컴포넌트에서 하이라이트 가능한 Material들을 수집
-- **상태 표현**: 선택, 유효, 무효 상태에 따라 다른 색상으로 하이라이트
-- **Shader 키워드**: Material의 Shader 키워드를 동적으로 활성화/비활성화
-
-## HighlightState 열거형
-
+## 멤버
+### 열거형
 ```csharp
 /// <summary>
 /// 하이라이트 상태를 정의하는 열거형
@@ -33,8 +31,6 @@ public enum HighlightState
     Invalid     // 유효하지 않은 배치 위치 (빨간색)
 }
 ```
-
-## 주요 멤버
 
 ### 필드
 ```csharp
@@ -63,7 +59,7 @@ private static readonly Dictionary<HighlightState, string> StateKeywords = new()
 };
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 하이라이트 시스템을 초기화하는 메서드.
@@ -111,7 +107,6 @@ private void ChangeKeyword(string keyword)
 ```
 
 ## 코드 스니펫
-
 ### Material 초기화
 ```csharp
 public void Setup()
@@ -171,48 +166,131 @@ private void ChangeKeyword(string keyword)
 }
 ```
 
-## 주요 기능 설명
-
-### Material 수집
-- `Setup()` 메서드에서 자식 Renderer들의 Material 중 `_HIGHLIGHTSTATE` 속성을 가진 Material들을 수집
-- 하이라이트 효과를 지원하는 Material만 대상으로 함
-
-### 상태별 하이라이트
+## 기능 설명
+### 하이라이트 상태 시스템
 - **None**: 기본 상태, 하이라이트 없음 (`_HIGHLIGHTSTATE_NONE`)
 - **Selected**: 선택된 오브젝트를 파란색으로 표시 (`_HIGHLIGHTSTATE_BLUE`)
 - **Valid**: 유효한 배치 위치를 녹색으로 표시 (`_HIGHLIGHTSTATE_GREEN`)
 - **Invalid**: 유효하지 않은 배치 위치를 빨간색으로 표시 (`_HIGHLIGHTSTATE_RED`)
 
-### Shader 키워드 관리
+### 머티리얼 관리
+- `Setup()` 메서드에서 자식 Renderer들의 Material 중 `_HIGHLIGHTSTATE` 속성을 가진 Material들을 수집
+- 하이라이트 효과를 지원하는 Material만 대상으로 함
+
+### 키워드 기반 렌더링
 - 기존에 활성화된 `_HIGHLIGHTSTATE`로 시작하는 키워드들을 모두 비활성화
 - 새로운 상태에 해당하는 키워드만 활성화
 - Material의 `EnableKeyword()`와 `DisableKeyword()`를 사용하여 동적 변경
 
-## Shader 요구사항
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase) 등에서 동적으로 컴포넌트 추가.
+- 셰이더에서 `_HIGHLIGHTSTATE_*` 키워드 사용.
+- [`IMyRoomEditorEditableObject.Focused()`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject), [`Selected()`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject) 등에서 호출.
 
-하이라이트 효과를 사용하려면 Material의 Shader가 다음 키워드를 지원해야함
-- `_HIGHLIGHTSTATE_NONE`
-- `_HIGHLIGHTSTATE_BLUE`
-- `_HIGHLIGHTSTATE_GREEN`
-- `_HIGHLIGHTSTATE_RED`
+## Shader 요구사항
+- 하이라이트 효과를 사용하려면 Material의 Shader가 다음 키워드를 지원해야함
+  - `_HIGHLIGHTSTATE_NONE`
+  - `_HIGHLIGHTSTATE_BLUE`
+  - `_HIGHLIGHTSTATE_GREEN`
+  - `_HIGHLIGHTSTATE_RED`
 
 ## 사용 예시
-
-### 기본적인 사용
+### 하이라이트 기능 셋업 
 ```csharp
-var editingState = GetComponent<PropEditingState>();
-editingState.Setup();  // Material 초기화
+// 배치 오브젝트 클래스(SpawnablePropBase의서브 클래스)에서 Setup() 호출
+protected override void SetupPropHighlight()
+{
+    _propEditingState.Setup();
+}
 
-// 상태 변경
-editingState.Selected();  // 파란색 하이라이트
-editingState.Valid();     // 녹색 하이라이트
-editingState.Invalid();   // 빨간색 하이라이트
-editingState.Default();   // 하이라이트 해제
+// PropEditingState에서 Material및 렌더러 검색하여 캐싱
+public void Setup()
+{
+    var renderers = GetComponentsInChildren<Renderer>();
+    foreach (var renderer in renderers)
+    {
+        foreach (var material in renderer.materials)
+        {
+            if (material != null && material.HasProperty(StatePropertyName))
+            {
+                targetMaterials.Add(material);
+            }
+        }
+    }
+}
 ```
+
+### 하이라이트 표시
+```csharp
+//오브젝트 이동시 배치 가능한 위치일때 Valid 하이라이트 처리
+public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
+{
+    Move(hitPosition);
+    transform.rotation = area.GetPlacementRotation();
+    
+    if (area.GetPlacementType() != PlacementType)
+    {
+        _propEditingState.Invalid();
+        return false;
+    }
+    if (area.IsPlacementAreaInProp(out var parent))
+    {
+        SetPropParent(parent);
+    }
+    else
+    {
+        ClearPropParent();
+    }
+
+    _propEditingState.Valid();
+    return true;
+}
+
+// 오브젝트 선택/포커싱 할대 Focused/Unfocused 하이라이트 처리
+if (InputUtils.GetRaycastHit(out RaycastHit hits, _targetLayer, _firstPriorityLayer))
+{
+    if (hits.transform.TryGetComponent(out IMyRoomEditorEditableObject focusedObject)
+        && InputUtils.IsPointerOnUI() == false)
+    {
+        if (focusedObject.Equals(_focusedObject)) continue;
+        if (IsSelectedObject(focusedObject))
+        {
+            _focusedObject?.Unfocused();
+            _focusedObject = focusedObject;
+        }
+        else
+        {
+            if (IsSelectedObject(_focusedObject) == false)
+            {
+                _focusedObject?.Unfocused();
+            }
+            _focusedObject = focusedObject;
+            _focusedObject.Focused();
+        }
+    }
+    else
+    {
+        //Unfocus조건
+        //1. 선택된 오브젝트는 Unfocus되지 않는다.
+        //2. 선택된 오브젝트가 아니며 포커싱 중인 오브젝트가 있는 경우는 Unfocus 한다.
+        if (IsSelectedObject(_focusedObject))
+        {
+            _focusedObject = null;
+        }
+        else
+        {
+            _focusedObject?.Unfocused();
+            _focusedObject = null;
+        }
+    }
+} 
+```
+
 
 ## 관련 클래스
 
-- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/): 바닥/천장 배치 오브젝트
-- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/): 벽 배치 오브젝트
-- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/): 사진 프레임 오브젝트
-- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/): 스크린 오브젝트
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)
+- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/)

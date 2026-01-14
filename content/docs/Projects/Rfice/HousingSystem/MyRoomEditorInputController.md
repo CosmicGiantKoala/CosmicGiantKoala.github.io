@@ -11,54 +11,53 @@ weight = 410
 
 ## 개요
 
-`MyRoomEditorInputController`는 `InputAction`을 통해 발생하는 입력 이벤트를 각각의 `Dispatcher`로 전달하는 클래스. 시스템 활성화 상태 기반 `InputAction` 토글을 담당.
+`MyRoomEditorInputController`는 `InputAction`을 통해 발생하는 입력 이벤트를 각각의 `Dispatcher`로 전달하는 클래스입니다. Rfice 게임 입력과 MyRoomEditor 전용 입력을 토글하며, 카메라 이동/회전/줌과 편집 관련 입력 이벤트를 적절한 디스패처로 전달합니다.  [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html)을 사용하여 입력을 처리하고, 안전 영역 내 포인터 입력을 보장합니다.
 
-## 주요 역할
+## 역할
+- Rfice 입력과 MyRoom 에디터 입력의 활성화/비활성화 토글
+- 카메라 제어 입력 이벤트(이동, 회전, 줌)의 구독 및 디스패처 전달
+- 편집 입력 이벤트(포인터 클릭, 취소, 삭제, 우클릭)의 구독 및 디스패처 전달
+- 화면 안전 영역 내 포인터 입력 검증 및 필터링
 
-- **입력 이벤트 중계**: InputAction 이벤트를 적절한 Dispatcher로 전달
-- **시스템 토글**: 에디터 활성화/비활성화에 따른 입력 시스템 전환
-- **안전 영역 검증**: 포인터가 화면 안전 영역 내에 있는지 검증
-- **입력 구분**: 카메라 조작과 편집 입력을 분리하여 처리
 
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
-/// 어플리케이션 기본 입력 시스템.
+/// 기본 게임 입력 액션 (Rfice 입력)
 /// </summary>
 [Inject]
 private RficeAction _rficeInput;
 
 /// <summary>
-/// MyRoom 에디터 시스템 전용 입력 액션
+/// MyRoom 에디터 전용 입력 액션
 /// </summary>
 [Inject]
 private MyRoomEditorInput _myRoomInput;
 
 /// <summary>
-/// 카메라 관련 입력 이벤트를 처리하는 클래스
+/// 카메라 입력 이벤트 처리 디스패처
 /// </summary>
 [Inject]
 private MyRoomEditorCameraInputDispatcher _cameraInputDispatcher;
 
 /// <summary>
-/// 오브젝트 편집 관련 입력 이벤트를 처리하는 클래스
+/// 편집 입력 이벤트 처리 디스패처
 /// </summary>
 [Inject]
 private MyRoomEditorEdittingInputDispatcher _edittingDispatcher;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
-/// 모든 MyRoom 에디터 입력을 활성화하는 메서드.
+/// 모든 MyRoomEditor 입력을 활성화하는 메서드.
 /// 기본 게임 입력을 비활성화하고 에디터 입력을 활성화.
 /// </summary>
 public void EnableAll()
 
 /// <summary>
-/// 모든 MyRoom 에디터 입력을 비활성화하는 메서드.
+/// 모든 MyRoomEditor 입력을 비활성화하는 메서드.
 /// 기본 게임 입력을 활성화하고 에디터 입력을 비활성화.
 /// </summary>
 public void DisableAll()
@@ -121,28 +120,25 @@ private void InputEventSubscribe()
 }
 ```
 
-## 주요 기능 설명
-
+## 기능 설명
 ### 입력 시스템 토글
-- **EnableAll()**: Rfice 입력 비활성화, MyRoomEditor 입력 활성화
-- **DisableAll()**: Rfice 입력 활성화, MyRoomEditor 입력 비활성화
+- **EnableAll()**: Rfice 입력을 비활성화하고 MyRoomEditor 입력을 활성화. 카메라 이동, 회전, 줌, 포인터 입력을 모두 활성화.
+- **DisableAll()**: Rfice 입력을 활성화하고 MyRoomEditor 입력을 비활성화. 모든 에디터 입력을 비활성화.
 
-### 입력 카테고리
-- **카메라 입력**: 이동, 회전, 줌
-- **편집 입력**: 포인터 클릭, 취소, 삭제, 우클릭
-- **시스템 입력**: 전체 활성화/비활성화
-
-### 안전 영역 처리
-- 포인터가 화면 안전 영역 내에 있을 때만 입력 처리
-- 노치나 시스템 UI 영역 제외
-
-### 이벤트 라우팅
-- 각 입력 이벤트를 적절한 Dispatcher로 전달
+### 이벤트 처리
+- 카메라 입력 이벤트(이동, 회전, 줌)를 MyRoomEditorCameraInputDispatcher로 전달.
+- 편집 입력 이벤트(포인터 클릭, 취소, 삭제, 우클릭)를 MyRoomEditorEdittingInputDispatcher로 전달.
 - Dispatcher가 실제 비즈니스 로직 처리
 
-## 관련 클래스
+### 안전 영역 검증
+- 포인터 입력 시 Screen.safeArea를 사용하여 노치나 시스템 UI 영역을 제외한 안전 영역 내 입력만 처리.
 
-- `RficeAction`: 기본 게임 입력 액션
-- `MyRoomEditorInput`: 에디터 전용 입력 액션
-- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/): 카메라 입력 이벤트 처리
-- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/): 편집 입력 이벤트 처리
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- Zenject를 사용하여 의존성 주입: `RficeAction`, `MyRoomEditorInput`, [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/), [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/).
+- [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html) 패키지를 사용.
+
+## 관련 클래스
+- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/)
+- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)
+- [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html)

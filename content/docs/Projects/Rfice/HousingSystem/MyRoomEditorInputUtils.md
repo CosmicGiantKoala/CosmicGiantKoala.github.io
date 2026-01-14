@@ -10,18 +10,18 @@ weight = 413
 +++
 ## 개요
 
-`MyRoomEditorInputUtils`는 입력 유틸리티 클래스. UI 검증, Raycast 실행, 포인터 델타 계산 등 입력 관련 헬퍼 함수를 제공.
+MyRoomEditorInputUtils는 MyRoomEditor에서 입력 관련 유틸리티 기능을 제공하는 클래스입니다. Unity의 Physics Raycast를 사용하여 포인터 위치 기반 레이캐스트를 수행하고, 결과를 필터링하며, UI 요소 클릭 감지와 포인터 입력 값 제공 기능을 포함합니다. 편집 및 배치 작업에서 정확한 타겟 감지를 지원합니다.
 
-## 주요 역할
+## 역할
+- 포인터 기반 레이캐스트 수행 및 결과 반환
+- 무시할 오브젝트 필터링을 통한 정확한 타겟 감지
+- 우선순위 레이어 기반 레이캐스트 결과 선택
+- 포인터 위치 및 델타 값 제공
+- UI 요소 위 포인터 감지
 
-- **Raycast 수행**: 화면 포인터 위치에서 3D 공간으로의 Raycast 실행
-- **UI 검증**: 포인터가 UI 요소 위에 있는지 확인
-- **포인터 정보**: 포인터 위치 및 델타 값 제공
-- **충돌 필터링**: 배치 영역 및 오브젝트 무시 로직
+## 멤버
 
-## 주요 멤버
-
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// Raycast를 수행할 카메라: 화면 좌표를 3D 공간으로 변환
@@ -52,7 +52,7 @@ private EventSystem _eventSystem = EventSystem.current;
 private const int RaycastLimit = 10;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 특정 오브젝트를 무시한 Raycast 결과를 반환하는 메서드.
@@ -235,18 +235,91 @@ private RaycastHit[] RemoveIgnoring(RaycastHit[] raycastHits, SpawnablePropBase 
 
 ### Raycast 수행
 - [`Physics.RaycastNonAlloc`](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.RaycastNonAlloc.html): 가비지 생성 방지를 위한 비할당 Raycast
-- **결과 제한**: 최대 10개의 충돌 결과만 처리
-- **거리 필터링**: 최소/최대 거리 기반 필터링
+- 결과 제한: 최대 10개의 충돌 결과만 처리
+- 거리 필터링: 최소/최대 거리 기반 필터링
+- `GetRaycastHit` (무시 오브젝트 버전): 포인터 위치에서 레이캐스트를 수행하고, 지정된 ignoreObject를 제외한 가장 가까운 BoxCollider를 가진 오브젝트를 반환. 최소/최대 거리 필터링을 적용.
+- `GetRaycastHit` (우선순위 레이어 버전): 레이캐스트 결과를 우선순위 레이어에 따라 선택. 우선순위 레이어의 오브젝트가 있으면 이를, 없으면 가장 가까운 오브젝트를 반환.
 
-### 충돌 필터링
-- **BoxCollider만 허용**: 정확한 충돌 감지를 위해
-- **거리 검증**: 너무 가까운 충돌 무시
-- **오브젝트 무시**: 특정 SpawnablePropBase 제외
+### 포인터 입력 처리
+- `PointerDelta()`: 마우스 또는 터치 입력의 델타 값을 반환.
+- `PointerPosition()`: 현재 포인터의 화면 좌표를 반환.
 
-### 우선순위 처리
-- **레이어 우선순위**: 특정 레이어의 오브젝트를 우선 선택
-- **거리 정렬**: 가장 가까운 오브젝트 우선
+### UI 감지
+- `IsPointerOnUI()`: [`GraphicRaycaster`](https://docs.unity3d.com/2019.1/Documentation/ScriptReference/UI.GraphicRaycaster.html)를 사용하여 포인터가 UI 요소 위에 있는지 확인. UI 클릭을 방지하기 위해 편집 작업에서 사용.
 
-### UI 검증
-- **GraphicRaycaster 사용**: UI 요소에 대한 Raycast
-- **모든 Raycaster 검색**: 씬의 모든 GraphicRaycaster 확인
+### 결과 필터링
+- `RemoveIgnoring()`: [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스를 구현한 오브젝트 중 ignoreObject와 다른 경우만 유지. 배치 작업에서 자기 자신을 무시하기 위해 사용.
+
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html), [`UGUI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html) 사용.
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea), [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)에 의존.
+
+## 사용 예시
+### [`MyRoomEditorPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/)에서 레이캐스트를 통해 오브젝트 선택
+```csharp
+private IEnumerator CoDetectObject()
+{
+    while (true)
+    {
+        yield return null;
+
+        if (InputUtils.GetRaycastHit(out RaycastHit hits, _targetLayer, _firstPriorityLayer))
+        {
+            if (hits.transform.TryGetComponent(out IMyRoomEditorEditableObject focusedObject)
+                && InputUtils.IsPointerOnUI() == false)
+            {
+                if (focusedObject.Equals(_focusedObject)) continue;
+                if (IsSelectedObject(focusedObject))
+                {
+                    _focusedObject?.Unfocused();
+                    _focusedObject = focusedObject;
+                }
+                else
+                {
+                    if (IsSelectedObject(_focusedObject) == false)
+                    {
+                        _focusedObject?.Unfocused();
+                    }
+                    _focusedObject = focusedObject;
+                    _focusedObject.Focused();
+                }
+            }
+            else
+            {
+                //Unfocus조건
+                //1. 선택된 오브젝트는 Unfocus되지 않는다.
+                //2. 선택된 오브젝트가 아니며 포커싱 중인 오브젝트가 있는 경우는 Unfocus 한다.
+                if (IsSelectedObject(_focusedObject))
+                {
+                    _focusedObject = null;
+                }
+                else
+                {
+                    _focusedObject?.Unfocused();
+                    _focusedObject = null;
+                }
+            }
+        }
+    }
+}
+```
+
+### [`MyRoomEditorPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/)에서 UI위에 포인터가 올라간 상태에서 `PointerDown()` 시 동작하지 않게 적용
+```csharp
+public override void OnPointerDown()
+{
+    if (InputUtils.IsPointerOnUI()) return;
+    if (!_isPlaceable) return;
+    MoveAccept();
+}
+```
+
+## 관련 클래스
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)
+- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementManager)
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea)
+- [`MyRoomEditorPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/)
+- [`MyRoomEditorPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/)
+- [`MyRoomEditorPropRotator`](/docs/projects/rfice/housingsystem/myroomproprotator/)

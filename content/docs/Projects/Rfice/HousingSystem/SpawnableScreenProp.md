@@ -9,18 +9,15 @@ toc = true
 weight = 417
 +++
 ## 개요
+`SpawnableScreenProp`는 MyRoomEditor에서 스크린을 나타내는 스폰 가능한 오브젝트입니다. 이 클래스는 스크린 핸들러를 제공하며, IMoveableProp과 IScreenProp 인터페이스를 구현합니다.
 
-`SpawnableScreenProp`는 스크린 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 벽에 배치되는 스크린의 특수 기능을 구현하며, 개인공간에서 실시간 파일 공유 기능 모듈(NetworkedScreen)을 사용할 수 있게 설정.
-
-## 주요 역할
-
-- **스크린 인터페이스 제공**: 실시간 파일 공유를 위한 화면 제공
-- **NetworkedScreen 연동**: 네트워크를 통한 파일 공유 모듈 연결
-- **벽 배치 특화**: 벽면 배치에 최적화된 위치 및 기즈모
-- **화면 트랜스폼 제공**: ScreenHandlerTr을 통한 화면 위치 제공
+## 역할
+- 스크린 오브젝트(NetworkedScreen)의 이동 기능 제공
+- 오브젝트 하이라이트 및 선택 상태 관리
+- 기즈모 위치 및 회전 계산
+- 벽에 배치 할 수 있는 오브젝트
 
 ## 구현 인터페이스
-
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 - [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 상호작용 기능
@@ -104,17 +101,59 @@ public void Move(Vector3 position)
 public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 ```
 
-## 사용 예시
+## 기능 설명
+### 편집 기능
+- 이동 변경 지원
+- 하이라이트 상태 표시
 
-### NetworkedScreen 연동
+### 편집 가능성 검증
+- **이동 가능**: 이동 인터페이스 지원
+
+### 배치 프로세스
+1. **위치 이동**: 히트 포인트로 즉시 이동
+2. **타입 검증**: 배치 영역 타입과 PlacementType 일치 확인
+3. **부모 설정**: 배치 영역이 다른 오브젝트 위면 부모 관계 설정
+    - 오브젝트 슬롯 영역에 배치 시 부모 설정
+    - 룸 레벨 배치 시 부모 해제
+4. **시각 피드백**: 유효/무효에 따라 하이라이트 변경
+
+### 하이라이트 상태
+- **Focused**: 녹색 (Valid)
+- **Unfocused**: 기본 (Default)
+- **Selected**: 파란색 (Selected)
+- **Deselected**: 기본 (Default)
+
+### 기즈모 위치
+- 벽 구조물의 회전값에 맞춰 적합한 위치 반환
+- 기즈모는 수평 방향으로 표시
+
+### 기즈모 위치 계산
 ```csharp
-var screenProp = GetComponent<SpawnableScreenProp>();
-var screenTransform = screenProp.ScreenHandlerTr;
-// NetworkedScreen 모듈을 screenTransform에 연결
+public (Vector3,Quaternion) GetGizmoPositionAndRotation()
+{
+    var bounds = _collider.bounds;
+    var fixedRotation = transform.rotation.eulerAngles.y - 90;
+    var gizmoRotation = new Vector3(0, fixedRotation, 90);
+    var offsetDirection = fixedRotation switch
+    {
+        RightDirectionKey => (Vector3.right * bounds.size.x) + (Vector3.right *0.5f),
+        BackDirectionKey => (Vector3.back * bounds.size.z) + (Vector3.back *0.5f),
+        ForwardDirectionKey => (Vector3.forward * bounds.size.z) + (Vector3.forward *0.5f),
+        LeftDirectionKey => (Vector3.left * bounds.size.x) + (Vector3.left *0.5f),
+        _ => Vector3.zero
+    };
+    Vector3 offset = bounds.center + offsetDirection;
+    return (offset, Quaternion.Euler(gizmoRotation));
+}
 ```
 
-## 의존성
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받음.
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IScreenProp`](/docs/projects/rfice/housingsystem/iscreenprop/) 인터페이스를 구현.
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/) 컴포넌트를 사용.
 
+## 관련 클래스
 - [`NetworkedScreen`](/docs/projects/rfice/incomplete/fileshare/): 실시간 파일 공유 모듈
 - [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
 - [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스

@@ -11,18 +11,18 @@ weight = 403
 
 ## 개요
 
-`MyRoomEditorPlacementManager`는 [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받아 오브젝트의 생성 및 배치를 관리하는 클래스. Raycast를 이용해 사용자의 입력에 따라 오브젝트 배치 위치를 검증하고, 배치 상태에서 이동 및 회전 처리를 담당.
+`MyRoomEditorPlacementManager`는 MyRoomEditor에서 [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받아 오브젝트 생성/배치 작업을 관리하는 상태 기반 클래스입니다. [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 사용하여 배치 가능한 영역을 감지하고, 사용자의 입력에 따라 프로퍼티의 위치와 회전을 실시간으로 조정합니다. 배치 완료 시 프로퍼티를 영구적으로 배치하고 관련 데이터를 저장합니다.
 
-## 주요 역할
+## 역할
+- 오브젝트 배치 대상 설정 및 초기화
+- 레이캐스트 기반 배치 위치 검증 및 이동 처리([`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/) 사용)
+- 포인터 입력을 통한 자유 회전 처리
+- 배치 완료 및 취소 로직 관리
+- 배치 상태와 UI 상태 간 동기화
+- 배치된 프로퍼티의 영구 저장 및 부모-자식 관계 설정
 
-- **오브젝트 배치**: Raycast를 통해 배치 가능한 위치를 검증하고 오브젝트를 월드에 배치.
-- **실시간 위치 검증**: 코루틴을 사용한 실시간 배치 검증.
-- **회전 처리**: 마우스 입력에 따른 자유 회전 및 스냅 회전 지원.
-- **배치 취소**: ESC 키를 통한 배치 취소 및 상태 복원.
-
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 입력 유틸리티 클래스. 마우스 입력 및 Raycast 처리를 담당.
@@ -88,7 +88,7 @@ private bool _isRotating;
 private int _targetLayer;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 배치를 취소하는 public 메서드.
@@ -138,7 +138,6 @@ private void ReleasePlacementBehaviour()
 ```
 
 ## 코드 스니펫
-
 ### 오브젝트 배치 프로세스
 ```csharp
 public void SetPlacementTarget(GameObject targetObject)
@@ -240,27 +239,53 @@ private IEnumerator CoRotationHandle()
 }
 ```
 
-## 주요 기능 설명
 
-### 배치 프로세스
-1. `SetPlacementTarget()` 호출로 배치 모드 시작
-2. `CoDetectPlacement` 코루틴이 실시간으로 배치 가능 위치 검증
-3. 마우스 클릭으로 배치 완료 (`Placement()`)
-4. 배치 후 편집 모드로 전환
+## 기능 설명
 
-### 입력 처리
-- **좌클릭**: 배치 위치 선택
-- **우클릭**: 스냅 회전 (45도 단위)
-- **ESC**: 배치 취소
+### 배치 대상 설정
+- `SetPlacementTarget()`: 배치할 오브젝트를 설정하고 Placement 상태로 전환. 기존 배치 오브젝트를 정리하고 감지 코루틴을 시작.
+
+### 실시간 배치 감지
+- `CoDetectPlacement()`: 배치 중인 오브젝트의 위치를 실시간으로 업데이트. 레이캐스트를 사용하여 배치 가능한 영역을 감지.
 
 ### 배치 검증
-- Physics.Raycast를 사용한 충돌 감지
-- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/) 인터페이스를 통한 배치 영역 검증
-- 실시간으로 배치 가능성 피드백 제공
+- `PlaceableHitPoint()`: 레이캐스트 결과를 기반으로 배치 가능 여부를 판단. [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/) 인터페이스를 구현한 영역에서만 배치 가능.
+
+### 입력 처리
+- `OnPointerDown()`: 배치 중 클릭 시 회전 모드로 전환합니다.
+- `OnPointerUp()`: 배치 가능 시 배치를 완료합니다.
+- `OnRightClick()`: 90도 회전 스냅을 적용합니다.
+- `OnCancel()`: 배치를 취소하고 상태를 초기화합니다.
+
+### 회전 처리
+- `CoRotationHandle()`: 포인터 델타를 기반으로 자유 회전을 수행합니다.
+
+### 배치 완료
+- `Placement()`: 배치를 완료하고 프로퍼티 정보를 저장합니다. 부모-자식 관계를 설정하고 편집 상태로 전환합니다.
+
+## 의존성/상속 관계
+
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받음.
+- Zenject를 사용하여 [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 의존성 주입받음.
+- [`IMoveableProp`](/docs/projects/rfice/HousingSystem/IMoveableProp), [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea), [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase), [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
+
+## 사용 예시
+### 오브젝트 생성 UI에서 오브젝트 선택시
+```csharp
+private void OnSpawnProp(string downloadKey)
+{
+    _spawner.SpawnProp(downloadKey, obj =>
+    {
+        _myRoomEditorPlacementManager.SetPlacementTarget(obj);
+        editorDefaultBar.SetActiveCategoryScrollView(false);
+        myRoomEditorObjectEditUI.ShowSpawnPropNamePanel(scrollPanelPresenter.GetPropNameKey(downloadKey));
+    });
+}
+```
 
 ## 관련 클래스
-- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/): 부모 클래스
-- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): 입력 유틸리티
-- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 가능한 오브젝트 인터페이스
-- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 인터페이스
-- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 가능한 오브젝트 인터페이스
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)
+- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/)
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/)

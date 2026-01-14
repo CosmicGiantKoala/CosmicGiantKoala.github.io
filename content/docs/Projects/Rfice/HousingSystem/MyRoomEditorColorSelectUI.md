@@ -10,14 +10,13 @@ weight = 430
 +++
 ## 개요
 
-`MyRoomEditorColorSelectUI`는 색상 선택 UI를 처리하는 클래스. 사용할 수 있는 색상 옵션을 표시하고 선택 이벤트 처리.
+`MyRoomEditorColorSelectUI` 클래스는 MyRoomEditor에서 색상 선택 UI를 관리하는 컴포넌트입니다. 색상 리스트를 표시하고 사용자의 선택을 처리하며, 선택된 색상 인덱스를 이벤트로 전달합니다.
 
-## 주요 역할
-
-- **색상 리스트 표시**: 사용 가능한 색상 옵션들을 UI에 표시
-- **선택 상태 관리**: 현재 선택된 색상을 하이라이트 표시
-- **이벤트 전달**: 색상 선택 이벤트를 외부로 전달
-- **UI 상태 제어**: 색상 항목들의 활성화/비활성화 관리
+## 역할
+- 색상 아이템 리스트 관리 및 표시
+- 색상 선택 상태 관리
+- 선택된 색상 이벤트 발생
+- UI 초기화 및 상태 동기화
 
 ### 이벤트
 ```csharp
@@ -96,25 +95,33 @@ private void OnSelectMaterialColor(int index)
 }
 ```
 
-## 주요 기능 설명
+## 기능 설명
 
-### 색상 리스트 관리
-- **동적 리스트 생성**: 제공된 색상 리스트에 따라 UI 항목들을 동적으로 생성 및 표시
-- **항목 상태 관리**: 각 색상 항목의 선택/해제 상태를 독립적으로 관리
-- **현재 선택 표시**: 현재 적용된 색상을 시각적으로 구분하여 표시
+### 색상 리스트 표시
+- `OnDrawColorList()`: 제공된 색상 리스트를 UI 아이템에 바인딩
+- 현재 선택된 색상 인덱스에 따라 선택 상태 표시
+
+### 선택 상태 관리
+- 단일 선택 모드: 하나의 색상만 선택 가능
+- 선택 변경 시 이전 선택 해제 및 새로운 선택 활성화
+- 현재 적용된 색상을 시각적으로 구분하여 표시
 
 ### 이벤트 처리
-- **단일 선택 보장**: 하나의 색상만 선택된 상태로 유지
-- **이벤트 전파**: 선택된 색상 인덱스를 외부 컴포넌트로 전달
-- **상태 동기화**: 선택 변경 시 모든 관련 UI 요소들의 상태 업데이트
+- 색상 선택 시 인덱스를 이벤트로 전달
+- 부모 컴포넌트가 선택 처리 수행
 
-### UI 라이프사이클
-- **초기화**: Awake에서 색상 항목들을 초기 설정하고 이벤트 연결
-- **재사용**: 리스트 변경 시 기존 항목들을 재활용하여 성능 최적화
-- **정리**: 선택 해제 시 모든 항목을 초기 상태로 복원
+### 초기화
+- 색상 항목들을 초기 설정하고 이벤트 연결
+- 선택 해제 시 모든 항목을 초기 상태로 복원
+- 리스트 변경 시 기존 항목들을 재활용하여 성능 최적화
+
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`MyRoomEditorColorEditItem`](/docs/projects/rfice/HousingSystem/MyRoomEditorColorEditItem)에 의존.
+- `MyRoomPropColor` 클래스 사용.
 
 ## 관련 클래스
 
-- [`MyRoomEditorColorEditItem`](/docs/projects/rfice/housingsystem/myroomeditorcoloredititem/): 개별 색상 항목을 표시하는 UI 컴포넌트
-- `MyRoomPropColor`: 색상 정보를 담는 데이터 클래스
-- [`MyRoomEditorObjectEditUI`](/docs/projects/rfice/housingsystem/myroomeditorobjecteditui/): 색상 선택 UI를 사용하는 부모 UI 클래스
+- [`MyRoomEditorColorEditItem`](/docs/projects/rfice/housingsystem/myroomeditorcoloredititem/)
+- [`MyRoomEditorObjectEditUI`](/docs/projects/rfice/housingsystem/myroomeditorobjecteditui/)
+- [`IColorEditableProp`](/docs/projects/rfice/HousingSystem/IColorEditableProp)

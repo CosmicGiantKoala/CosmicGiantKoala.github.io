@@ -10,19 +10,17 @@ weight = 402
 +++
 
 ## 개요
+`MyRoomEditorState`는 MyRoomEditor의 상태 관리를 위한 추상 베이스 클래스입니다. 상태 기반 아키텍처를 구현하여 각 상태(편집, 배치 등)가 독립적으로 동작할 수 있도록 합니다. 입력 이벤트 처리와 상태 전환을 중앙 집중화합니다.
 
-`MyRoomEditorState`는 MyRoomEditor 시스템의 상태 관리를 담당하는 추상 클래스. 다양한 배치/편집 상태를 전환 및 관리하며, 입력 이벤트를 처리하고 상태 변화에 따라 입력을 활성화/비활성화.
+## 역할
+- MyRoomEditor의 상태 기반 아키텍처 제공(`MyRoomEditorStateEnum`에 따라 상태를 전환하고 관리.)
+- 입력 이벤트의 상태별 중계
+- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)를 통해 편집 관련 입력 이벤트를 처리.
+- 상태 전환 시 자동 입력 활성화/비활성화
+- 서브클래스에서 구현되는 추상 메서드를 통해 구체적인 상태 로직 구현
 
-## 주요 역할
-
-- **상태 관리**: `MyRoomEditorStateEnum`에 따라 상태를 전환하고 관리.
-- **입력 처리**: [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)를 통해 편집 관련 입력 이벤트를 처리.
-- **상태별 프로세스**: 서브클래스에서 구현되는 추상 메서드를 통해 상태별 동작을 정의.
-- **의존성 주입**: Zenject를 사용한 객체 간 의존성 주입.
-
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 상태 변경을 처리하는 핸들러. Zenject를 통해 주입되며, 상태 전환 이벤트를 관리.
@@ -44,10 +42,9 @@ protected MyRoomEditorEdittingInputDispatcher EditorInputDispatcher;
 /// </summary>
 [SerializeField]
 protected MyRoomEditorPlacementPresenter placementPresenter;
-
 ```
 
-### 추상 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 마우스 왼쪽 버튼이 눌렸을 때 호출되는 메서드.
@@ -87,7 +84,6 @@ protected abstract void Disable();
 ```
 
 ## 코드 스니펫
-
 ### 상태 변경 프로세스
 ```csharp
 /// <summary>
@@ -124,33 +120,53 @@ private void OnChangedState(MyRoomEditorStateEnum state)
 }
 ```
 
-## 상속 구조
+## 기능 설명
+### 상태 기반 아키텍처
+- 각 상태 클래스가 특정 상태(targetState)에 바인딩
+- 상태 변경 시 자동으로 입력 이벤트 대상 변경
+- 상태 전환 시 Enable/Disable 호출
 
-`MyRoomEditorState`는 다음과 같은 서브클래스를 가집니다:
-- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/): 오브젝트 생성 및 배치 상태 관리
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 오브젝트 편집 상태 관리
+### 입력 이벤트 관리
+- 상태 활성화 시 입력 이벤트 구독
+- 상태 비활성화 시 입력 이벤트 해제
+- 추상 메서드를 통한 상태별 입력 처리 구현
 
-## 의존성
-
-- `MyRoomEditorStateHandle`: 상태 변경 이벤트 관리
-- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/): 편집 입력 이벤트 처리
-- `MyRoomEditorPlacementPresenter`: 배치 관련 프리젠터
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`MyRoomEditorStateHandle`](/docs/projects/rfice/HousingSystem/MyRoomEditorStateHandle)에 의존.
+- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/HousingSystem/MyRoomEditorEditingInputDispatcher)에 의존.
+- [`MyRoomEditorPlacementPresenter`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementPresenter)에 의존.
+- `MyRoomEditorState`의 서브 클래스
+  - [`MyRoomEditorPlacementManager`](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/): 오브젝트 생성 및 배치 상태 관리
+  - [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 오브젝트 편집 상태 관리
 
 ## 사용 예시
-
-서브클래스 구현 예시:
+### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 상속받아 편집 상태 구현
 ```csharp
-public class MyRoomEditorPlacementManager : MyRoomEditorState
+public class MyRoomEditorPropEditingManager : MyRoomEditorState
 {
     protected override void Enable()
     {
-        // 배치 모드 활성화 프로세스
+        // 편집 상태 활성화 로직
+        Debug.Log("Edit mode enabled");
     }
-
+    
     protected override void Disable()
     {
-        // 배치 모드 비활성화 프로세스
+        // 편집 상태 비활성화 로직
+        Debug.Log("Edit mode disabled");
     }
-
-    // ... 다른 추상 메서드 구현
+    
+    protected override void OnPointerDown()
+    {
+        // 포인터 다운 처리 로직
+    }
+    
+    // 다른 추상 메서드 구현...
 }
+```
+
+## 관련 클래스
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/)
+- [`MyRoomEditorStateHandle`](/docs/projects/rfice/HousingSystem/MyRoomEditorStateHandle)

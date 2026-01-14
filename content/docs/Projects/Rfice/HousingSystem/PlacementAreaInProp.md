@@ -9,18 +9,16 @@ toc = true
 weight = 428
 +++
 ## 개요
+`PlacementAreaInProp`는 오브젝트에 추가 배치 가능한 슬롯 영역(책상 위 등)을 정의하는 클래스입니다. [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스를 구현하여 슬롯 위치에 다른 오브젝트를 배치할 수 있도록 합니다. 배치 타입에 따라 적절한 레이어로 설정됩니다.
 
-`PlacementAreaInProp`는 책상, 탁자 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.
+## 역할
+- 오브젝트에 추가 배치 슬롯 영역 정의
+- 배치 타입에 따른 레이어 설정
+- 부모 프로퍼티 참조 관리
+- 배치 가능 여부 및 위치 정보 제공
 
-## 주요 역할
-
-- **부모 오브젝트 연동**: 배치 영역을 특정 오브젝트와 연결
-- **레이어 설정**: 배치 타입에 따라 적절한 레이어 설정
-- **부모 관계 추적**: 배치 영역이 속한 부모 오브젝트 정보 제공
-
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 배치 영역 타입 (Floor, Wall, Ceiling 등)
@@ -29,15 +27,15 @@ weight = 428
 private PlacementType _placementType;
 
 /// <summary>
-/// 이 배치 영역이 속한 부모 오브젝트
+/// 이 배치 영역이 속한 오브젝트
 /// </summary>
 private SpawnablePropBase _baseParent;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
-/// 부모 오브젝트와 배치 영역을 연결하고 레이어를 설정.
+/// 슬롯을 가진 오브젝트와 배치 영역을 연결하고 레이어를 설정.
 /// </summary>
 public void SetPlacementAreaInProp(SpawnablePropBase parent)
 
@@ -52,29 +50,53 @@ public PlacementType GetPlacementType()
 public Quaternion GetPlacementRotation()
 
 /// <summary>
-/// 해당 컴포넌트가 `PlacementAreaInProp`(오브젝트 중복배치 영역)인지 확인하고 부모 오브젝트 반환
+/// 해당 배치 가능 영역이 `PlacementAreaInProp`(오브젝트 중복배치 영역)인지 확인하고 오브젝트 반환
 /// </summary>
 public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 ```
 
-## 구현 인터페이스
+## 기능 설명
+### 배치 정보 제공
+- 배치 타입 정보 제공
+- 배치 회전 정보 제공 (transform.rotation)
+- 해당 영역을 소유한 슬롯 오브젝트 반환.
 
-- `IPlaceableArea`: 배치 영역 인터페이스
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스 구현.
+- [`PlacementType`](/docs/projects/rfice/HousingSystem/PlacementType) 열거형 사용.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)에 의존.
+- - `Collider` 컴포넌트 필요 (RequireComponent).
 
 ## 사용 예시
-
+### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
 ```csharp
-// 부모 오브젝트와 배치 영역 연결
-placementAreaInProp.SetPlacementAreaInProp(parentObject);
-
-// 배치 영역이 오브젝트 위에 있는지 확인
-if (placementAreaInProp.IsPlacementAreaInProp(out var parent))
+public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
 {
-    Debug.Log($"배치 영역은 {parent.PropNameKey} 위에 있습니다.");
+    Move(hitPosition);
+    transform.rotation = area.GetPlacementRotation();
+    
+    if (area.GetPlacementType() != PlacementType)
+    {
+        _propEditingState.Invalid();
+        return false;
+    }
+    if (area.IsPlacementAreaInProp(out var parent))
+    {
+        SetPropParent(parent);
+    }
+    else
+    {
+        ClearPropParent();
+    }
+
+    _propEditingState.Valid();
+    return true;
 }
 ```
 
 ## 관련 클래스
-
-- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 오브젝트로 사용되는 배치 가능한 오브젝트
-- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 구현하는 인터페이스
+- [`PlacementAreaProp`](/docs/projects/rfice/HousingSystem/PlacementAreaProp)
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea)
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)
+- [`PlacementType`](/docs/projects/rfice/HousingSystem/PlacementType)

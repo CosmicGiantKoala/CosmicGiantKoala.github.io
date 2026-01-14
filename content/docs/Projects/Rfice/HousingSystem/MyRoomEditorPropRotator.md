@@ -9,19 +9,18 @@ toc = true
 weight = 408
 +++
 ## 개요
+`MyRoomEditorPropRotator`는 MyRoomEditor에서 오브젝트의 회전 편집을 담당하는 클래스입니다. [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor)를 상속받아 회전 편집 기능을 구현하며, PointerDelta 통한 실시간 회전과 기즈모 표시를 제공합니다.
 
-`MyRoomEditorPropRotator`는 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속받아 오브젝트의 회전을 담당하는 클래스. InputUtils를 통해 초기 마우스 상태를 캐싱하고 마우스의 이동범위만큼 오브젝트를 좌/우로 회전.
+## 역할
 
-## 주요 역할
+- 오브젝트의 회전 편집 기능 제공
+- PointerDelta를 추적하여 실시간 회전 조작
+- 회전 화살표 기즈모 표시 및 업데이트
+- 스냅 회전 기능 지원
+- 회전 각도에 따른 머티리얼 파라미터 업데이트(커스텀 쉐이더 효과)
+- ESC 키로 회전 취소 및 원래 각도 복원
 
-- **자유 회전**: 마우스 드래그로 실시간 자유 회전
-- **스냅 회전**: 우클릭으로 단계별 회전 (45도 단위)
-- **기즈모 표시**: 회전 방향을 나타내는 기즈모 표시
-- **실행 취소**: ESC 키로 회전 취소 및 원래 각도 복원
-- **시각적 피드백**: 회전 각도에 따른 Material 효과 적용
-
-## 주요 멤버
-
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
@@ -30,7 +29,7 @@ weight = 408
 public event Action OnFinishRotate;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 회전 방향을 표시하는 화살표 기즈모 오브젝트.
@@ -66,7 +65,7 @@ private Coroutine _detector;
 private readonly int _rotateAnglePropertyId = Shader.PropertyToID("_Angle");
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 회전할 오브젝트 설정 메서드.
@@ -162,30 +161,76 @@ private void ReleaseRotateBehaviour()
 }
 ```
 
-## 주요 기능 설명
+
+## 기능 설명
+### 회전 편집 활성화
+- 회전 검출 코루틴 시작
+- 회전 화살표 기즈모 활성화
+- 기즈모 위치 및 회전 설정
 
 ### 회전 프로세스
-1. **Setup**: 회전 가능한 오브젝트 확인 및 초기 회전 값 캐시
-2. **Enable**: 회전 감지 코루틴 시작 및 기즈모 활성화
-3. **실시간 회전**: 마우스 드래그로 실시간 회전 적용
-4. **시각적 피드백**: Material의 _Angle 속성으로 회전 각도 반영
-5. **클릭으로 확정**: 마우스 클릭 시 회전 완료
-6. **데이터 업데이트**: 회전 완료 후 배치 정보 업데이트
+1. `Setup(IMyRoomEditorEditableObject setUpObject)`: 회전 가능한 오브젝트 확인 및 초기 상태 캐시
+2. `Enable()`: 회전 감지 코루틴 시작 및 기즈모 활성화
+3. `CoDetectRotate()`: PointerDelta를 통해 실시간 회전 적용
+4. `RotateAccept()()`: 마우스 클릭 시 회전 적용
 
-### 입력 처리
-- **마우스 delta**: 마우스 이동에 따른 실시간 회전
-- **우클릭**: 45도 단위 스냅 회전
-- **좌클릭**: 회전 확정
-- **ESC**: 회전 취소
+### 실시간 회전 조작
+- 포인터 델타 값을 기반으로 실시간 회전 적용
+- Y축 회전을 중심으로 한 쿼터니언 계산
+- 회전 값에 따라 커스텀 쉐이더 머티리얼 파라미터 업데이트
+
+### 기즈모 표시
+- 회전 화살표를 오브젝트의 기즈모 위치에 표시
+- 기즈모 회전 방향 설정
+
+### 스냅 회전
+- 우클릭 시 지정된 스냅 값만큼 회전
+- 정밀한 각도 조정 지원
+
+### 취소 및 복원
+- 취소 시 캐시된 회전 값으로 복원
+- 편집 상태 해제 및 이벤트 발생
 
 ### Material 효과
 - Shader의 _Angle 속성을 사용하여 회전 각도를 시각적으로 표현
 - 실시간으로 회전 값에 따라 Material 업데이트
 - ![rfice_myroom_transformGizmo](/images/rfice_myroom_transformGizmo.png)
 
+## 의존성/상속 관계
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor)를 상속받음.
+- [`IRotatableProp`](/docs/projects/rfice/HousingSystem/IRotateableProp) 인터페이스 사용.
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
+
+## 사용 예시
+### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 회전 편집 모드 전환
+```csharp
+private void OnChangedEditMode(PropEditMode mode)
+{
+    editingMode = mode;
+    if (editingMode == PropEditMode.Disable)
+    {
+        CleanUpPropEditor();
+        return;
+    }
+    
+    propEditor?.Disable();
+    propEditor = SwitchPropEditor();
+    if(propEditor.Setup(_editingObject)) propEditor.Enable();
+}
+
+private MyRoomEditorPropEditor SwitchPropEditor()
+{
+    return editingMode switch
+    {
+        PropEditMode.Select => propSelector,
+        PropEditMode.Move => propMover,
+        PropEditMode.Rotate => propRotator,
+    };
+}
+```
 
 ## 관련 클래스
-- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/): 부모 클래스
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 사용자
-- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): 입력 처리 및 포인터 델타 계산
-- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 가능한 오브젝트 인터페이스
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/)

@@ -9,26 +9,27 @@ toc = true
 weight = 416
 +++
 ## 개요
+`SpawnablePhotoFrameProp`는 MyRoomEditor에서 사진 프레임을 나타내는 스폰 가능한 오브젝트입니다. 이 클래스는 사용자가 사진을 업로드하고 표시할 수 있는 기능을 제공하며, IMoveableProp과 IPhotoFrameProp 인터페이스를 구현합니다.
 
-`SpawnablePhotoFrameProp`는 사진 프레임 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 벽에 배치되는 사진 프레임의 특수 기능을 구현.
-
-## 주요 역할
-
-- **이미지 로딩 및 표시**: URL로부터 텍스처를 로드하여 프레임에 표시
-- **동적 이미지 변경**: 편집 시 이미지 업로드 및 교체
-- **벽 배치 특화**: 벽면 배치에 최적화된 기즈모 및 이동
-- **데이터 지속성**: 이미지 URL을 배치 데이터에 저장
+## 역할
+- 사진 프레임 오브젝트의 이동 및 편집 기능 제공
+- 이미지 업로드 명령 및 콜백 받은 URL을 오브젝트 텍스처 적용 처리
+- 오브젝트 하이라이트 및 선택 상태 관리
+- 기즈모 위치 및 회전 계산
+- 이미지 URL 데이터 관리
+- 벽에 배치 할 수 있는 오브젝트
 
 ## 구현 인터페이스
-
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 - [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/): 사진 프레임 특수 기능
 - [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 상호작용 기능
 
-## 주요 컴포넌트
+## 멤버
+### 이벤트
+- `OnCompleteAppliedImageCallback`: 이미지 적용 완료 시 호출되는 이벤트
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// Zenject를 통한 의존성 주입: 인터랙션 매니저
@@ -63,7 +64,7 @@ private string _imgPath;
 private PropEditingState _propEditingState;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 오브젝트 삭제 메서드.
@@ -152,7 +153,6 @@ public void Interact()
 ```
 
 ## 코드 스니펫
-
 ### 이미지 업로드 완료 처리
 ```csharp
 public void OnCompleteUpload(string imgPath)
@@ -191,31 +191,79 @@ public void Interact()
 }
 ```
 
-
-## 주요 기능 설명
-
-### 이미지 처리 워크플로우
+## 기능 설명
+### 이미지 관리
 1. **업로드 요청**: [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/)를 통해 이미지 업로드
-2. **완료 콜백**: `OnCompleteUpload`에서 이미지 경로 수신
-3. **텍스처 로드**: `TextureLoaderFromURL`로 URL로부터 텍스처 로드
-4. **이미지 적용**: `ApplyImage`에서 프레임에 이미지 표시
+2. **완료 콜백**: `OnCompleteUpload(string imgPath)`에서 이미지 경로 수신
+3. **텍스처 로드**: `TextureLoaderFromURL`(외부 유틸리티 클래스)로 URL로부터 텍스처 로드
+4. **이미지 적용**: `ApplyImage(Texture2D img)`에서 프레임에 이미지 표시
 5. **데이터 저장**: 배치 데이터에 이미지 URL 저장
+
+### 편집 기능
+- 이동, 이미지 텍스쳐 변경 지원
+- 하이라이트 상태 표시
+
+### 편집 가능성 검증
+- **이미지 변경 가능**: 이미지 변경 인터페이스 지원
+- **이동 가능**: 이동 인터페이스 지원
+
+### 배치 프로세스
+1. **위치 이동**: 히트 포인트로 즉시 이동
+2. **타입 검증**: 배치 영역 타입과 PlacementType 일치 확인
+3. **부모 설정**: 배치 영역이 다른 오브젝트 위면 부모 관계 설정
+    - 오브젝트 슬롯 영역에 배치 시 부모 설정
+    - 룸 레벨 배치 시 부모 해제
+4. **시각 피드백**: 유효/무효에 따라 하이라이트 변경
+
+### 하이라이트 상태
+- **Focused**: 녹색 (Valid)
+- **Unfocused**: 기본 (Default)
+- **Selected**: 파란색 (Selected)
+- **Deselected**: 기본 (Default)
+
+### 기즈모 위치
+- 벽 구조물의 회전값에 맞춰 적합한 위치 반환
+- 기즈모는 수평 방향으로 표시 
+
+### 기즈모 위치 계산
+```csharp
+public (Vector3,Quaternion) GetGizmoPositionAndRotation()
+{
+    var bounds = _collider.bounds;
+    var fixedRotation = transform.rotation.eulerAngles.y - 90;
+    var gizmoRotation = new Vector3(0, fixedRotation, 90);
+    var offsetDirection = fixedRotation switch
+    {
+        RightDirectionKey => (Vector3.right * bounds.size.x) + (Vector3.right *0.5f),
+        BackDirectionKey => (Vector3.back * bounds.size.z) + (Vector3.back *0.5f),
+        ForwardDirectionKey => (Vector3.forward * bounds.size.z) + (Vector3.forward *0.5f),
+        LeftDirectionKey => (Vector3.left * bounds.size.x) + (Vector3.left *0.5f),
+        _ => Vector3.zero
+    };
+    Vector3 offset = bounds.center + offsetDirection;
+    return (offset, Quaternion.Euler(gizmoRotation));
+}
+```
+
+### 인터랙션 초기화
+- `Interact()` 메서드로 룸 진입 시 자동 이미지 로드
+- 저장된 URL로부터 텍스처를 로드하여 프레임에 적용
 
 ### 벽 배치 특화
 - 배치 시 `area.GetPlacementRotation()`으로 벽면 방향 자동 설정
 - 기즈모는 벽 방향에 따라 오브젝트 측면에 배치
 - 회전은 불가능하여 벽면 고정 유지
 
-### 인터랙션 초기화
-- `Interact()` 메서드로 룸 진입 시 자동 이미지 로드
-- 저장된 URL로부터 텍스처를 로드하여 프레임에 적용
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받음.
+- `IMoveableProp`, `IPhotoFrameProp` 인터페이스를 구현.
+- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorInteractionManager)에 의존.
+- `PropImageRenderer`, `TextureLoaderFromURL`, [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/) 컴포넌트를 사용.
 
 ## 관련 클래스
-
-- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/): 이미지 업로드 처리
-- `PropImageRenderer`: 이미지 렌더링
-- `TextureLoaderFromURL`: 텍스처 로드
-- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
-- `MyRoomMaterialChangeHelper`: Material 변경 처리
-- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스
-- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 구현된 인터페이스
+- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/)
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/)
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)
+- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/)

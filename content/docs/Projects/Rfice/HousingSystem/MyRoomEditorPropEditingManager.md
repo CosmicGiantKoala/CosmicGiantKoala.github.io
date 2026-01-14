@@ -10,21 +10,21 @@ weight = 404
 +++
 
 ## 개요
+`MyRoomEditorPropEditingManager`는 MyRoomEditor에서 [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받아 오브젝트 편집 작업을 총괄하는 상태 기반 클래스입니다. 선택, 이동, 회전, 색상 변경, 삭제, 사진 업로드 등의 편집 기능을 통합 관리하며, UI 컴포넌트들과의 상호작용을 조율합니다. 이벤트 기반 아키텍처를 통해 다양한 편집 도구와의 협력을 지원합니다.
 
-`MyRoomEditorPropEditingManager`는 [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받아 오브젝트의 편집 상태를 관리하는 클래스. 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행하며, 서브 에디터들과 UI 이벤트를 통해 편집 동작을 처리.
+## 역할
+- 오브젝트 선택 및 해제 상태 관리
+- 상태 관리와 전략패턴을 결합하여 분리된 편집모드를 관리하고 상황에 따라 편집모드 전환.
+- 전환된 편집모드에 override된 입력 동작을 전달.
+- 색상 변경, 사진 업로드, 삭제 기능의 실행 및 결과 처리
+- 편집 UI와의 통합 및 이벤트 중계
+- 배치된 프로퍼티의 데이터 베이스 등록/해제 및 부모-자식 관계 관리
+- 편집 작업의 취소 및 상태 정리
+- 삭제 시 자식 프로퍼티의 연쇄 삭제 처리
 
-## 주요 역할
+## 멤버
 
-- **오브젝트 편집 모드 관리**: 상태 관리와 전략패턴을 결합하여 분리된 편집모드를 관리하고 상황에 따라 편집모드 전환.
-- **편집 모드별 명령 호출**: 전환된 편집모드에 override된 입력 동작을 전달.
-- **UI 연동**: 편집 UI와의 상호작용 처리.
-- **색상 및 인터렉션 편집**: Material 변경 및 특수 인터렉션 처리.
-- **데이터베이스 처리**: 편집 모드에서 변경된 오브젝트 데이터베이스 처리 이벤트 호출. 
-- **오브젝트 삭제**: 편집 UI를 통해 오브젝트 삭제 및 데이터베이스 이벤트 호출.
-
-## 주요 멤버
-
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 입력 처리 유틸리티 클래스.
@@ -297,31 +297,48 @@ private MyRoomEditorPropEditor SwitchPropEditor()
 }
 ```
 
-## 주요 기능 설명
 
-### 편집 모드
-- **Select**: 오브젝트 선택 모드(OnObjectSelected호출)
-- **Move**: 오브젝트 이동 모드(OnFinishMove호출)
-- **Rotate**: 오브젝트 회전 모드(OnFinishRotate호출)
-- **Disable**: 편집 비활성화
+## 기능 설명
 
-### 삭제 처리
-- 재귀적으로 자식 오브젝트까지 삭제
-- 데이터베이스에서 정보 제거
-- UI 및 상태 업데이트
+### 프로퍼티 선택 및 편집
+- `OnObjectSelected()`: 오브젝트 선택 시 편집 UI를 표시하고 편집 상태를 설정.
+- `OnReleaseSelected()`: 선택 해제 시 UI를 숨기고 편집 상태를 정리.
+
+### 삭제 기능
+- `OnDeleteEvent()`: 선택된 오브젝트와 그 자식들을 재귀적으로 삭제. 배치 정보를 제거하고 등록을 해제.
 
 ### 색상 변경
-- Material 동적 로드 및 적용
-- 프리젠터를 통한 데이터 업데이트
+- `OnActiveChangeColorTool()`: 색상 변경 UI를 활성화하고 사용 가능한 색상 리스트를 표시.
+- `OnSelectedColorToChange()`: 선택된 색상을 로드하여 적용하고 배치 정보를 업데이트.
 
-### 인터렉션 처리
-- 사진 프레임 이미지 업로드
-- 특수 오브젝트 인터렉션 지원
+### 이동 및 회전
+- `OnActiveMoveTool()`: 이동 모드로 전환.
+- `OnActiveRotateFreeTool()`: 자유 회전 모드로 전환.
+- `OnRotateQuarter()`: 90도 스냅 회전을 적용.
+
+### 사진 업로드
+- `OnUploadPhoto()`: 사진 프레임 오브젝트에 대해 이미지 업로드를 시작.
+
+### 모드 관리
+- `OnChangedEditMode()`: 편집 모드를 변경하고 해당 에디터를 활성화.
+- `SwitchPropEditor()`: 현재 모드에 따라 적절한 오브젝트 에디터를 반환.
+
+### 오브젝트 데이터 관리
+- `RegisterProp()`: 새로 배치된 오브젝트를 등록.
+- `UnRegisterProp()`: 삭제된 오브젝트를 등록 해제.
+- `SetPropBaseParentTransform()`: 로드된 오브젝트들의 부모-자식 관계를 설정.
+
+## 의존성/상속 관계
+
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)를 상속받음.
+- Zenject를 사용하여 [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/), [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/), `IPropSpawner`를 의존성 주입받음.
+- [`MyRoomEditorObjectEditUI`](/docs/projects/rfice/HousingSystem/MyRoomEditorObjectEditUI), [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor), [`MyRoomEditorPropSelector`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropSelector), [`MyRoomEditorPropMover`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropMover), [`MyRoomEditorPropRotator`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropRotator), [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject), [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)에 의존.
 
 ## 관련 클래스
-- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/): 부모 클래스
-- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): 입력 처리 유틸리티
-- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/): 인터렉션 관리
-- `IPropSpawner`: 오브젝트 스포닝 인터페이스
-- [`MyRoomEditorObjectEditUI`](/docs/projects/rfice/housingsystem/myroomeditorobjecteditui/): 편집 UI
-- [`MyRoomEditorPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/), [`MyRoomEditorPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/), [`MyRoomEditorPropRotator`](/docs/projects/rfice/housingsystem/myroomproprotator/) : 서브에디터
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)
+- [`MyRoomEditorInteractionManager`](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/)
+- [`MyRoomEditorObjectEditUI`](/docs/projects/rfice/housingsystem/myroomeditorobjecteditui/)
+- [`MyRoomEditorPropSelector`](/docs/projects/rfice/housingsystem/myroompropselector/)
+- [`MyRoomEditorPropMover`](/docs/projects/rfice/housingsystem/myroompropmover/)
+- [`MyRoomEditorPropRotator`](/docs/projects/rfice/housingsystem/myroomproprotator/)

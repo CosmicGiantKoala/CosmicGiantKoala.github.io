@@ -10,18 +10,15 @@ weight = 406
 +++
 
 ## 개요
+`MyRoomEditorPropSelector`는 MyRoomEditor에서 오브젝트 선택 기능을 제공하는 클래스입니다. [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor)를 상속받아 [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)의 레이캐스트를 통한 오브젝트 검출, 포커스 및 선택 상태 관리를 담당합니다.
 
-`MyRoomEditorPropSelector`는 [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)를 상속받아 오브젝트의 선택을 담당하는 클래스. Raycast를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생시킴.
+## 역할
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)를 활용해 레이캐스트를 통한 편집 가능 오브젝트 검출
+- 오브젝트 포커스 및 선택 상태 관리
+- 우선순위 레이어를 통한 정확한 타겟팅
+- 선택 해제 및 상태 정리 기능 제공
 
-## 주요 역할
-
-- **오브젝트 감지**: 실시간으로 마우스 포인터 아래의 편집 가능 오브젝트 감지.
-- **선택 처리**: 클릭을 통해 오브젝트 선택 및 선택 해제.
-- **포커스 관리**: 오브젝트에 대한 포커스 상태 관리 (Focused/Unfocused).
-- **레이어 우선순위**: Prop 레이어를 우선적으로 처리하는 레이어 마스크 관리.
-
-## 주요 멤버
-
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
@@ -36,7 +33,7 @@ public event Action<IMyRoomEditorEditableObject> OnObjectSelect;
 public event Action OnReleaseSelect;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 오브젝트 감지 상태일때 실행되는 코루틴 참조.
@@ -56,7 +53,7 @@ private const string MyRoomWallLayerNameKey = "Wall";
 private const string MyRoomGroundLayerNameKey = "Ground";
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// Raycast 오브젝트 감지 코루틴.
@@ -168,27 +165,68 @@ private void ReleaseSelect()
 }
 ```
 
-## 주요 기능 설명
+## 기능 설명
+### 오브젝트 검출
+- 레이캐스트를 통한 타겟 레이어(MyRoomProp, Wall, Ground) 히트 검출
+- 우선순위 레이어를 통한 정확한 오브젝트 타겟팅
+- UI 위 포인터는 무시
 
-### 오브젝트 상태
-- **Focused**: 마우스가 오브젝트 위에 있음 (시각적 피드백)
-- **Selected**: 클릭으로 선택됨 (편집 가능 상태)
-- **Unfocused**: 마우스가 오브젝트에서 벗어남
+### 포커스 관리
+- 포커스된 오브젝트에 Focused() 호출
+- 선택된 오브젝트는 Unfocus되지 않음
+- 포커스 변경 시 이전 오브젝트 Unfocus
 
-### 선택 프로세스
-1. 같은 오브젝트 재클릭 시 선택 해제
-2. 다른 오브젝트 클릭 시 이전 선택 해제 후 새 오브젝트 선택
-3. 배치 영역(벽, 바닥) 클릭 시 선택 해제
-4. UI 위에서는 선택 동작 무시
+### 선택 로직
+- 포인터 다운 시 포커스된 오브젝트 선택
+- 같은 오브젝트 재선택 시 선택 해제
+- 배치 영역(벽) 클릭 시 선택 해제
+
+### 선택 해제
+- 취소 키 입력 시 선택 해제
+- 선택된 오브젝트 Deselected() 호출
+- 포커스된 오브젝트 정리
 
 ### 실시간 감지
 - 매 프레임마다 Raycast 수행
-- UI 위에서는 감지하지 않음
 - 선택된 오브젝트는 계속 선택 상태 유지
+
+## 의존성/상속 관계
+
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditor)를 상속받음.
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject), [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스 사용.
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
+
+## 사용 예시
+### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 선택모드 전환
+```csharp
+private void OnChangedEditMode(PropEditMode mode)
+{
+    editingMode = mode;
+    if (editingMode == PropEditMode.Disable)
+    {
+        CleanUpPropEditor();
+        return;
+    }
+    
+    propEditor?.Disable();
+    propEditor = SwitchPropEditor();
+    if(propEditor.Setup(_editingObject)) propEditor.Enable();
+}
+
+private MyRoomEditorPropEditor SwitchPropEditor()
+{
+    return editingMode switch
+    {
+        PropEditMode.Select => propSelector,
+        PropEditMode.Move => propMover,
+        PropEditMode.Rotate => propRotator,
+    };
+}
+```
 
 ## 관련 클래스
 
-- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/): Raycast 및 UI 감지 유틸리티
-- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트 인터페이스
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 입력 전달 및 이벤트 리스너
-- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/): 부모 클래스
+- [`MyRoomEditorInputUtils`](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`MyRoomEditorPropEditor`](/docs/projects/rfice/housingsystem/myroompropeditor/)

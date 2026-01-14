@@ -9,18 +9,16 @@ toc = true
 weight = 427
 +++
 ## 개요
+`PlacementAreaProp`는 MyRoomEditor에서 룸 레벨의 배치 가능 영역을 정의하는 클래스입니다. 벽, 바닥, 천장 등의 룸 구조물을 나타내며, [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스를 구현합니다. 오브젝트 배치의 기반이 되는 영역입니다.
 
-`PlacementAreaProp`는 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. 오브젝트가 배치될 수 있는 공간의 범위와 규칙을 지정.
+## 역할
+- 룸 레벨 배치 영역 정의 (벽, 바닥, 천장)
+- 배치 타입 및 회전 정보 제공
+- 프로퍼티 배치 정보 저장/로드
+- 편집 가능 인터페이스 구현 (제한적)
 
-## 주요 역할
-
-- **배치 영역 정의**: 배치 타입과 회전 값 제공
-- **편집 인터페이스**: 색상 편집 인터페이스 구현 (빈 구현)
-- **배치 정보 관리**: 배치된 오브젝트 정보 저장/관리
-
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 배치 영역 타입 (바닥, 벽, 천장 등)
@@ -35,7 +33,7 @@ private PlacementType placementAreaType;
 private Quaternion propRotation;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 배치 영역 타입을 반환.
@@ -53,25 +51,45 @@ public Quaternion GetPlacementRotation()
 public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 ```
 
-## 구현 인터페이스
+## 기능 설명
+### 룸 구조물 표현
+- 벽, 바닥, 천장 등의 룸 레벨 배치 영역 정의
+- 배치 타입과 회전에 따라 다른 오브젝트 배치 가능
 
-- [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 인터페이스
+## 의존성/상속 관계
+
+- `MonoBehaviour`를 상속받음.
+- [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea) 인터페이스 구현.
+- `Collider` 컴포넌트 필요 (RequireComponent).
+- [`PlacementType`](/docs/projects/rfice/HousingSystem/PlacementType) 열거형 사용.
 
 ## 사용 예시
-
+### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
 ```csharp
-// 배치 영역 타입 확인
-var placementType = placementArea.GetPlacementType();
-var rotation = placementArea.GetPlacementRotation();
-
-// 오브젝트 위 배치 영역인지 확인
-if (placementArea.IsPlacementAreaInProp(out var parentProp))
+public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
 {
-    Debug.Log($"배치 영역은 {parentProp.PropNameKey} 위에 있습니다.");
+    Move(hitPosition);
+    transform.rotation = area.GetPlacementRotation();
+    
+    if (area.GetPlacementType() != PlacementType)
+    {
+        _propEditingState.Invalid();
+        return false;
+    }
+    if (area.IsPlacementAreaInProp(out var parent))
+    {
+        SetPropParent(parent);
+    }
+    else
+    {
+        ClearPropParent();
+    }
+
+    _propEditingState.Valid();
+    return true;
 }
 ```
 
 ## 관련 클래스
-
 - [`PlacementType`](/docs/projects/rfice/housingsystem/placementtype/): 배치 타입 열거형
 - [`IPlaceableArea`](/docs/projects/rfice/housingsystem/iplaceablearea/): 배치 영역 인터페이스

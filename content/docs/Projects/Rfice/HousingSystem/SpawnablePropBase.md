@@ -9,18 +9,15 @@ toc = true
 weight = 414
 +++
 ## 개요
+`SpawnablePropBase`는 MyRoomEditor에서 제어 가능한 모든 오브젝트의 abstract 클래스입니다. 오브젝트의 기본 정보, 부모-자식 관계, 배치 정보 관리 및 공통 로직을 담당합니다.
 
-`SpawnablePropBase`는 모든 배치 가능한 오브젝트의 abstract 클래스. 공용 Property 데이터 설정, 상태 정보 관리, 부모-자식 오브젝트 관계 구성, 상태 표현 등 공통 로직을 처리.
+## 역할
+- 프로퍼티 기본 정보 관리 (ID, 타입, 카테고리 등)
+- 부모-자식 관련 프로세스
+- 오브젝트 배치 정보 저장/로드
+- 오브젝트 슬롯 영역 관리
 
-## 주요 역할
-
-- **데이터 관리**: 오브젝트의 속성 및 배치 정보 관리
-- **계층 구조**: 부모-자식 관계 관리
-- **색상 처리**: 색상 변형 및 하이라이트 설정
-- **배치 영역 설정**: 추가 배치 영역 구성
-- **상호작용**: 인터랙터블 컴포넌트 초기화
-
-## 주요 멤버
+## 멤버
 
 ### 속성
 ```csharp
@@ -90,7 +87,7 @@ public abstract IMyRoomEditorEditableObject GetEditableObject();
 protected abstract void SetupPropHighlight();
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 오브젝트 기본 정보를 설정하는 메서드.
@@ -128,7 +125,6 @@ public void RemoveChildProp(SpawnablePropBase childProp)
 ```
 
 ## 코드 스니펫
-
 ### 배치된 오브젝트 초기화
 ```csharp
 public void SetPlacePropInfo(MyRoomPlaceProp placePropInfo)
@@ -210,40 +206,37 @@ public void RemoveChildProp(SpawnablePropBase childProp)
 }
 ```
 
-## 주요 기능 설명
-
-### 데이터 초기화
-- **속성 설정**: 오브젝트의 기본 속성 (ID, 타입, 카테고리 등)
-- **배치 정보 설정**: 위치, 회전, 색상 등의 배치 데이터 설정
-
-### 색상 관리
-- **색상 변형 확인**: 오브젝트가 색상 변경 가능한지 검증
-- **색상 키 매핑**: 저장된 색상 키에 따라 현재 색상 설정
+## 기능 설명
+### 프로퍼티 정보 관리
+- `MyRoomProp` 데이터로부터 기본 정보 설정
+- 배치 타입, 카테고리, 기능 등 저장
 
 ### 계층 구조 관리
-- **부모 설정**: 다른 오브젝트 위에 배치될 때 부모 관계 설정
-- **자식 관리**: 자식 오브젝트 추가/제거 및 계층 구조 유지
-- **절대 위치 변환**: 로컬 좌표를 월드 좌표로 변환
+- 부모-자식 관계를 통한 오브젝트 계층 관리
+- 트랜스폼 부모 설정 및 해제
+- [`PlacementAreaInProp`](/docs/projects/rfice/HousingSystem/PlacementAreaInProp) 초기화 및 동작 지원
 
-### 배치 영역 설정
-- **추가 배치 영역**: 자식 컴포넌트의 배치 영역을 현재 오브젝트와 연결
+### 배치 데이터 처리
+- 절대/상대 좌표 변환
+- 색상 및 회전 정보 저장
 
-### 인터랙션 초기화
-- **컴포넌트 인터랙션**: 인터랙터블 컴포넌트가 있으면 초기화 실행
-
-## 상속 구조
-
-`SpawnablePropBase`는 다음과 같은 서브클래스 가짐.
-- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/): 바닥/천장 배치 오브젝트
-- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/): 벽 배치 오브젝트
-- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/): 사진 프레임 오브젝트
-- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/): 스크린 오브젝트
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- `MyRoomProp`, `MyRoomPlaceProp` 사용(데이터베이스 클래스/구조체).
+- [`PlacementAreaInProp`](/docs/projects/rfice/HousingSystem/PlacementAreaInProp)에 의존.
+- **서브클래스**
+  - [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/): 바닥/천장 배치 오브젝트
+  - [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/): 벽 배치 오브젝트
+  - [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/): 사진 프레임 오브젝트
+  - [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/): 스크린 오브젝트
 
 ## 관련 클래스
-
-- `MyRoomProp`: 오브젝트 기본 정보
-- `MyRoomPlaceProp`: 배치 정보
-- `MyRoomPropColor`: 색상 정보
-- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 인터랙션 인터페이스
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 관리자
-- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/), [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/) : 의존 인터페이스
+- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)
+- [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/)
+- [`PlacementAreaInProp`](/docs/projects/rfice/HousingSystem/PlacementAreaInProp)
+- [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+- [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+- [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)
+- [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/)

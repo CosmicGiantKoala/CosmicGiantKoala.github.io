@@ -10,17 +10,19 @@ weight = 429
 +++
 ## 개요
 
-`MyRoomEditorObjectEditUI`는 오브젝트 편집 메뉴를 표시하고 조작하는 UI 클래스. 선택된 오브젝트의 이름 및 사용 가능한 편집 기능 표시하고 편집 기능(이동, 회전, 삭제, 색변경, 인터렉션) 등을 제어하는 버튼과 메뉴 관리.
+`MyRoomEditorObjectEditUI`는 MyRoomEditor에서 선택된 오브젝트의 편집 UI를 관리하는 클래스입니다. Unity UI 시스템을 사용하여 편집 메뉴를 표시하고, 색상 변경, 이동, 회전, 삭제, 이미지 업로드 등의 기능을 제공합니다. 이벤트 기반 아키텍처를 통해 외부 매니저와 통신하며, 툴팁과 시각적 피드백을 지원합니다.
 
-## 주요 역할
+## 역할
 
-- **편집 메뉴 표시**: 선택된 오브젝트의 편집 옵션 표시
-- **버튼 상태 관리**: 활성화/비활성화 상태 및 툴팁 표시
-- **이벤트 처리**: 편집 액션에 대한 이벤트 발생
-- **색상 선택 UI 연동**: 색상 변경 UI와의 상호작용
+- 선택된 프로퍼티의 편집 메뉴 표시 및 숨김
+- 색상 선택 UI와의 통합 관리
+- 편집 도구 상태 관리 (색상 편집, 이동, 자유 회전)
+- 버튼 호버/클릭 이벤트 처리 및 시각적 피드백 제공
+- 프로퍼티 타입에 따른 메뉴 아이템 활성화/비활성화
+- 오브젝트 삭제 기능 제공
+- 툴팁 표시 및 위치 조정
 
-## 주요 멤버
-
+## 멤버
 ### 열거형
 ```csharp
 /// <summary>
@@ -47,7 +49,7 @@ public event Action OnClickRotateFreeEvent;
 public event Action OnClickUploadPhotoEvent;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 메뉴 게임 오브젝트: 편집 메뉴의 루트 오브젝트
@@ -72,6 +74,22 @@ private Button deleteBtn, editColorBtn, moveBtn, rotateQuarterBtn, rotateFreeBtn
 /// </summary>
 private IMyRoomEditorEditableObject _selectedProp;
 
+/// <summary>
+/// 편집 버튼 리스트
+/// </summary>
+private List<Button> _editButtons;
+
+/// <summary>
+/// 메뉴 상태별 스프라이트
+/// </summary>
+[SerializeField]
+private Sprite normalSprite, hoverSprite, pressedSprite, selectedSprite, disabledSprite;
+
+/// <summary>
+/// 툴팁 오브젝트 RectTransform
+/// </summary>
+[SerializeField]
+private RectTransform hoverTooltip, activeTooltip;
 
 ```
 
@@ -202,24 +220,109 @@ public void DrawColorList(List<MyRoomPropColor> colorList)
 }
 ```
 
-## 주요 기능 설명
+### 버튼 상태 관리
 
-### UI 상태 관리
-- **편집 메뉴 표시**: 선택된 오브젝트의 편집 가능 기능에 따라 버튼들을 동적으로 활성화
-- **툴팁 시스템**: 호버와 액티브 툴팁을 통한 사용자 가이드
-- **편집 도구 토글**: 색상 편집, 이동, 자유 회전 모드 간 전환
+```csharp
+private void EnableAllButtons()
+{
+    _editButtons.ForEach(button =>
+    {
+        button.interactable = true;
+        button.image.sprite = normalSprite;
+        SetChildImageAlpha(button, _enabledIconColor);
+    });
+}
+
+private void DisableButtons(List<Button> buttons)
+{
+    buttons.ForEach(button =>
+    {
+        button.interactable = false;
+        button.image.sprite = disabledSprite;
+        SetChildImageAlpha(button, _disabledIconColor);
+    });
+}
+```
+
+### 이벤트 트리거 추가 (툴팁 표시 및 숨김)
+```csharp
+private void AddListeners(Button button)
+{
+    EventTrigger trigger = button.gameObject.AddComponent<EventTrigger>();
+    
+    EventTrigger.Entry pointerEnterEntry = new EventTrigger.Entry{eventID = EventTriggerType.PointerEnter};
+    pointerEnterEntry.callback.AddListener(data => OnPointerEnterEvent(button));
+    trigger.triggers.Add(pointerEnterEntry);
+    
+    EventTrigger.Entry pointerExitEntry = new EventTrigger.Entry {eventID = EventTriggerType.PointerExit};
+    pointerExitEntry.callback.AddListener(data => OnPointerExitEvent(button));
+    trigger.triggers.Add(pointerExitEntry);
+}
+
+private void OnPointerEnterEvent(Button targetBtn)
+{
+    if (_activeTool != ActiveEditingTool.None) return;
+    targetBtn.image.sprite = hoverSprite;
+    if (_additionalStatusButtons.Contains(targetBtn))
+    {
+        ShowToolTip(hoverTooltip, targetBtn.transform.position);
+    }
+}
+
+private void ShowToolTip(RectTransform targetToolTip, Vector2 position)
+{
+    targetToolTip.gameObject.SetActive(true);
+    targetToolTip.position = new Vector3(position.x, targetToolTip.position.y);
+}
+
+private void OnPointerExitEvent(Button targetBtn)
+{
+    if (_activeTool != ActiveEditingTool.None) return; 
+    targetBtn.image.sprite = normalSprite;
+    hoverTooltip.gameObject.SetActive(false);
+}
+```
+
+## 기능 설명
+
+### UI 표시/숨김 관리
+- **ShowSelectedPropMenu()**: 선택된 프로퍼티의 타입을 확인하여 적절한 편집 메뉴를 표시. 색상 변경, 회전, 이동, 이미지 업로드 기능의 사용 가능 여부를 체크.
+- **HideMenu()**: 모든 메뉴와 툴팁을 숨기고 상태를 초기화합니다.
+
+### 편집 도구 토글
+- 색상 편집, 이동, 자유 회전 도구를 토글 방식으로 활성화/비활성화. 하나의 도구만 활성화.
+
+### 시각적 피드백
+- 버튼 호버 시 스프라이트 변경과 툴팁 표시를 통해 사용자 경험을 향상.
+- 선택된 도구는 다른 버튼들을 비활성화하고 시각적으로 강조.
 
 ### 이벤트 처리
-- **버튼 인터랙션**: 클릭, 호버 이벤트 처리 및 시각적 피드백
-- **다국어 지원**: Lean Localization을 통한 텍스트 현지화
+- 각 버튼 클릭 시 해당 이벤트를 발생시켜 외부 매니저에서 동작.
+- 색상 선택 UI와의 통합을 통해 색상 변경 기능을 제공.
 
-### 상태 동기화
-- **오브젝트 상태 반영**: 선택된 오브젝트의 속성에 따른 UI 상태 변경
-- **실시간 업데이트**: 편집 작업 중 UI 상태 실시간 반영
-- **배치 연동**: 배치 매니저와의 상태 동기화
+### 현지화
+- [`Lean Localization`](https://carloswilkes.com/Documentation/LeanLocalization)을 통한 텍스트 현지화
+
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`UGUI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html), [`TextMesh Pro`](https://docs.unity3d.com/Packages/com.unity.textmeshpro@3.0/manual/index.html), [`Lean Localization`](https://carloswilkes.com/Documentation/LeanLocalization), Event System을 사용.
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject), [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/HousingSystem/MyRoomEditorColorSelectUI)에 의존.
+
+## 사용 예시
+###  [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 오브젝트가 선택 될 때, 오브젝트 편집 UI표시
+```csharp
+private void OnObjectSelected(IMyRoomEditorEditableObject selectedObject)
+{
+    _editingObject = selectedObject;
+    objectEditUI.ShowSelectedPropMenu(_editingObject);
+}
+```
 
 ## 관련 클래스
-
-- [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/housingsystem/myroomeditorcolorselectui/): 색상 선택 UI 컴포넌트
-- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트 인터페이스
-- `ActiveEditingTool`: 편집 도구 상태 열거형
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)
+- [`MyRoomEditorPlacementManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementManager)
+- [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/housingsystem/myroomeditorcolorselectui/)
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)
+- [`UGUI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html)
+- [`TextMesh Pro`](https://docs.unity3d.com/Packages/com.unity.textmeshpro@3.0/manual/index.html)
+- [`Lean Localization`](https://carloswilkes.com/Documentation/LeanLocalization)

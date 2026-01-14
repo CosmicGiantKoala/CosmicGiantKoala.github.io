@@ -11,18 +11,17 @@ weight = 412
 
 ## 개요
 
-`MyRoomCameraController`는 MyRoom 에디터에서 카메라 조작을 담당하는 클래스. Cinemachine을 사용하여 WASD 이동, 마우스 회전, 줌 기능을 제공.
+`MyRoomCameraController` 클래스는 MyRoomEditor에서 카메라의 이동, 회전, 줌 기능을 관리하는 컨트롤러입니다. Cinemachine 컴포넌트를 활용하여 부드러운 카메라 조작을 제공하며, 경계 제한과 입력 이벤트 처리를 포함합니다.
 
-## 주요 역할
+## 역할
 
-- **카메라 이동**: WASD 키를 통한 방향 기반 이동
-- **카메라 회전**: 마우스 드래그를 통한 회전
-- **카메라 줌**: 마우스 휠을 통한 줌 인/아웃
-- **경계 제한**: 카메라 이동 범위를 박스 콜라이더로 제한
+- 카메라 이동, 회전, 줌 기능 구현
+- Cinemachine 컴포넌트 초기화 및 설정
+- 입력 이벤트에 따른 카메라 제어
+- 카메라 이동 경계 제한 적용
 
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 입력 이벤트를 받아 카메라 조작을 수행하는 디스패처
@@ -111,7 +110,7 @@ private bool _activeMove;
 private Coroutine _moveCoroutine;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// Cinemachine 카메라 컴포넌트를 초기화하는 프라이빗 메서드.
@@ -167,7 +166,7 @@ private void OnCameraDisengaged()
 private void OnCameraZoomed(float value)
 ```
 
-## 코드 스니펫
+## 주요 코드 스니펫
 
 ### 카메라 이동 프로세스
 ```csharp
@@ -268,25 +267,33 @@ private void OnCameraZoomed(float value)
 }
 ```
 
-## 주요 기능 설명
+## 기능 설명
 
 ### 카메라 이동
-- WASD 키 입력을 받아 카메라 전방/우측 방향으로 이동
+- 입력 방향에 따라 카메라 팔로워 이동
+- 카메라 전방/우측 방향을 기준으로 상대적 이동
+- 박스 콜라이더 경계를 벗어나지 않도록 제한
 - 코루틴을 사용하여 부드러운 이동 구현
-- 박스 콜라이더 경계를 벗어나지 않도록 위치 제한
 
 ### 카메라 회전
 - 마우스 드래그 입력을 [`Cinemachine POV`](https://docs.unity3d.com/Packages/com.unity.cinemachine@2.7/manual/CinemachineAimPOV.html) 컴포넌트로 처리
 - 입력 제공자의 활성화/비활성화로 회전 모드 제어
 
 ### 카메라 줌
-- 마우스 휠 입력을 받아 카메라 거리 조정
-- 최소/최대 줌 거리로 제한
+- [`Framing Transposer`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineFramingTransposer.html)를 통한 거리 조절
+- 최소/최대 줌 거리 제한
+- 입력 값에 따른 감도 적용
 
-### Cinemachine 통합
-- [`Virtual Camera`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineVirtualCamera.html), [`Input Provider`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineInputProvider.html), [`Cinemachine POV`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachinePOV.html), [`Framing Transposer`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineFramingTransposer.html) 사용
-- 초기화 시 컴포넌트 검증 및 속도 설정
+### 이벤트 처리
+- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/HousingSystem/MyRoomEditorCameraInputDispatcher) 이벤트 구독
+- 카메라 참여/비참여 상태 관리
+
+## 의존성/상속 관계
+- `MonoBehaviour`를 상속받음.
+- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/HousingSystem/MyRoomEditorCameraInputDispatcher)에 의존.
+- Cinemachine 패키지를 사용 ([`Virtual Camera`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineVirtualCamera.html), [`Input Provider`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineInputProvider.html), [`Cinemachine POV`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachinePOV.html), [`Framing Transposer`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.CinemachineFramingTransposer.html)).
 
 ## 관련 클래스
-- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/): 입력 이벤트 제공
-- [`Cinemachine`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.html): 카메라 조작 라이브러리
+- [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/)
+- [`Cinemachine`](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/api/Unity.Cinemachine.html)
+- [`MyRoomEditorInputController`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputController)

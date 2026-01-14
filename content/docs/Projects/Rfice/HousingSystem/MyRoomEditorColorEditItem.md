@@ -10,43 +10,43 @@ weight = 431
 +++
 ## 개요
 
-`MyRoomEditorColorEditItem`은 선택 가능한 색상 항목을 나타내는 UI 컴포넌트. 개별 색상을 표시하고 선택 상태를 관리.
+`MyRoomEditorColorEditItem` 클래스는 MyRoom 에디터에서 색상 선택 UI의 개별 아이템을 관리하는 컴포넌트입니다. 색상 패널 표시와 선택 상태 관리를 담당하며, 색상 선택 이벤트를 발생시킵니다.
 
-## 주요 역할
+## 역할
 
-- **색상 표시**: 개별 색상을 시각적으로 표시
-- **선택 인터랙션**: 사용자의 클릭을 받아 색상 선택 처리
-- **상태 관리**: 선택/해제 상태를 시각적으로 표현
-- **이벤트 전달**: 선택 이벤트를 부모 컴포넌트로 전달
+- 색상 선택 UI 아이템 표시 및 상호작용 처리
+- 선택 상태 시각적 피드백 제공
+- 색상 값 설정 및 표시
+- 색상 선택 이벤트 발생
 
-## 주요 멤버
-
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
-/// 색상 선택 이벤트: 이 항목이 선택되었을 때 발생
+/// 색상 선택 이벤트 (아이템 인덱스 전달)
 /// </summary>
 public event Action<int> OnSelectMaterialColorEvent;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
-/// 선택 상태 표시 오브젝트: 선택되었을 때 활성화되는 게임 오브젝트
+/// 색상 선택 버튼
+/// </summary>
+[SerializeField]
+private Button selectColorButton;
+
+/// <summary>
+/// 선택 상태 표시 오브젝트
 /// </summary>
 [SerializeField]
 private GameObject selectedObject;
 
 /// <summary>
-/// 색상 패널: 선택 가능한 색상을 표시하는 이미지 컴포넌트
+/// 색상 패널 이미지
 /// </summary>
 [SerializeField]
 private Image colorPanel;
-
-/// <summary>
-/// 항목 인덱스: 이 색상 항목의 인덱스 값
-/// </summary>
-private int _itemIndex;
 ```
 
 ### 주요 메서드
@@ -56,6 +56,7 @@ private int _itemIndex;
 /// 항목의 인덱스를 설정하여 선택 시 올바른 인덱스를 전달할 수 있도록 함.
 /// </summary>
 /// <param name="index">이 색상 항목의 인덱스</param>
+public void Initialize(int index)
 
 /// <summary>
 /// 색상 항목을 선택된 상태로 변경하는 메서드.
@@ -83,12 +84,30 @@ private void OnClick()
 public void Release()
 ```
 
-## 주요 기능 설명
 
-### 색상 표시 및 인터랙션
-- **색상 렌더링**: 지정된 색상을 UI에 시각적으로 표시
-- **인덱스 관리**: 각 항목의 고유 인덱스를 유지하여 정확한 선택 전달
+## 기능 설명
+
+### 색상 표시
+- `SetItemColor()`: 지정된 색상으로 패널 색상 설정
+- UI를 통해 사용 가능한 색상 옵션 표시
+
+### 선택 상태 관리
+- `Selected()`: 선택 시 시각적 표시 활성화
+- `Release()`: 선택 해제 시 시각적 표시 비활성화
+
+### 이벤트 처리
+- 버튼 클릭 시 인덱스와 함께 이벤트 발생
+- 부모 UI 컴포넌트가 선택 처리 수행
+
+### 초기화
+- `Initialize()`: 아이템 인덱스 설정으로 고유 식별
+
+## 의존성/상속 관계
+
+- `MonoBehaviour`를 상속받음.
+- [`UGUI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html) 컴포넌트 사용 (Button, Image).
 
 ## 관련 클래스
-
-- [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/housingsystem/myroomeditorcolorselectui/): 이 항목들을 관리하는 부모 UI 클래스
+- [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/housingsystem/myroomeditorcolorselectui/)
+- [`IColorEditableProp`](/docs/projects/rfice/HousingSystem/IColorEditableProp)
+- [`UGUI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html)

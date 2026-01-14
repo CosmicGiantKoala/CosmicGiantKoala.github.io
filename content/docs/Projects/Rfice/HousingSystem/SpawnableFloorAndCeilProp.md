@@ -9,26 +9,23 @@ toc = true
 weight = 415
 +++
 ## 개요
+`SpawnableFloorAndCeilProp`는 MyRoomEditor에서 바닥과 천장에 배치되는 오브젝트를 위한 클래스입니다. [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받아 오브젝트 기본 기능과 이동, 회전, 색상 편집 등의 동작을 구체적으로 구현합니다.
 
-`SpawnableFloorAndCeilProp`는 바닥과 천장에 배치되는 일반적인 오브젝트 클래스. [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)를 상속받아 바닥(Floor)과 천장(Ceiling)에 배치 가능한 오브젝트의 기본 구현을 제공.
-
-## 주요 역할
-
-- **편집 인터페이스 구현**: 색상 편집, 이동, 회전 기능 제공
-- **하이라이트 상태 관리**: PropEditingState를 통한 시각적 피드백
-- **Material 변경**: MyRoomMaterialChangeHelper를 통한 동적 색상 변경
-- **기즈모 위치 계산**: 배치 타입에 따른 기즈모 위치 결정
+## 역할
+- 바닥/천장 오브젝트의 기본 기능 제공
+- 이동, 회전, 색상 변경 인터페이스 구현
+- 하이라이트 상태 관리
+- 배치 검증 및 부모 관계 설정
+- 오브젝트 기즈모 위치 반환
 
 ## 구현 인터페이스
-
 - [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 편집 기능
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 
-## 주요 멤버
-
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 편집 상태 컴포넌트: 하이라이트 상태 관리
@@ -41,7 +38,7 @@ private PropEditingState _propEditingState;
 private MyRoomMaterialChangeHelper _materialChangeHelper;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 오브젝트 삭제 메서드.
@@ -213,17 +210,23 @@ public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 }
 ```
 
-## 주요 기능 설명
-
-### 초기화 프로세스
-1. **컴포넌트 수집**: Collider, PropEditingState, MaterialChangeHelper
-2. **이벤트 등록**: Material 변경 시 하이라이트 재설정
-3. **하이라이트 설정**: PropEditingState 초기화
+## 기능 설명
+### 편집 기능
+- 이동, 회전, 색상 변경 지원
+- 하이라이트 상태 표시
 
 ### 편집 가능성 검증
-- **색상 편집**: 색상 변형 지원 + 색상 리스트 존재 + MaterialChangeHelper 존재
-- **이동 가능**: 항상 true (바닥/천장 오브젝트는 이동 가능)
-- **회전 가능**: 항상 true (Y축 회전 지원)
+- **색상 편집**: 색상 변경 인터페이스 지원 지원 + 오브젝트 데이터에 색상 리스트 존재
+- **이동 가능**: 이동 인터페이스 지원
+- **회전 가능**: 회전 인터페이스 지원
+
+### 배치 프로세스
+1. **위치 이동**: 히트 포인트로 즉시 이동
+2. **타입 검증**: 배치 영역 타입과 PlacementType 일치 확인
+3. **부모 설정**: 배치 영역이 다른 오브젝트 위면 부모 관계 설정
+   - 오브젝트 슬롯 영역에 배치 시 부모 설정
+   - 룸 레벨 배치 시 부모 해제
+4. **시각 피드백**: 유효/무효에 따라 하이라이트 변경
 
 ### 하이라이트 상태
 - **Focused**: 녹색 (Valid)
@@ -231,19 +234,19 @@ public (Vector3, Quaternion) GetGizmoPositionAndRotation()
 - **Selected**: 파란색 (Selected)
 - **Deselected**: 기본 (Default)
 
-### 배치 검증 로직
-1. **위치 이동**: 히트 포인트로 즉시 이동
-2. **타입 검증**: 배치 영역 타입과 PlacementType 일치 확인
-3. **부모 설정**: 배치 영역이 다른 오브젝트 위면 부모 관계 설정
-4. **시각 피드백**: 유효/무효에 따라 하이라이트 변경
-
 ### 기즈모 위치
 - **Floor**: 오브젝트 위쪽 (bounds.height만큼 위)
 - **Ceiling**: 오브젝트 아래쪽 (bounds.height만큼 아래)
 - 기즈모는 수직 방향으로 표시
 
+## 의존성/상속 관계
+- [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)를 상속받음.
+- [`IColorEditableProp`](/docs/projects/rfice/HousingSystem/IColorEditableProp), [`IMoveableProp`](/docs/projects/rfice/HousingSystem/IMoveableProp), [`IRotatableProp`](/docs/projects/rfice/HousingSystem/IRotatableProp) 인터페이스 구현.
+- [`PropEditingState`](/docs/projects/rfice/HousingSystem/PropEditingState), `MyRoomMaterialChangeHelper`에 의존.
+
 ## 관련 클래스
-- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/): 하이라이트 상태 관리
-- `MyRoomMaterialChangeHelper`: Material 변경 처리
-- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/): 부모 클래스
-- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/), [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/), [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 구현된 인터페이스
+- [`PropEditingState`](/docs/projects/rfice/housingsystem/propeditingstate/)
+- [`SpawnablePropBase`](/docs/projects/rfice/housingsystem/spawnablepropbase/)
+- [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/)
+- [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/)
+- [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/)

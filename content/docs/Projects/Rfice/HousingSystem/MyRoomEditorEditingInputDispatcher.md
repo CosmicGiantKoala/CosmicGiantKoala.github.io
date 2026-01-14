@@ -10,16 +10,14 @@ weight = 412
 +++
 ## 개요
 
-`MyRoomEditorEdittingInputDispatcher`는 편집 관련 입력 이벤트를 처리하는 클래스. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리를 담당.
+`MyRoomEditorEdittingInputDispatcher` 클래스는 MyRoom 에디터에서 편집 관련 입력 이벤트를 중앙에서 관리하고 배포하는 디스패처입니다. 포인터 클릭, 취소, 삭제 등의 편집 입력을 적절한 리스너들에게 전달합니다.
 
-## 주요 역할
+## 역할
+- 편집 관련 입력 이벤트 처리
+- 이벤트 구독 패턴을 통한 느슨한 결합 구현
+- 포인터, 키보드 입력 상태 관리 및 이벤트 중계
 
-- **포인터 이벤트 처리**: 마우스 클릭/업 이벤트 중계
-- **편집 명령 처리**: 취소, 삭제, 우클릭 이벤트 중계
-- **이벤트 디스패칭**: 입력 컨트롤러로부터의 이벤트를 구독자에게 전달
-
-## 주요 멤버
-
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
@@ -76,44 +74,20 @@ public void OnRightClicked()
 public void OnDeletePressed()
 ```
 
-## 코드 스니펫
+## 기능 설명
 
-### 이벤트 호출 메서드들
-```csharp
-public void OnPointerDown()
-{
-    OnPointerDownEvent?.Invoke();
-}
+### 포인터 입력 이벤트
+- `OnPointerDown()`: 마우스 왼쪽 버튼이나 터치 시작 시 이벤트 발생
+- `OnPointerUp()`: 마우스 왼쪽 버튼이나 터치 종료 시 이벤트 발생
+- `OnRightClicked()`: 마우스 우클릭 시 이벤트 발생
 
-public void OnPointerUp()
-{
-    OnPointerUpEvent?.Invoke();
-}
+### 키보드 입력 이벤트
+- `OnCanceled()`: ESC 키나 취소 입력 시 이벤트 발생
+- `OnDeletePressed()`: Delete 키나 Backspace 키 입력 시 이벤트 발생
 
-public void OnCanceled()
-{
-    OnCancelEvent?.Invoke();
-}
-
-public void OnRightClicked()
-{
-    OnRightClickEvent?.Invoke();
-}
-
-public void OnDeletePressed()
-{
-    OnDeletePressEvent?.Invoke();
-}
-```
-
-## 주요 기능 설명
-
-### 이벤트 유형
-- **OnPointerDownEvent**: 마우스 버튼 눌림
-- **OnPointerUpEvent**: 마우스 버튼 뗌
-- **OnCancelEvent**: 취소 명령 (ESC 키)
-- **OnRightClickEvent**: 우클릭
-- **OnDeletePressEvent**: 삭제 명령 (Delete 키)
+### 이벤트 구독 패턴
+- Observer 패턴 구현으로 입력 처리와 비즈니스 로직 분리
+- 다중 리스너 지원으로 확장성 제공
 
 ### 이벤트 흐름
 1. [`MyRoomEditorInputController`](/docs/projects/rfice/housingsystem/myroomeditorinputcontroller/)에서 입력 감지
@@ -121,5 +95,6 @@ public void OnDeletePressed()
 3. 등록된 이벤트 핸들러 실행
 
 ## 관련 클래스
-- [`MyRoomEditorInputController`](/docs/projects/rfice/housingsystem/myroomeditorinputcontroller/): 이벤트 메서드 호출자
-- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/): 편집 입력 이벤트 리스너
+- [`MyRoomEditorInputController`](/docs/projects/rfice/housingsystem/myroomeditorinputcontroller/)
+- [`MyRoomEditorState`](/docs/projects/rfice/housingsystem/myroomeditorstate/)
+- [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html)
