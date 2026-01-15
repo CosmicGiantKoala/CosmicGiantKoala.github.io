@@ -10,16 +10,28 @@ weight = 402
 +++
 
 ## 개요
-`MyRoomEditorState`는 MyRoomEditor의 상태 관리를 위한 추상 베이스 클래스입니다. 상태 기반 아키텍처를 구현하여 각 상태(편집, 배치 등)가 독립적으로 동작할 수 있도록 합니다. 입력 이벤트 처리와 상태 전환을 중앙 집중화합니다.
+`MyRoomEditorState`는 MyRoomEditor의 상태를 관리하는 추상 기본 클래스입니다. 이 클래스는 상태 패턴을 구현하여 다양한 편집 상태를 관리하고, 입력 이벤트를 처리하며, 상태 변화 시 입력 활성화/비활성화를 담당합니다.
 
 ## 역할
-- MyRoomEditor의 상태 기반 아키텍처 제공(`MyRoomEditorStateEnum`에 따라 상태를 전환하고 관리.)
-- 입력 이벤트의 상태별 중계
-- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)를 통해 편집 관련 입력 이벤트를 처리.
-- 상태 전환 시 자동 입력 활성화/비활성화
-- 서브클래스에서 구현되는 추상 메서드를 통해 구체적인 상태 로직 구현
+- MyRoomEditor의 다양한 편집 상태 관리
+- 입력 이벤트 처리 및 라우팅
+- 상태 변화 시 입력 활성화/비활성화 관리
+- 상태 핸들러를 통한 상태 전환 관리
 
 ## 멤버
+### 열거형
+```csharp
+/// <summary>
+/// MyRoomEditor의 상태를 정의하는 열거형
+/// </summary>
+public enum MyRoomEditorStateEnum
+{
+    Default,      // 기본 상태
+    Placement,    // 오브젝트 배치 상태
+    Editing       // 오브젝트 편집 상태
+}
+```
+
 ### 속성
 ```csharp
 /// <summary>
@@ -121,21 +133,22 @@ private void OnChangedState(MyRoomEditorStateEnum state)
 ```
 
 ## 기능 설명
-### 상태 기반 아키텍처
-- 각 상태 클래스가 특정 상태(targetState)에 바인딩
-- 상태 변경 시 자동으로 입력 이벤트 대상 변경
-- 상태 전환 시 Enable/Disable 호출
-
-### 입력 이벤트 관리
-- 상태 활성화 시 입력 이벤트 구독
-- 상태 비활성화 시 입력 이벤트 해제
+### 상태 관리
+- 상태 핸들러를 통해 상태 전환을 중앙에서 관리
+- `ChangeState()`: 현재 상태를 변경하고 상태 핸들러에 알림
+- `Enable()`/`Disable()`: 상태 활성화/비활성화 및 입력 디스패처 구독 관리
 - 추상 메서드를 통한 상태별 입력 처리 구현
+
+### 입력 이벤트 처리
+- `OnPointerDown()`/`OnPointerUp()`: 포인터 입력 처리
+- `OnCancel()`: 취소 입력 처리 (ESC 키 등)
+- `OnRightClick()`: 우클릭 입력 처리
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음.
-- [`MyRoomEditorStateHandle`](/docs/projects/rfice/HousingSystem/MyRoomEditorStateHandle)에 의존.
-- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/HousingSystem/MyRoomEditorEditingInputDispatcher)에 의존.
-- [`MyRoomEditorPlacementPresenter`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementPresenter)에 의존.
+- [`MyRoomEditorStateHandle`](/docs/projects/rfice/housingSystem/myroomeditorstatehandle)에 의존.
+- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher)에 의존.
+- [`MyRoomEditorPlacementPresenter`](/docs/projects/rfice/housingsystem/myroomeditorplacementpresenter)에 의존.
 - `MyRoomEditorState`의 서브 클래스
   - [`MyRoomEditorPlacementManager`](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/): 오브젝트 생성 및 배치 상태 관리
   - [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 오브젝트 편집 상태 관리
@@ -167,6 +180,7 @@ public class MyRoomEditorPropEditingManager : MyRoomEditorState
 ```
 
 ## 관련 클래스
-- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
+- [`MyRoomEditorStateHandle`](/docs/projects/rfice/housingsystem/myroomeditorstatehandle/)
+- [`MyRoomEditorEditingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)
 - [`MyRoomEditorPlacementManager`](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/)
-- [`MyRoomEditorStateHandle`](/docs/projects/rfice/HousingSystem/MyRoomEditorStateHandle)
+- [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)

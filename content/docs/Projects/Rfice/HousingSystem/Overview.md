@@ -9,25 +9,24 @@ toc = true
 weight = 401
 +++
 
-
 ## 1. 기능 개요
 
-- **MyRoomEditor**는 Unity 기반의 3D 개인 룸 커스터마이징 시스템으로, 사용자가 가상 공간에 가구와 장식 요소들을 자유롭게 배치하고 편집할 수 있는 통합 편집 환경을 제공합니다.
-- **제작기간**: 2024.11 ~ 2025.03(WebGL support)
-- **시스템 개발 인원** : 7인(**유니티 클라이언트** 2인, 3D 디자인 3인, 백엔드 1인, UX/UI 1인)
+- **MyRoomEditor**는  Rfice 어플리케이션의 하위 컨탠츠 중 하나로 Unity 기반의 3D 개인 룸 커스터마이징 시스템으로, 사용자가 가상 공간에 가구와 장식 요소들을 자유롭게 배치하고 편집할 수 있는 통합 편집 환경을 제공합니다.
+- **개발 기간**: 2024.11 ~ 2025.03
+- **시스템 개발 인원**: 7인 (유니티 클라이언트 2인, 3D 디자인 3인, 백엔드 1인, UX/UI 1인)
 
 ### 개발 배경 및 요구사항
-- 사용자가 개인 공간을 3D 환경에서 직관적으로 커스터마이징 다른 사용자들과 공유하는 소셜/크리에이티브 공간 제공.
-- 다양한 가구와 장식 요소들을 실시간으로 배치하고 편집하는 기능.
-- 가구의 위치(`Vector3`), 회전(`Quaternion`) 및 커스텀데이터(`Material`, `URL`)을 JSON 데이터로 직렬화하여 서버와 통신 가능한 형태로 파싱.
-- 편집 화면에서 '꾸미기 종료' UI 조작시 서버에 편집데이터를 저장하고, 사용자의 룸에 유저가 진입시 서버에서 데이터를 받아 오브젝트를 동적으로 생성/배치 하는 방식으로 제작.
-- MVP 패턴과 의존성 주입을 활용한 확장 가능한 아키텍처 구축.
-- EA의 심즈4 건축시스템을 참고하여 동작 플로우 제작.
-- 사용자로부터 이미지 URL 또는 파일을 받아 런타임에서 텍스처를 로드하고, 해당 텍스처를 액자 오브젝트의 Material에 적용하여 동적으로 커스터마이징.
+- 사용자가 개인 공간을 3D 환경에서 직관적으로 커스터마이징하고 다른 사용자들과 공유하는 소셜/크리에이티브 공간 제공
+- 다양한 가구와 장식 요소들을 실시간으로 배치하고 편집하는 기능
+- 가구의 위치(`Vector3`), 회전(`Quaternion`) 및 커스텀 데이터(`Material`, `URL`)을 JSON 데이터로 직렬화하여 서버와 통신 가능한 형태로 파싱
+- 편집 화면에서 '꾸미기 종료' UI 조작 시 서버에 편집 데이터를 저장하고, 사용자의 룸에 유저가 진입 시 서버에서 데이터를 받아 오브젝트를 동적으로 생성/배치하는 방식으로 제작
+- MVP 패턴과 의존성 주입을 활용한 확장 가능한 아키텍처 구축
+- EA의 심즈4 건축 시스템을 참고하여 동작 플로우 제작
+- 사용자로부터 이미지 URL 또는 파일을 받아 런타임에서 텍스처를 로드하고, 해당 텍스처를 액자 오브젝트의 Material에 적용하여 동적으로 커스터마이징
 
 ### 주요 기능
 
-{{< alert context="info" text="🐨: 직접구현 기능, 🧑‍💻: 클라이언트 팀원 제작 기능"/ >}}
+{{< alert context="info" text="🐨: 직접구현 기능, 🧑‍💻: 클라이언트 팀원 제작 기능" />}}
 
 {{< table "table-striped">}}
 | 기능 | 설명 |
@@ -46,7 +45,8 @@ weight = 401
 |🧑‍💻 동적 오브젝트 생성| 룸에 진입시 유저의 커스터마이징 데이터를 통해 오브젝트 동적 생성 및 배치.|
 |🧑‍💻 아이템 데이터 파싱| csv로 작성된 아이템 데이터를 유니티 ScriptableObject 데이터로 파싱.|
 |🧑‍💻 카탈로그 UI| 유저가 커스터마이징 가능한 아이템들을 카탈로그 UI를 통해 표시.|
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
 ### 커스터마이징 데모 영상
 {{<video src="videos/MyRoomEditor.mp4" width="70%" class="responsive-video">}}
@@ -54,7 +54,7 @@ weight = 401
 
 ## 2. 사용된 기술 요소
 
-{{< alert context="info" text="직접구현한 요소 및 협업 요소 기술, 🤝:협업요소"/ >}}
+{{< alert context="info" text="직접구현한 요소 및 협업 요소 기술, 🤝:협업요소" />}}
 
 ### 핵심 기술 요소 및 API 활용
 {{< table "table-striped">}}
@@ -65,7 +65,8 @@ weight = 401
 |**Physics.Raycast**|편집 씬에서 마우스 좌표와 오브젝트간 상호작용 및 선택 로직 구현.|
 |**UGUI / EventSystem**|동적 UI 구성 및 오브젝트 편집 인터페이스 구현.|
 |[**Zenject**](https://github.com/modesttree/Zenject)|객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도의 코드베이스 구축.|
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
 ### 설계 활용 패턴
 {{< table "table-striped">}}
@@ -75,11 +76,148 @@ weight = 401
 |**MVP (Model-View-Presenter)**|편집 UI(View)와 편집 로직(Presenter)의 책임을 분리하여 UI변경에 유연하게 대응.|
 |**전략 패턴 (Strategy Pattern)**|오브젝트 배치/선택/편집 등 다양한 편집 모드별 처리 로직을 분리하여 새로운 편집 전략 추가에 유연하게 대응.|
 |**옵저버 패턴 (Observer Pattern)**|오브젝트 상태 및 사용자 조작에 따른 변화를 관련 모듈에 실시간으로 전달하는 이벤트 시스템 구현.|
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
-## 3. 주요 클래스별 역할 및 관계
+## 3. 전체 시스템 구조도(간략)
+```mermaid
+classDiagram
+    direction LR
 
-{{< alert context="info" text="직접구현한 요소만 기술"/ >}}
+    %% Core Classes
+    class MyRoomEditorState {
+        <<abstract>>
+        + ChangeState()
+        + Enable()
+        + Disable()
+    }
+
+    class MyRoomEditorPlacementManager {
+        + SetPlacementTarget()
+        + CancelPlacement()
+    }
+
+    class MyRoomEditorPropEditingManager {
+        + RegisterProp()
+        + OnObjectSelected()
+    }
+
+    class MyRoomEditorInputController {
+        + EnableAll()
+        + DisableAll()
+    }
+
+    %% Input System
+    class MyRoomEditorCameraInputDispatcher {
+        + OnCameraMoveDirection
+        + OnCameraZoom
+    }
+
+    class MyRoomEditorEditingInputDispatcher {
+        + OnPointerDownEvent
+        + OnPointerUpEvent
+    }
+
+    class MyRoomEditorInputUtils {
+        + GetRaycastHit()
+        + IsPointerOnUI()
+    }
+
+    %% Prop System
+    class SpawnablePropBase {
+        <<abstract>>
+        + SetPropInfo()
+        + RegisterProp()
+    }
+
+    class SpawnableFloorAndCeilProp
+    class SpawnableWallProp
+    class SpawnablePhotoFrameProp
+    class SpawnableScreenProp
+
+    %% Editor Components
+    class MyRoomEditorPropEditor {
+        <<abstract>>
+        + Enable()
+        + Disable()
+    }
+
+    class MyRoomEditorPropSelector
+    class MyRoomEditorPropMover
+    class MyRoomEditorPropRotator
+
+    %% UI Components
+    class MyRoomEditorObjectEditUI {
+        + ShowSelectedPropMenu()
+        + DrawColorList()
+    }
+
+    class MyRoomEditorColorSelectUI
+    class MyRoomEditorColorEditItem
+
+    %% Interfaces
+    class IMyRoomEditorEditableObject {
+        <<interface>>
+        + Focused()
+        + Selected()
+    }
+
+    class IColorEditableProp {
+        <<interface>>
+        + GetColorList()
+    }
+
+    class IMoveableProp {
+        <<interface>>
+        + Move()
+    }
+
+    class IRotatableProp {
+        <<interface>>
+        + SetRotation()
+    }
+
+    class IInteractableProp {
+        <<interface>>
+        + Interact()
+    }
+
+    %% Relationships
+    MyRoomEditorState <|-- MyRoomEditorPlacementManager
+    MyRoomEditorState <|-- MyRoomEditorPropEditingManager
+
+    MyRoomEditorInputController --> MyRoomEditorCameraInputDispatcher
+    MyRoomEditorInputController --> MyRoomEditorEditingInputDispatcher
+
+    MyRoomEditorPlacementManager --> MyRoomEditorInputUtils
+    MyRoomEditorPropEditingManager --> MyRoomEditorInputUtils
+
+    MyRoomEditorPropEditingManager --> MyRoomEditorPropEditor
+    MyRoomEditorPropEditingManager --> MyRoomEditorObjectEditUI
+
+    MyRoomEditorPropEditor <|-- MyRoomEditorPropSelector
+    MyRoomEditorPropEditor <|-- MyRoomEditorPropMover
+    MyRoomEditorPropEditor <|-- MyRoomEditorPropRotator
+
+    SpawnablePropBase <|-- SpawnableFloorAndCeilProp
+    SpawnablePropBase <|-- SpawnableWallProp
+    SpawnablePropBase <|-- SpawnablePhotoFrameProp
+    SpawnablePropBase <|-- SpawnableScreenProp
+
+    IMyRoomEditorEditableObject <|-- IColorEditableProp
+    IMyRoomEditorEditableObject <|-- IMoveableProp
+    IMyRoomEditorEditableObject <|-- IRotatableProp
+    IInteractableProp <|-- IColorEditableProp
+
+    MyRoomEditorObjectEditUI --> MyRoomEditorColorSelectUI
+    MyRoomEditorColorSelectUI --> MyRoomEditorColorEditItem
+```
+
+<br><br>
+
+## 4. 주요 클래스별 역할 및 관계
+
+{{< alert context="info" text="직접구현한 요소만 기술" />}}
 
 ### 상태관리 클래스
 {{< table "table-striped">}}
@@ -88,7 +226,8 @@ weight = 401
 |[**MyRoomEditorState**](/docs/projects/rfice/housingsystem/myroomeditorstate/)<br> *<<abstract>>*| ️💡 MyRoomEditor의 상태를 관리하는 abstract 클래스.<br> 💡 `InputDispatcher`와 상태 핸들을 통해 입력 이벤트를 처리. 상태 변화 시 입력 활성화/비활성화 담당.<br> 💡 다양한 편집 상태를 관리하고, 상태 변화 로직을 처리. |
 |[**MyRoomEditorPlacementManager**](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/)<br>-->MyRoomEditorState| ️💡 오브젝트 생성 및 배치 상태를 관리하는 implement 클래스.<br> 💡 `Raycast` 를 이용해 사용자의 입력에 따라 오브젝트 배치 위치를 검증.<br> 💡 `InputDispatcher` 를 통해 받는 이벤트와 배치 검증을 통해 오브젝트를 월드에 배치.<br> 💡 배치상태에서 이동 및 회전 처리.|
 |[**MyRoomEditorPropEditingManager**](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)<br>-->MyRoomEditorState| ️💡 오브젝트 편집 상태를 관리하는 implement 클래스.<br> 💡 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행.<br> 💡 서브 클래스`(MyRoomPropEditor)`와 UI이벤트를 통해 편집 동작을 처리.<br> 💡 실행취소를 포함한 상태 스택 관리.|
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
 ```mermaid
 classDiagram
@@ -96,7 +235,7 @@ classDiagram
     class MyRoomEditorState {
         <<abstract>>
         # MyRoomEditorStateHandle : class
-        # MyRoomEditorEdittingInputDispatcher : class
+        # MyRoomEditorEditingInputDispatcher : class
         # OnUpdatedPlacementProp : event Action
         # ChangeState(MyRoomEditorStateEnum)
         # Enable()
@@ -112,8 +251,7 @@ classDiagram
         + ChangeState(MyRoomEditorStateEnum)
     }
 
-
-    class MyRoomEditorEdittingInputDispatcher {
+    class MyRoomEditorEditingInputDispatcher {
         // 편집 인풋 전달 클래스
     }
 
@@ -142,22 +280,22 @@ classDiagram
         <<abstract>>
         // 편집 기능 클래스
     }
-    
+
     class SpawnablePropBase{
         // 프랍 컴포넌트 베이스
     }
-    
+
     class IMyRoomEditorEditableObject{
         // 편집 가능한 프랍 인터페이스
     }
 
-    MyRoomEditorState o--> MyRoomEditorEdittingInputDispatcher : subscribe
+    MyRoomEditorState o--> MyRoomEditorEditingInputDispatcher : subscribe
     MyRoomEditorState o--> MyRoomEditorStateHandle : subscribe, used
-    
+
     MyRoomEditorPlacementManager --|> MyRoomEditorState : extend
     MyRoomEditorPlacementManager o--> MyRoomEditorInputUtils : used
     MyRoomEditorPlacementManager o--> SpawnablePropBase
-    
+
     MyRoomEditorPropEditingManager --|> MyRoomEditorState : extend
     MyRoomEditorPropEditingManager o--> MyRoomEditorInputUtils : used
     MyRoomEditorPropEditingManager o--> MyRoomEditorInteractionManager : used
@@ -165,8 +303,8 @@ classDiagram
     MyRoomEditorPropEditingManager o--> MyRoomEditorObjectEditUI : used, subscribe
     MyRoomEditorPropEditingManager "1" *--> "n" SpawnablePropBase : manage
     MyRoomEditorPropEditingManager "1" *--> "n" IMyRoomEditorEditableObject : manage
-      
 ```
+
 <br><br>
 
 ### 오브젝트 선택/편집기
@@ -178,7 +316,8 @@ classDiagram
 |[**MyRoomPropMover**](/docs/projects/rfice/housingsystem/myroompropmover/)<br>-->MyRoomPropEditor| ️💡 오브젝트의 이동을 담당하는 implement 클래스.<br> 💡`Raycast`를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생. |
 |[**MyRoomPropRotator**](/docs/projects/rfice/housingsystem/myroomproprotator/)<br>-->MyRoomPropEditor| ️💡 오브젝트의 회전을 담당하는 implement 클래스.<br> 💡`InputUtils`를 통해 초기 마우스 상태를 캐싱하고 마우스의 이동범위만큼 오브젝트를 좌/우로 회전. |
 |[**MyRoomEditorInteractionManager**](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/)| ️💡 오브젝트의 특수 인터렉션을 담당하는 클래스.<br> 💡`MyRoomEditorPropEditingManager` 를 통해 특정 인터렉션 호출을 처리. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
 ```mermaid
 classDiagram
@@ -186,7 +325,7 @@ direction LR
     class MyRoomEditorPropEditingManager {
         // 편집 상태 관리자
     }
-    
+
     class MyRoomEditorPropEditor {
     <<abstract>>
     # InputUtils : MyRoomEditorInputUtils
@@ -194,8 +333,8 @@ direction LR
     # CachedPosition : Vector3
     # CachedRotation : Quaternion
     # CachedParent : SpawnablePropBase
-    
-    ### Public Abstract Method List()  
+
+    ### Public Abstract Method List()
     + Enable()
     + Disable()
     + Setup(IMyRoomEditorEditableObject) bool
@@ -224,11 +363,11 @@ direction LR
     class MyRoomEditorInteractionManager {
         + UploadImage(Action[string] imageUploadedCallback)
     }
-    
+
     class IMyRoomInteractionInteractor {
         // 외부커맨드, API, 네트워크 연동 클래스
     }
-    
+
     class MyRoomEditorInputUtils{
         // 조작 유틸리티 클래스
     }
@@ -236,17 +375,18 @@ direction LR
     MyRoomEditorPropSelector --|> MyRoomEditorPropEditor : extend
     MyRoomEditorPropMover --|> MyRoomEditorPropEditor : extend
     MyRoomEditorPropRotator --|> MyRoomEditorPropEditor : extend
-    
+
     MyRoomEditorPropEditingManager o--> MyRoomEditorPropEditor : used
     MyRoomEditorPropEditingManager o--> MyRoomEditorInteractionManager : used
     MyRoomEditorPropEditingManager o--> MyRoomEditorPropSelector : subscribe
     MyRoomEditorPropEditingManager o--> MyRoomEditorPropMover : subscribe
     MyRoomEditorPropEditingManager o--> MyRoomEditorPropRotator : subscribe
-    
+
     MyRoomEditorPropEditor o--> MyRoomEditorInputUtils : use
-    
+
     MyRoomEditorInteractionManager o--> IMyRoomInteractionInteractor : use
 ```
+
 <br><br>
 
 ### 사용자 입력 및 입력 유틸리티
@@ -257,7 +397,8 @@ direction LR
 |[**MyRoomEditorCameraInputDispatcher**](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/)| ️💡 카메라 조작 이벤트를 처리하는 클래스. WASD 이동, 마우스 회전, 줌 등 카메라 컨트롤 이벤트 관리. |
 |[**MyRoomEditorEditingInputDispatcher**](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)| ️💡 편집 관련 입력 이벤트를 처리하는 클래스. 포인터 이벤트, 삭제, 취소 등 편집 명령 처리. |
 |[**MyRoomEditorInputUtils**](/docs/projects/rfice/housingsystem/myroomeditorinpututils/)| ️💡 입력 유틸리티 클래스. UI 검증, `Raycast` 실행, 포인터 델타 계단 등 입력 관련 헬퍼 함수 제공. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
 
 ```mermaid
 classDiagram
@@ -304,28 +445,28 @@ direction LR
         + PointerDelta() Vector2
         + IsPointerOnUI() bool
     }
-    
+
     class MyRoomEditorCameraController {
         // 카메라 제어 컨트롤러
     }
-    
+
     class MyRoomEditorState {
         // 에디터 상태 관리자
     }
-    
+
     MyRoomEditorInputController o--> MyRoomEditorInput : subscribe
     MyRoomEditorInputController o--> MyRoomEditorCameraInputDispatcher : use
     MyRoomEditorInputController o--> MyRoomEditorEditingInputDispatcher : use
 
     MyRoomEditorState o--> MyRoomEditorEditingInputDispatcher : subscribe
-    
-    
+
     MyRoomEditorPropEditor o--> MyRoomEditorInputUtils : use
     MyRoomEditorPropEditingManager o--> MyRoomEditorInputUtils : use
     MyRoomEditorPlacementManager o--> MyRoomEditorInputUtils : use
-    
+
     MyRoomEditorCameraController o--> MyRoomEditorCameraInputDispatcher : subscribe
 ```
+
 <br><br>
 
 ### 오브젝트 동작 및 정의 Component
@@ -338,7 +479,9 @@ direction LR
 |[**SpawnablePhotoFrameProp**](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)<br>-->SpawnablePropBase<br>-->IPhotoFrameProp<br>-->IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 텍스처 업로드 및 이미지 적용 기능 포함. |
 |[**SpawnableScreenProp**](/docs/projects/rfice/housingsystem/spawnablescreenprop/)<br>-->SpawnablePropBase<br>-->IScreenProp<br>-->IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 개인공간에서 실시간 파일 공유 기능 모듈(`NetworkedScreen`)을 사용 할 수 있게 세팅.  |
 |[**PropEditingState**](/docs/projects/rfice/housingsystem/propeditingstate/)| ️💡 오브젝트 편집 상태에 따라 오브젝트의 `Material` 효과를 표현하는 클래스. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
+
 ```mermaid
 classDiagram
 direction LR
@@ -350,7 +493,7 @@ direction LR
         + Valid()
         + Invalid()
     }
-    
+
     class SpawnablePropBase {
         <<abstract>>
         + PlacementType: PlacementType
@@ -390,34 +533,34 @@ direction LR
         // 스크린 오브젝트
         // Interface정의에 따라 기능 implement
     }
-    
+
     class PropComponent{
         // SpawnableFllorAncCeilProp
         // SpawnableWallProp
         // SpawnablePhotoFrameProp
         // SpawnableScreenProp
     }
-    
+
     class IColorEditableProp{
         // 컬러 변경 가능한 프랍 기능 정의 interface
     }
-    
+
     class IMoveableProp{
         // 이동 가능한 프랍 기능 정의 interface
     }
-    
+
     class IRotatableProp{
         // 회전 가능한 프랍 기능 정의 interface
     }
-    
+
     class IPhotoFrameProp{
         // 사진 업로드 가능한 프랍 기능 정의 interface
     }
-    
+
     class IScreenProp{
         // 파일 뷰어 기능 가능한 프랍 기능 정의 interface
     }
-    
+
     PropEditingState <--* SpawnableFloorAndCeilProp : manage
     PropEditingState <--* SpawnableWallProp : manage
     PropEditingState <--* SpawnablePhotoFrameProp : manage
@@ -426,13 +569,14 @@ direction LR
     SpawnableWallProp --|> SpawnablePropBase : extend
     SpawnablePhotoFrameProp --|> SpawnablePropBase : extend
     SpawnableScreenProp --|> SpawnablePropBase : extend
-    
+
     PropComponent ..|> IColorEditableProp : implement
     PropComponent ..|> IMoveableProp : implement
     PropComponent ..|> IRotatableProp : implement
     PropComponent ..|> IPhotoFrameProp : implement
     PropComponent ..|> IScreenProp : implement
 ```
+
 <br><br>
 
 ### 오브젝트 동작 및 정의 Interface
@@ -450,7 +594,9 @@ direction LR
 |[**IInteractableProp**](/docs/projects/rfice/housingsystem/iinteractableprop/) <br> *<<interface>>* | ️💡 특수한 인터렉션 가능한 오브젝트 정의 및 사용자 인터렉션 기능 정의. |
 |[**IPhotoFrameProp**](/docs/projects/rfice/housingsystem/iphotoframeprop/) <br> *<<interface>>* <br> -->IInteractableProp | ️💡 사진 프레임 정의 및 이미지 설정 기능 정의. |
 |[**IScreenProp**](/docs/projects/rfice/housingsystem/iscreenprop/) <br> *<<interface>>* <br> -->IInteractableProp | ️💡 실시간 파일 공유 모듈 정의. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
+
 ```mermaid
 classDiagram
 direction LR
@@ -514,20 +660,21 @@ direction LR
         // SpawnablePhotoFrameProp
         // SpawnableScreenProp
     }
-    
+
     IColorEditableProp --|> IMyRoomEditorEditableObject : extends
     IMoveableProp --|> IMyRoomEditorEditableObject : extends
     IRotatableProp --|> IMyRoomEditorEditableObject : extends
     IPhotoFrameProp --|> IInteractableProp : extends
     IScreenProp --|> IInteractableProp : extends
-    
+
     PropComponent ..|> IColorEditableProp : implement
     PropComponent ..|> IMoveableProp : implement
     PropComponent ..|> IRotatableProp : implement
     PropComponent ..|> IPhotoFrameProp : implement
     PropComponent ..|> IScreenProp : implement
-    
+
 ```
+
 <br><br>
 
 ### 오브젝트 배치 구역 정의 Component 및 Interface
@@ -537,7 +684,9 @@ direction LR
 |[**IPlaceableArea**](/docs/projects/rfice/housingsystem/iplaceablearea/)<br>*<<interface>>*| ️💡 배치 영역 정의 및 배치 영역 기능 정의. |
 |[**PlacementAreaProp**](/docs/projects/rfice/housingsystem/placementareaprop/) <br> -->IPlaceableArea | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
 |[**PlacementAreaInProp**](/docs/projects/rfice/housingsystem/placementareainprop/) <br> -->IPlaceableArea | ️💡 책상, 탁자, 데크 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.<br> 💡 부모 오브젝트 내 자식 오브젝트 처리. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
+
 ```mermaid
 classDiagram
 direction LR
@@ -563,19 +712,18 @@ direction LR
         // SpawnablePhotoFrameProp
         // SpawnableScreenProp
     }
-    
+
     class MyRoomEditorInputUtils{
         // 조작 유틸리티 클래스
     }
-    
+
     class MyRoomEditorPlacementManager{
         // 프랍 생성 및 배치 기능 클래스
     }
-    
+
     class MyRoomEditorPropMover{
         // 프랍 이동 기능 클래스
     }
-    
 
     PlacementAreaProp ..|> IPlaceableArea : implements
     PlacementAreaInProp ..|> IPlaceableArea : implements
@@ -585,8 +733,8 @@ direction LR
     MyRoomEditorPlacementManager ..> IPlaceableArea : dependency
     MyRoomEditorPropMover ..> IPlaceableArea : dependency
 ```
-<br><br>
 
+<br><br>
 
 ### 오브젝트 편집UI Component
 {{< table "table-striped">}}
@@ -595,7 +743,9 @@ direction LR
 |[**MyRoomEditorObjectEditUI**](/docs/projects/rfice/housingsystem/myroomeditorobjecteditui/)| ️💡 오브젝트 편집 메뉴를 표시하고 조작하는 UI클래스. <br> 💡 선택된 오브젝트의 이름 및 사용 가능한 편집 기능 표시.  <br> 💡 편집 기능(이동, 회전, 삭제, 색변경, 인터렉션) 등을 제어하는 버튼과 메뉴 관리. |
 |[**MyRoomEditorColorSelectUI**](/docs/projects/rfice/housingsystem/myroomeditorcolorselectui/)| ️💡 색상 선택 UI를 처리하는 클래스. <br> 💡 사용할 수 있는 색상 옵션을 표시하고 선택 이벤트 처리. |
 |[**MyRoomEditorColorEditItem**](/docs/projects/rfice/housingsystem/myroomeditorcoloredititem/)| ️💡 선택 가능한 색상 항목을 나타내는 UI 컴포넌트. <br> 💡 개별 색상을 표시하고 선택 상태를 관리. |
-{{< /table >}}<br>
+{{< /table >}}
+<br>
+
 ```mermaid
 classDiagram
     direction LR
@@ -616,7 +766,7 @@ classDiagram
     class MyRoomEditorColorSelectUI {
         + OnSelectedColor: event Action[int]
         + DrawColorList(List[MyRoomPropColor], int)
-        
+
     }
 
     class MyRoomEditorColorEditItem {
@@ -635,9 +785,10 @@ classDiagram
     MyRoomEditorColorSelectUI "1" --> "n" MyRoomEditorColorEditItem : manages
     MyRoomEditorPropEditingManager o--> MyRoomEditorObjectEditUI : use, subscribe
 ```
+
 <br><br>
 
-## 4. 주요 특징
+## 5. 주요 특징
 
 ### 기능의 특징
 - **실시간 배치 검증**: 코루틴 기반 실시간 충돌 감지 및 배치 가능성 검증
@@ -647,7 +798,7 @@ classDiagram
 - **플렛폼 확장성 고려**: 모바일 환경 확장성을 고려한 입력 및 편집 환경 구성
 - **오브젝트 배치 검증 최적화**: Physics.RaycastNonAlloc를 사용하여 가비지 생성을 방지하고, 결과 수를 제한하여 성능을 최적화.
 
-## 5. UseCase
+## 6. UseCase
 
 ### 개인 룸 커스터마이징 시나리오
 1. **기본 룸 생성**: 빈 룸에서 시작하여 기본 가구 배치

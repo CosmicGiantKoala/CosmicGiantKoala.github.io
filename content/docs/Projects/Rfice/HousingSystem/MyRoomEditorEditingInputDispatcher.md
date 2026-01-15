@@ -1,5 +1,5 @@
 ﻿+++
-title = "MyRoomEditorEdittingInputDispatcher"
+title = "MyRoomEditorEditingInputDispatcher"
 description = "편집 관련 입력 이벤트를 처리하는 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
@@ -10,7 +10,7 @@ weight = 412
 +++
 ## 개요
 
-`MyRoomEditorEdittingInputDispatcher` 클래스는 MyRoom 에디터에서 편집 관련 입력 이벤트를 중앙에서 관리하고 배포하는 디스패처입니다. 포인터 클릭, 취소, 삭제 등의 편집 입력을 적절한 리스너들에게 전달합니다.
+`MyRoomEditorEditingInputDispatcher` 클래스는 MyRoom 에디터에서 편집 관련 입력 이벤트를 중앙에서 관리하고 배포하는 디스패처입니다. 포인터 클릭, 취소, 삭제 등의 편집 입력을 적절한 리스너들에게 전달합니다.
 
 ## 역할
 - 편집 관련 입력 이벤트 처리

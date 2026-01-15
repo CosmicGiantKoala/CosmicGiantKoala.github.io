@@ -71,7 +71,11 @@ bool IsPlaceableArea(Vector3 targetPos, IPlaceableArea placeableArea)
 ## 상속 관계 및 구현체
 
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)를 확장
-- 이동이 가능한 오브젝트들에서 구현([`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/), [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/), [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/), [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/))
+- 이동이 가능한 오브젝트들에서 구현:
+  - [`SpawnableFloorAndCeilProp`](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)
+  - [`SpawnableWallProp`](/docs/projects/rfice/housingsystem/spawnablewallprop/)
+  - [`SpawnablePhotoFrameProp`](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)
+  - [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/)
 
 ## 사용 예시
 
@@ -105,4 +109,4 @@ if (movableProp.IsPlaceableArea(newPosition, placeableArea))
 - [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea)
 - [`MyRoomEditorPlacementManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPlacementManager)
 - [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)
-- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/) 
+- [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)

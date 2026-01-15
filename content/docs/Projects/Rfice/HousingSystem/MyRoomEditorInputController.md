@@ -45,7 +45,7 @@ private MyRoomEditorCameraInputDispatcher _cameraInputDispatcher;
 /// 편집 입력 이벤트 처리 디스패처
 /// </summary>
 [Inject]
-private MyRoomEditorEdittingInputDispatcher _edittingDispatcher;
+private MyRoomEditorEditingInputDispatcher _edittingDispatcher;
 ```
 
 ### 메서드
@@ -110,13 +110,13 @@ private void InputEventSubscribe()
     _myRoomInput.MyRoomEditorCamera.CameraZoom.performed += OnCameraZoomWheel;
 
     // 포인터 입력 이벤트 구독
-    _myRoomInput.MyRoomEditorEditting.PointerDown.started += OnPointerDown;
-    _myRoomInput.MyRoomEditorEditting.PointerUp.performed += OnPointerUp;
-    
+    _myRoomInput.MyRoomEditorEditing.PointerDown.started += OnPointerDown;
+    _myRoomInput.MyRoomEditorEditing.PointerUp.performed += OnPointerUp;
+
     // 단축키 입력 이벤트 구독
-    _myRoomInput.MyRoomEditorEditting.Cancel.started += OnCancel;
-    _myRoomInput.MyRoomEditorEditting.RightClick.started += OnRightClick;
-    _myRoomInput.MyRoomEditorEditting.Delete.started += OnDeletePress;
+    _myRoomInput.MyRoomEditorEditing.Cancel.started += OnCancel;
+    _myRoomInput.MyRoomEditorEditing.RightClick.started += OnRightClick;
+    _myRoomInput.MyRoomEditorEditing.Delete.started += OnDeletePress;
 }
 ```
 
@@ -135,10 +135,10 @@ private void InputEventSubscribe()
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음.
-- Zenject를 사용하여 의존성 주입: `RficeAction`, `MyRoomEditorInput`, [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/), [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/).
+- Zenject를 사용하여 의존성 주입: `RficeAction`, `MyRoomEditorInput`, [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/), [`MyRoomEditorEditingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/).
 - [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html) 패키지를 사용.
 
 ## 관련 클래스
 - [`MyRoomEditorCameraInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditorcamerainputdispatcher/)
-- [`MyRoomEditorEdittingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)
+- [`MyRoomEditorEditingInputDispatcher`](/docs/projects/rfice/housingsystem/myroomeditoreditinginputdispatcher/)
 - [`InputSystem`](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.17/manual/index.html)

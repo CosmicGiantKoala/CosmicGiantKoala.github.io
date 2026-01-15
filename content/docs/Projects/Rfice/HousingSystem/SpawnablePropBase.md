@@ -9,16 +9,16 @@ toc = true
 weight = 414
 +++
 ## 개요
-`SpawnablePropBase`는 MyRoomEditor에서 제어 가능한 모든 오브젝트의 abstract 클래스입니다. 오브젝트의 기본 정보, 부모-자식 관계, 배치 정보 관리 및 공통 로직을 담당합니다.
+`SpawnablePropBase`는 MyRoomEditor에서 모든 배치 가능한 오브젝트의 추상 기본 클래스입니다. 이 클래스는 배치 가능한 오브젝트들의 공통 기능을 제공하며, [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/) 인터페이스를 구현하여 편집 가능한 오브젝트로 동작합니다.
 
 ## 역할
-- 프로퍼티 기본 정보 관리 (ID, 타입, 카테고리 등)
-- 부모-자식 관련 프로세스
-- 오브젝트 배치 정보 저장/로드
-- 오브젝트 슬롯 영역 관리
+- 모든 배치 가능한 오브젝트들의 기본 기능을 제공
+- 공통 속성 및 상태 관리
+- 부모-자식 오브젝트 관계 구성
+- 하이라이트 상태 표현
+- 배치 정보 관리
 
 ## 멤버
-
 ### 속성
 ```csharp
 /// <summary>
@@ -27,49 +27,39 @@ weight = 414
 public PlacementType PlacementType { get; private set; }
 
 /// <summary>
-/// 메인 카테고리: 오브젝트의 주요 분류
-/// </summary>
-public MyRoomPropMainCategory GetMainCategory { get; private set; }
-
-/// <summary>
-/// 특성: 오브젝트의 추가 기능
-/// </summary>
-public Feature PropFeature { get; private set; }
-
-/// <summary>
-/// 이름 키: 로컬라이징을 위한 오브젝트 이름 식별자
+/// 로컬라이징용 오브젝트 이름 키
 /// </summary>
 public string PropNameKey { get; private set; }
 
 /// <summary>
-/// 고유 ID: 오브젝트 식별자
+/// 오브젝트의 고유 식별자
 /// </summary>
 public string Id { get; private set; }
 
 /// <summary>
-/// 오브젝트 기본 정보: ID, 타입, 카테고리, 색상 리스트 등
-/// </summary>
-protected MyRoomProp MyRoomPropData { get; private set; }
-
-/// <summary>
-/// 배치 정보: 위치, 회전, 색상, 부모 관계 등
-/// </summary>
-protected MyRoomPlaceProp MyRoomPlacePropData { get; private set; }
-
-/// <summary>
-/// 현재 색상: 적용된 색상 정보 (null 가능)
-/// </summary>
-protected MyRoomPropColor CurrentColor { get; set; }
-
-/// <summary>
-/// 부모 오브젝트: 이 오브젝트가 부착된 부모 SpawnablePropBase (null 가능)
+/// 부모 오브젝트 참조
 /// </summary>
 public SpawnablePropBase ParentProp { get; private set; }
 
 /// <summary>
-/// 자식 오브젝트 리스트: 이 오브젝트 위에 배치된 자식 오브젝트들
+/// 자식 오브젝트 리스트: 이 오브젝트 슬롯에 배치된 자식 오브젝트들
 /// </summary>
 private List<SpawnablePropBase> _childrenProps = new();
+
+/// <summary>
+/// 오브젝트 기본 데이터 : ID, 타입, 카테고리, 색상 리스트 등
+/// </summary>
+protected MyRoomProp MyRoomPropData { get; private set; }
+
+/// <summary>
+/// 오브젝트 배치 데이터 : 위치, 회전, 색상, 부모 관계 등
+/// </summary>
+protected MyRoomPlaceProp MyRoomPlacePropData { get; private set; }
+
+/// <summary>
+/// 현재 색상 정보
+/// </summary>
+protected MyRoomPropColor CurrentColor { get; set; }
 ```
 
 ### 추상 메서드
@@ -207,18 +197,23 @@ public void RemoveChildProp(SpawnablePropBase childProp)
 ```
 
 ## 기능 설명
-### 프로퍼티 정보 관리
-- `MyRoomProp` 데이터로부터 기본 정보 설정
-- 배치 타입, 카테고리, 기능 등 저장
+### 오브젝트 정보 관리
+- `SetPropInfo()`: 오브젝트의 기본 데이터 설정
+- `SetPlacePropInfo()`: 오브젝트의 배치 데이터 설정 및 초기화
+- `GetPlacePropInfo()`/`GetPlacePropId()`: 배치 정보를 조회
 
-### 계층 구조 관리
-- 부모-자식 관계를 통한 오브젝트 계층 관리
-- 트랜스폼 부모 설정 및 해제
-- [`PlacementAreaInProp`](/docs/projects/rfice/HousingSystem/PlacementAreaInProp) 초기화 및 동작 지원
+### 부모-자식 관계 관리
+- `AddChildProp()`/`RemoveChildProp()`: 자식 오브젝트 추가/제거
+- `SetPropParent()`/`ClearPropParent()`: 부모 오브젝트 설정/해제
+- - [`PlacementAreaInProp`](/docs/projects/rfice/housingsystem/placementareainprop) 초기화 및 동작 지원
+- `gameobject.transform` 관리
 
-### 배치 데이터 처리
-- 절대/상대 좌표 변환
-- 색상 및 회전 정보 저장
+### 편집 기능
+- `RegisterProp()`: 편집 매니저에 오브젝트 등록
+- `SetupPropHighlight()`: 하이라이트 상태 초기화 (서브클래스에서 구현)
+
+### 오브젝트 삭제
+- `Delete()`: 오브젝트 삭제 및 리소스 정리
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음.
