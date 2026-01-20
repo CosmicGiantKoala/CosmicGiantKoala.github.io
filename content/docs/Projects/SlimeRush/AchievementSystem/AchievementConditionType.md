@@ -1,6 +1,6 @@
 +++
 title = "AchievementConditionType"
-description = "업적 시스템 핵심 데이터 모델"
+description = "업적의 완료 조건 타입 정의"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
@@ -89,6 +89,6 @@ private AchievementConditionType ParseConditionType(string conditionTypeString)
 ```
 
 ## 관련 클래스
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)
-- [`AchievementSheetData`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSheetData)
-- [`AchievementSystem`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSystem)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
