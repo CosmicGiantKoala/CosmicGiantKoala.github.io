@@ -25,7 +25,7 @@ weight = 201
     - 타겟 시스템(`ITarget`, `TargetingOption`, `TargetScanner`, `TargetSystem`)
 
 ### 개발 배경 및 요구사항
-- **표준 전투 로직 제공**: 정확한 대미지 계산과 다양한 전투 상황에 대응할 수 있는 로직 구현
+- **표준 전투 로직 제공**: 정확한 데미지 계산과 다양한 전투 상황에 대응할 수 있는 로직 구현
 - **유연한 마법 시스템**: 다양한 마법 타입과 시전 방식을 지원하는 확장 가능한 마법 시스템 구축
 - **실시간 전투 처리**: 플레이어와 몬스터 간의 실시간 전투 상호작용 및 상태 관리
 - **효율적인 타겟팅 시스템**: 다양한 타겟팅 옵션과 정확한 타겟 추적 기능 제공
@@ -41,8 +41,8 @@ weight = 201
 | **마법 발동 시스템** | 실시간 쿨타임 관리, 타겟팅 옵션 적용, 마법 시전 처리 |
 | **몬스터 공격 능력 관리** | 몬스터 공격 능력 관리, 거리 기반 전투 행동 결정 |
 | **몬스터 공격 능력 핸들링** | 개별 공격 능력 처리, 쿨타임 관리, 거리 감지 |
-| **대미지 계산 시스템** | 통상 대미지 공식 구현, 크리티컬 히트, 룬 시스템 연동 |
-| **대미지 정보/결과 관리** | 대미지 데이터 구조화, 속성 변환, 최종 적용 결과 제공 |
+| **데미지 계산 시스템** | 통상 데미지 공식 구현, 크리티컬 히트, 룬 시스템 연동 |
+| **데미지 정보/결과 관리** | 데미지 데이터 구조화, 속성 변환, 최종 적용 결과 제공 |
 | **타겟 정의 및 서칭** | 타겟 인터페이스 표준화, 다양한 타겟팅 옵션 지원 |
 | **실시간 타겟 추적** | 플레이어와 적 사이의 거리 실시간 감시 및 추적 |
 {{< /table >}}<br>
@@ -56,7 +56,7 @@ weight = 201
 | **Unity Physics** | 레이캐스트, 거리 계산, 물리 연산 |
 | **Zenject** | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
 | **Unity Coroutines** | 실시간 쿨타임 관리 및 타겟 추적 코루틴 기반 처리 |
-| **Unity Events** | 마법 시전, 대미지 적용, 타겟 변경 이벤트 시스템 |
+| **Unity Events** | 마법 시전, 데미지 적용, 타겟 변경 이벤트 시스템 |
 {{< /table >}}<br>
 
 ### 설계 활용 패턴
@@ -71,364 +71,369 @@ weight = 201
 {{< /table >}}<br>
 
 ## 3. 전체 시스템 구조도(간략)
-
+{{< alert context="info" text="작업 범위 위주" />}}
 ```mermaid
 classDiagram
   direction LR
-  class MagicBookLibrary {
-    + MagicBooks: List<MagicBook>
-    + InitPlayerInfo(PlayerDataInfo)
-    + UpdatePlayerInfo(PlayerDataInfo)
-    + OnUpdatedMagic(MagicInfo)
-  }
 
-  class MagicBookCreator {
-    + Create(MagicBookParameters)
-  }
+%% 핵심 시스템 클래스
+  class MagicBookLibrary
+  class MagicBook
+  class MagicBookCreator
+  class MagicBookParameters{<<struct>>>}
+  class CommonMonsterCombat
+  class CommonBattleManager
+  class MonsterAbilityHandler
+  class CommonBattleManager
+  class IDamageAble{<<interface>>}
+  class DamageInfo
+  class ITarget{<<interface>>}
+  class TargetSystem
+  class TargetScanner
+  class MagicAbilityInfo{<<struct>>}
+  class MagicAbilityType{<<enumeration>>}
 
-  class MagicBook {
-    + InitializeMagicBook(MagicInfo, PlayerDataInfo)
-    + CastToTarget(ITarget[])
-    + CastToPosition(Vector3[])
-    + OnUpdatedPlayerInfo(PlayerDataInfo)
-    + OnUpdatedMagicInfo(MagicInfo)
-  }
+%% 주요 관계
+  MagicBookLibrary o--> MagicBookCreator : uses
+  MagicBookLibrary "1" o--> "n" MagicBook : manages
+  MagicBookLibrary *--> MagicBookParameters : creates
+  MagicBookCreator --> MagicBook : creates
+  MagicBookCreator --> MagicBookParameters : uses
+  
+  MagicBook o--> TargetSystem : uses
+  MagicBook --> TargetingOption : uses
+  MagicBook o--> ITarget : uses
+  MagicBook --> CommonBattleManager : uses
+  MagicAbilityInfo --> MagicAbilityType : uses
 
-  class CommonMonsterCombat {
-    + OnSetupSetupMonsterCombat()
-    + OnPlayed()
-    + OnPaused()
-  }
+  CommonMonsterCombat ..|> MonsterCombatBehaviour :impl
+  CommonMonsterCombat "1" *--> "n" MonsterAbilityHandler : manages
+  CommonMonsterCombat o--> TargetSystem : uses
+  MonsterAbilityHandler o--> IDamageAble : uses
+  MonsterAbilityHandler o--> ITarget : uses
 
-  class MonsterAbilityHandler {
-    + Update(float, float)
-  }
+  CommonBattleManager --> DamageInfo : creates
+  CommonBattleManager --> MagicAbilityInfo : creates
+  DamageInfo --> MagicAbilityInfo : contains
 
-  class CommonBattleManager {
-    + CreateDamageInfo(PlayerDataInfo, MagicInfo)
-    + DecisionCriticalHit(DamageInfo)
-    + GetCoolTime(float, float)
-  }
-
-  class TargetSystem {
-    + InitPlayer(ITarget)
-    + FindTarget(Vector3, MagicTargetType, float)
-    + FindTargets(Vector3, MagicTargetType, int, float)
-    + FindPosition(Vector3, MagicTargetType, float)
-    + FindPositions(Vector3, MagicTargetType, int, float)
-  }
-
-  class TargetScanner {
-    + FindNearestTarget(Vector3, ITarget[], float)
-    + FindRandomTarget(Vector3, ITarget[], float)
-    + FindRandomPosition(Vector3, float)
-  }
-
-  class DamageInfo {
-    + CommonDamage: float
-    + CriticalChance: float
-    + CriticalDamage: float
-    + PhysicalStrength: float
-    + ElementalType: DamageElemental
-    + MagicAbilityInfo: MagicAbilityInfo
-  }
-
-  class DamageResult {
-    + IsDead: bool
-    + AttackDamage: float
-    + IsCriticalHit: bool
-    + AppliedDamage: float
-    + DamagedObject: GameObject
-  }
-
-  class ITarget {
-    <<interface>>
-    + GetPosition(): Vector3
-    + GetTransform(): Transform
-    + GetDamageAble(): IDamageAble
-  }
-
-MagicBookLibrary o--> MagicBookCreator : uses
-MagicBookLibrary --> MagicBook : manages
-MagicBookCreator --> MagicBook : creates
-MagicBookLibrary o--> IMagicHandler : subscribes
-
-CommonMonsterCombat --> MonsterAbilityHandler : manages
-CommonMonsterCombat o--> TargetSystem : uses
-
-CommonBattleManager --> DamageInfo : creates
-CommonBattleManager --> DamageResult : creates
-
-TargetSystem --> TargetScanner : uses
-TargetSystem --> ITarget : manages
-
-MagicBook o--> TargetSystem : uses
-MagicBook --> ITarget : uses
+  TargetSystem o--> TargetScanner : uses
+  TargetSystem "1" --> "n" ITarget : manages
 ```
 <br><br>
 
 ## 4. 주요 클래스별 역할 및 관계
-### 핵심 전투 관리
+### 플레이어 마법 관리 시스템
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[CommonBattleManager](/docs/projects/rfice/SlimeRush/BattleSystem/CommonBattleManager)** | 전투의 핵심 계산 로직 담당, 데미지 계산, 크리티컬 판정, 쿨타임 계산 |
-| **[TargetSystem](/docs/projects/rfice/SlimeRush/BattleSystem/TargetSystem)** | 타겟 관리 및 타겟팅 로직 구현, 플레이어와 적 타겟 추적 | 
-| **[MagicBook](/docs/projects/rfice/SlimeRush/BattleSystem/MagicBook)** | 플레이어 마법 시스템 관리, 쿨타임 관리, 마법 시전 및 타겟팅 |
-| **[MagicBookLibrary](/docs/projects/rfice/SlimeRush/BattleSystem/MagicBookLibrary)** | 활성화된 마법 관리, 마법책 생성 및 관리, 마법 사용 기록 저장 |
-| **[MagicBookCreator](/docs/projects/rfice/SlimeRush/BattleSystem/MagicBookCreator)** | 마법책 생성 팩토리, 의존성 주입을 통한 마법책 인스턴스 생성 |
-| **[MagicBookParameters](/docs/projects/rfice/SlimeRush/BattleSystem/MagicBookParameters)** | 마법책 생성에 필요한 매개변수 캡슐화 구조체 |
+| **[MagicBookLibrary](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)** | 활성화된 마법을 중앙에서 관리 클래스, 마법 할당 이벤트 구독 및 처리 |
+| **[MagicBookCreator](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)** | 마법책 생성 전용 팩토리 클래스|
+| **[MagicBook](/docs/projects/SlimeRush/BattleSystem/MagicBook)** | 마법 쿨타임관리/발사 클래스, 실시간 타겟 추적 |
+| **[MagicAbilityInfo](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)** | 마법의 부가 효과 정보를 저장하는 구조체|
+| **[MagicAbilityType](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)** | 마법의 부가 효과 종류를 정의하는 열거형|
+{{< /table >}}<br>
+
+```mermaid
+classDiagram
+    direction TD
+    class IMagicHandler {
+        <<interface>>
+    }
+    class PlayerControl
+    class MagicBookLibrary {
+        + MagicBooks : List~MagicBook~
+        + InitPlayerInfo(~PlayerDataInfo~)
+        + UpdatePlayerInfo(~PlayerDataInfo~)
+        - OnUpdatedMagic(~MagicInfo~)
+        - CreateMagicBook(~MagicInfo~): ~IEnumerator~
+        - UpdateMagicBook(~MagicInfo~)
+    }
+
+    class MagicBookParameters {
+      <<struct>>
+      + MagicBookLibrary : ~MagicBookLibrary~
+      + MagicBook : ~MagicBook~
+      + MagicInfo : ~MagicInfo~
+      + PlayerInfo : ~PlayerDataInfo~
+    }
+
+    class MagicBookCreator {
+        + Create(~MagicBookParameters~) : ~MagicBook~
+    }
+
+    class MagicBook {
+        - TargetingOption : ~TargetingOption~
+        - PlayerInfo : ~PlayerDataInfo~
+        - MagicInfo : ~MagicInfo~
+        + OnCastMagic: event Action~string, float~
+        + InitializeMagicBook(~MagicInfo~, ~PlayerDataInfo~)
+        + OnUpdatedPlayerInfo(~PlayerDataInfo~)
+        + OnUpdatedMagicInfo(~MagicInfo~)
+        - UpdateMagicBook()
+        - SetTargetingProcess(~TargetingOption~) : ~IEnumerator~
+        - CoSearch~T~(Action~T~, Func~MagicTargetType, T~) : ~IEnumerator~
+        - CastToTarget(~ITarget[]~)
+        - CastToPosition(~Vector3[]~)
+    }
+
+    class MagicAbilityInfo {
+        <<struct>>
+        + AbilityType: ~MagicAbilityType~
+        + AppliedDamage: ~float~
+        + Duration: ~float~
+        + CreateIgnition()
+        + CreateFreezing()
+        + CreateStatic()
+        + CreateWeathering()
+    }
+
+    class MagicAbilityType {
+        <<enum>>
+        None
+        Ignition
+        Freezing
+        Static
+        Weathering
+    }
+    
+    class TargetingOption{
+        <<struct>>
+    }
+    
+    class ITarget{
+        <<interface>>
+    }
+    
+    PlayerControl --> MagicBookLibrary : uses
+    MagicBookLibrary --> IMagicHandler : subscribe
+    MagicBookLibrary o--> MagicBookCreator : uses
+    MagicBookLibrary "1" --> "n" MagicBook : manages
+    MagicBookLibrary --> MagicBookParameters : creates
+    MagicBookCreator --> MagicBook : creates
+    MagicBookCreator --> MagicBookParameters : uses
+    MagicBook --> TargetSystem : uses
+    MagicBook *--> TargetingOption : creates
+    MagicBook --> ITarget : uses
+    MagicBook --> Magic : creates
+    DamageInfo --> MagicAbilityInfo : contains
+    MagicAbilityInfo --> MagicAbilityType : uses
+```
+<br><br>
+
+### 몬스터 시스템
+{{< table "table-striped">}}
+| 클래스 | 역할 |
+|-----|-----|
+| **[MonsterCombatBehaviour](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour)** | 게임 상태 감지 및 상태별 동작 이벤트 호출 |
+| **[CommonMonsterCombat](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)**<br>-->MonsterCombatBehaviour | 게임 상태별 몬스터 동작. 타겟 관련 동작 및 능력 핸들러 관리 |
+| **[MonsterAbilityHandler](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)** | 몬스터 능력 핸들러, 개별 공격 능력 처리, 쿨타임 관리, 거리 감지 |
+{{< /table >}}<br>
+
+```mermaid
+classDiagram
+    direction LR
+    class IGameStateObservable {
+        <<interface>>
+    }
+    
+    class GameState{
+        <<enumeration>>
+    }
+
+    class MonsterCombatBehaviour {
+        # OnPauseEvent: event Action
+        # OnPlayEvent : event Action
+        - OnChangedGameState(~GameState~)
+    }
+    
+    class CommonMonsterCombat {
+        - CombatBehaviour: delegate(~float~, ~float~)
+        - AbilityHandler: List~MonsterAbilityHandler~
+        # OnPlayed()
+        # OnPaused()
+        - CoCheckDistance(): ~IEnumerator~
+        - OnSetupMonsterCombat()
+    }
+
+    class MonsterAbilityHandler {
+        + MonsterAbilityHandler(~IMonsterAttackAbility~, ~ITarget~, ~IDamageAble~)
+        ~ Update(~float~, ~float~)
+    }
+
+    class IMonsterAttackAbility {
+        <<interface>>
+    }
+
+    MonsterCombatBehaviour o--> IGameStateObservable : subscribe
+    MonsterCombatBehaviour --> GameState: uses
+    CommonMonsterCombat "1" *--> "n" MonsterAbilityHandler : manage 
+    CommonMonsterCombat o--> TargetSystem : uses
+    CommonMonsterCombat --|> MonsterCombatBehaviour : inheritance
+    MonsterAbilityHandler o--> IMonsterAttackAbility : uses
+```
+<br><br>
+
+### 공통 시스템
+{{< table "table-striped">}}
+| 클래스 | 역할 |
+|-----|-----|
+| **[CommonBattleManager](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)** | 플레이어 정보와 마법정보 바탕으로 데미지 구조체 생성 및 데미지 공식 구현. 쿨타임, 마법 부가능력, 크리티컬 결정 등을 하는 정적 클래스 |
+| **[IDamageAble](/docs/projects/SlimeRush/BattleSystem/IDamageAble)** | 데미지를 입을 수 있는 객체를 정의하는 인터페이스, 표준화된 데미지 처리 제공 |
+| **[DamageInfo](/docs/projects/SlimeRush/BattleSystem/DamageInfo)** | 데미지 정보를 구조화한 데이터 컨테이너, 일반/치명타 데미지, 확률, 물리력 등 핵심 속성 포함 |
+| **[DamageResult](/docs/projects/SlimeRush/BattleSystem/DamageResult)** | 데미지 적용 결과를 담는 구조체, 실제 적용된 데미지 값과 치명타 여부, 대상 객체의 사망 여부 추적 |
+| **[ITarget](/docs/projects/SlimeRush/BattleSystem/ITarget)** | 타겟 인터페이스 표준화, 위치, Transform, 데미지 가능 객체 접근 인터페이스 제공 |
+| **[TargetingOption](/docs/projects/SlimeRush/BattleSystem/TargetingOption)** | 마법 타겟팅 옵션 정의 구조체, 타겟 타입(단일/다중/위치), 수량, 범위 설정 |
+| **[TargetScanner](/docs/projects/SlimeRush/BattleSystem/TargetScanner)** | 타겟 탐색 및 위치 찾기 전용 클래스, 거리 기반 타겟 정렬 및 필터링, 랜덤 타겟 선택 |
+| **[TargetSystem](/docs/projects/SlimeRush/BattleSystem/TargetSystem)** | 타겟 관리의 중앙 허브, 플레이어와 적 타겟의 통합 관리, 마우스 레이캐스트 기반 위치 감지 |
 {{< /table >}}<br>
 
 ```mermaid
 classDiagram
     direction LR
     class CommonBattleManager {
-        + CreateDamageInfo(PlayerDataInfo, MagicInfo)
-        + DecisionCriticalHit(DamageInfo)
-        + GetCoolTime(float, float)
-    }
-
-    class TargetSystem {
-        + InitPlayer(ITarget)
-        + AddEnemy(ITarget)
-        + RemoveEnemy(ITarget)
-        + FindTarget(Vector3, MagicTargetType, float)
-    }
-
-    class MagicBook {
-        + InitializeMagicBook(MagicInfo, PlayerDataInfo)
-        + OnUpdatedPlayerInfo(PlayerDataInfo)
-        + OnUpdatedMagicInfo(MagicInfo)
-        + CastToTarget(ITarget[])
-    }
-
-    class PlayerDataInfo {
-        + StrikingPower: float
-        + CriticalChance: float
-        + CriticalDamage: float
-        + AttackSpeed: float
-    }
-
-    class MagicInfo {
-        + id: string
-        + element: MagicElement
-        + sizeType: MagicSizeType
-        + strikingPower: float
-        + attackSpeed: float
-        + targetingType: MagicTargetType
-        + attackRange: float
-    }
-
-    MagicBook --> TargetSystem : uses
-    MagicBook --> PlayerDataInfo : uses
-    MagicBook --> MagicInfo : uses
-    CommonBattleManager --> PlayerDataInfo : uses
-    CommonBattleManager --> MagicInfo : uses
-    TargetSystem --> ITarget : manages
-```
-<br><br>
-
-### 데미지 및 전투 결과 처리
-{{< table "table-striped">}}
-| 클래스 | 역할 |
-|-----|-----|
-| **[DamageInfo](/docs/projects/rfice/SlimeRush/BattleSystem/DamageInfo)** | 데미지 정보를 담는 데이터 구조체, 기본 데미지, 크리티컬, 마법 능력 포함 |
-| **[DamageResult](/docs/projects/rfice/SlimeRush/BattleSystem/DamageResult)** | 데미지 적용 결과를 담는 구조체, 사망 여부, 적용 데미지, 크리티컬 여부 포함 |
-| **[MagicAbilityInfo](/docs/projects/rfice/SlimeRush/BattleSystem/MagicAbilityInfo)** | 마법의 특수 능력을 관리하는 구조체, 점화, 동결, 풍화, 정전기 등 |
-| **[ITarget](/docs/projects/rfice/SlimeRush/BattleSystem/ITarget)** | 타겟 인터페이스, 위치, 변환, 데미지 가능 여부 제공 |
-| **[IDamageAble](/docs/projects/rfice/SlimeRush/BattleSystem/IDamageAble)** | 데미지 처리 인터페이스, 데미지 적용 및 결과 반환 |
-{{< /table >}}<br>
-
-```mermaid
-classDiagram
-    direction LR
-    class DamageInfo {
-        + CommonDamage: float
-        + CriticalDamage: float
-        + CriticalChance: float
-        + PhysicalStrength: float
-        + ElementalType: DamageType
-        + MagicAbilityInfo: MagicAbilityInfo
-    }
-
-    class DamageResult {
-        + IsDead: bool
-        + AttackDamage: float
-        + AppliedDamage: float
-        + DamagedObject: GameObject
-        + IsCriticalHit: bool
-    }
-
-    class MagicAbilityInfo {
-        + IgnitionDamage: float
-        + IsIgnition: bool
-        + IsFreezing: bool
-        + IsWeathering: bool
-        + IsStatic: bool
-    }
-
-    class ITarget {
-        <<interface>>
-        + GetPosition(): Vector3
-        + GetTransform(): Transform
-        + GetDamageAble(): IDamageAble
+        <<static>>
+        + CreateDamageInfo(~PlayerDataInfo~, ~MagicInfo~):~DamageInfo~
+        + DecisionCriticalHit(~DamageInfo~):(~bool~,~float~)
+        + GetCoolTime(~float~,~float~):~float~
+        - CreateMagicAbility(~PlayerDataInfo~, ~MagicInfo~):~MagicAbilityInfo~
+        - CalculateCommonDamage(~PlayerDataInfo~, ~MagicInfo~):~float~
     }
 
     class IDamageAble {
         <<interface>>
-        + OnDamaged(DamageInfo): DamageResult
+        + OnDamaged(~DamageInfo~): ~DamageResult~
     }
 
-    class BaseMonster {
-        
+    class DamageInfo {
+        <<struct>>
+        + CommonDamage: ~float~
+        + CriticalChance: ~float~
+        + CriticalDamage: ~float~
+        + PhysicalStrength: ~float~
+        + PhysicalDirection: ~Vector3~
+        + ElementalType: ~DamageElemental~
+        + AttackClassification: ~AttackClassification~
+        + MagicAbilityInfo: ~MagicAbilityInfo~
+        + Attacker: ~string~
+    }
+    
+    class MagicAbilityInfo {
+        <<struct>>
+    }
+    
+    class DamageElemental{
+        <<enumeration>>
+        None, Physical, Fire, Ice, Lightining, Air
+    }
+    
+    class AttackClassification{
+        <<enumeration>>
+        Melee, Range, Area
     }
 
-    BaseMonster --> ITarget : implements
-    BaseMonster --> IDamageAble : implements
-    CommonBattleManager --> DamageInfo : creates
-    BaseMonster --> DamageResult : returns
-    DamageInfo --> MagicAbilityInfo : contains
-```
-<br><br>
-
-### 몬스터 전투 시스템
-{{< table "table-striped">}}
-| 클래스 | 역할 | 작업 구분 |
-|-----|-----|-----|
-| **[BaseMonster](/docs/projects/rfice/SlimeRush/BattleSystem/BaseMonster)** | 몬스터의 기본 전투 기능 구현, 데미지 처리, 상태 관리, 타겟 등록 | **타인 작업** |
-| **[MonsterStatus](/docs/projects/rfice/SlimeRush/BattleSystem/MonsterStatus)** | 몬스터 체력, 공격력, 이동 속도 등 상태 정보 관리 | **내 작업** |
-| **[MonsterMovement](/docs/projects/rfice/SlimeRush/BattleSystem/MonsterMovement)** | 몬스터 이동 로직 및 물리 연동 처리 | **내 작업** |
-| **[MonsterAbilityBehaviour](/docs/projects/rfice/SlimeRush/BattleSystem/MonsterAbilityBehaviour)** | 몬스터 특수 능력 및 회피 로직 처리 | **내 작업** |
-| **[CommonMonsterCombat](/docs/projects/rfice/SlimeRush/BattleSystem/CommonMonsterCombat)** | 일반 몬스터 전투 행동 관리, 공격 능력 설정 및 쿨타임 관리 | **내 작업** |
-| **[MonsterCombatBehaviour](/docs/projects/rfice/SlimeRush/BattleSystem/MonsterCombatBehaviour)** | 몬스터 전투 행동 기본 클래스, 게임 상태 변경에 따른 전투 행동 제어 | **내 작업** |
-{{< /table >}}<br>
-
-```mermaid
-classDiagram
-    direction LR
-    class BaseMonster {
-        + Init(int, MonsterInfo, Vector3, Action, bool)
-        + OnDamaged(DamageInfo)
-        + RegisterTarget()
-        + DeregisterTarget()
+    class DamageResult {
+        <<struct>>
+        + IsDead: ~bool~
+        + AttackDamage: ~float~
+        + IsCriticalHit: ~bool~
+        + AppliedDamage: ~float~
+        + DamagedObject: ~GameObject~
     }
 
-    class MonsterStatus {
-        + OnDamage(float)
-        + IsDead(): bool
-        + OnChangeStatus(MonsterStatusType)
+    class ITarget {
+        <<interface>>
+        + GetPosition(): ~Vector3~
+        + GetTransform(): ~Transform~
+        + GetDamageAble(): ~IDamageAble~
     }
 
-    class MonsterMovement {
-        + Init(Transform)
-        + Run()
-        + AddForce(Vector3, float)
+    class TargetSystem {
+        - TargetScanner: ~TargetScanner~
+        - PlayerTarget: ~ITarget~
+        - Enemies: HashSet~ITarget~
+        + Init/ReleasePlayer(~ITarget~)
+        + Add/RemoveEnemy(~ITarget~)
+        + FindTarget(~Vector3~, ~MagicTargetType~, ~float~): ~ITarget~
+        + FindTargets(~Vector3~, ~MagicTargetType~, ~int~, ~float~): ~ITarget[]~
+        + FindPosition(~Vector3~, ~MagicTargetType~, ~float~): ~Vector3~
+        + FindPositions(~Vector3~, ~MagicTargetType~, ~int~, ~float~): ~Vector3[]~
+        + TryGetMousePosition(out ~Vector3~): ~bool~
     }
-
-    class MonsterAbilityBehaviour {
-        + CalculateTakeDamage(AttackClassification, float)
-        + Setup(MonsterStats, MonsterAbility)
-    }
-
-    class MonsterInfo {
-        + ID: string
-        + NameKey: string
-        + StrikingPower: int
-        + HealthPoint: int
-        + MoveSpeed: float
-        + Ability: string
-    }
-
-    BaseMonster --> MonsterStatus : uses
-    BaseMonster --> MonsterMovement : uses
-    BaseMonster --> MonsterAbilityBehaviour : uses
-    BaseMonster --> MonsterInfo : uses
-    MonsterAbilityBehaviour --> MonsterStats : uses
-```
-<br><br>
-
-### 마법 시스템 확장
-{{< table "table-striped">}}
-| 클래스 | 역할 | 작업 구분 |
-|-----|-----|-----|
-| **[Magic](/docs/projects/rfice/SlimeRush/BattleSystem/Magic)** | 마법 객체의 기본 동작 및 시전 로직 | **타인 작업** |
-| **[MagicEffect](/docs/projects/rfice/SlimeRush/BattleSystem/MagicEffect)** | 마법 시전 시각 효과 및 사운드 관리 | **타인 작업** |
-| **[MagicHolderFactory](/docs/projects/rfice/SlimeRush/BattleSystem/MagicHolderFactory)** | 마법 객체 생성 및 관리를 위한 팩토리 | **타인 작업** |
-| **[TargetScanner](/docs/projects/rfice/SlimeRush/BattleSystem/TargetScanner)** | 타겟 탐색 및 위치 찾기 로직 구현 | **내 작업** |
-{{< /table >}}<br>
-
-```mermaid
-classDiagram
-    direction LR
-    class Magic {
-        + AttackToTarget(ITarget, ITarget[])
-        + AttackToPosition(ITarget, Vector3[])
-    }
-
-    class MagicEffect {
-        + CastingMagic(ITarget, string, float)
-        + OnCastMagic: Action
-    }
-
-    class MagicHolderFactory {
-        + Create(MagicParams): Magic
+    
+    class MagicTargetType {
+        <<enumeration>>
+        None, Mouse, Nearest, RandomTarget, Self
     }
 
     class TargetScanner {
-        + FindNearestTarget(Vector3, ITarget[], float): ITarget
-        + FindRandomTarget(Vector3, ITarget[], float): ITarget
-        + FindRandomPosition(Vector3, float): Vector3
+        + FindNearestTarget(~Vector3~, ~ITarget[]~, ~float~): ~ITarget~
+        + FineNearestTarget(~Vector3~, ~ITarget[]~, ~int~, ~float~): ~ITarget[]~
+        + FindRandomTarget(~Vector3~, ~ITarget[]~, ~float~): ~ITarget~
+        + FindRandomTarget(~Vector3~, ~ITarget[]~, ~int~, ~float~): ~ITarget[]~
+        + FindRandomPosition(~Vector3~, ~float~): ~Vector3~
+        + FindRandomPosition(~Vector3~, ~int~, ~float~): ~Vector3[]~
     }
 
-    class MagicParams {
-        + MagicPrefab: Magic
-        + CreatePosition: Vector3
-        + PlayerInfo: PlayerDataInfo
-        + MagicInfo: MagicInfo
+    class TargetingOption {
+        <<struct>>
+        + TargetType: ~MagicTargetType~
+        + TargetCount: ~int~
+        + TargetingRange: ~float~
+        + TargetingOption(~MagicTargetType~, ~int~, ~float~)
     }
 
-    MagicBook --> Magic : creates
-    MagicBook --> MagicEffect : uses
-    MagicBook --> MagicHolderFactory : uses
-    TargetSystem --> TargetScanner : uses
-    MagicHolderFactory --> MagicParams : uses
+    CommonBattleManager --> DamageInfo : creates
+    CommonBattleManager --> MagicAbilityInfo : creates
+    IDamageAble --> DamageResult : creates
+    DamageInfo --> MagicAbilityInfo : contains
+    DamageInfo --> DamageElemental : uses
+    DamageInfo --> AttackClassification : uses
+    TargetSystem o--> TargetScanner : uses
+    TargetSystem "1" --> "n" ITarget : manages
+    MagicBook o--> TargetSystem : uses
+    MagicBook --> CommonBattleManager : uses
+    MagicBook *--> TargetingOption : creates
+    MagicBook --> ITarget : uses
+    TargetingOption --> MagicTargetType : uses
+    Player ..|> ITarget : impl
+    Monster ..|> ITarget : impl
+    Player ..|> IDamageAble : impl
+    Monster ..|> IDamageAble : impl
+    Player o--> TargetSystem : uses
+    Monster o--> TargetSystem : uses
+
 ```
 <br><br>
 
 ## 5. 주요 특징
 ### 기능의 특징
-- **정교한 데미지 계산**: 플레이어 공격력, 마법 속성, 크기, 룬 능력 등 다양한 요소를 고려한 복합 데미지 계산
-- **유연한 타겟팅 시스템**: 마우스 위치, 가장 가까운 적, 랜덤 타겟 등 5가지 타겟팅 옵션 지원
-- **실시간 마법 쿨타임 관리**: 코루틴을 활용한 정확한 쿨타임 계산 및 관리
-- **몬스터 AI 연동**: 몬스터 이동, 공격, 사망 등 전투 행동을 체계적으로 관리
-- **상태 이상 시스템**: 점화, 동결, 풍화, 정전기 등 마법 속성에 따른 특수 효과 지원
-- **물리 연동 타격감**: 물리적 힘 적용을 통한 타격감 있는 전투 구현
-- **확장 가능한 아키텍처**: 전략 패턴과 의존성 주입을 통한 용이한 기능 확장
-- **성능 최적화**: 오브젝트 풀링을 통한 반복 사용 객체의 메모리 효율화
+- **데미지 계산 시스템**: 기본 데미지 + 속성 보너스 + 크리티컬 + 룬 효과 적용
+- **타겟팅 시스템**: 단일/다중 타겟, 위치 기반 시전, 마우스 지정 등 다양한 시전 방식 지원
+- **실시간 쿨타임 관리**: 타이밍 제어 및 시각적 피드백 제공, 코루틴 기반 처리
+- **몬스터 행동**: 거리 기반 전투 행동 결정, 다중 공격 능력 동시 관리, 게임 상태에 따라 행동 결정
+- **의존성 주입 아키텍처**: Zenject 기반 DI, 객체 생성과 의존성 관리 자동화
+- **확장 가능한 설계**: 플러그인 가능한 마법 시스템, 새로운 마법 타입 쉽게 추가 가능
 
 ## 6. UseCase
-### 플레이어 마법 시전 시나리오
-1. **마법 준비**: 플레이어가 마법북을 선택하고 마법 정보를 로드
-2. **타겟 탐색**: 타겟 시스템이 설정된 타겟팅 옵션에 따라 타겟을 탐색
-3. **쿨타임 체크**: 마법 쿨타임이 경과했는지 확인
-4. **마법 시전**: 마법 객체를 생성하고 시전 효과를 재생
-5. **데미지 계산**: CommonBattleManager가 데미지 정보를 생성하고 계산
-6. **타겟 공격**: 마법이 타겟에게 도달하고 데미지 적용
-7. **결과 처리**: 몬스터가 데미지를 받고 사망 여부 판단, 아이템 드롭
+### 마법 시전 시나리오
+1. **마법 할당**: 플레이어가 마법을 획득하면 MagicBookLibrary에서 마법책 생성
+2. **쿨타임 관리**: MagicBook에서 실시간 쿨타임 체크 및 타이밍 제어
+3. **타겟팅 결정**: TargetingOption에 따라 타겟 탐색 및 위치 지정
+4. **마법 시전**: MagicFactory를 통해 마법 객체 생성 및 시전 효과 재생
+5. **데미지 적용**: CommonBattleManager에서 데미지 계산 후 적용
+6. **결과 처리**: DamageResult를 통해 대상 객체의 사망 여부 및 최종 데미지 확인
 
 ### 몬스터 전투 시나리오
-1. **몬스터 소환**: 몬스터가 지정된 위치에 소환되고 타겟 시스템에 등록
-2. **플레이어 인식**: 몬스터가 플레이어를 인식하고 추적 시작
-3. **데미지 처리**: 플레이어의 공격을 받아 데미지 계산 및 적용
-4. **상태 반영**: 데미지에 따라 체력 감소, 애니메이션 트리거, 시각 효과 발생
-5. **사망 처리**: 체력이 0이하가 되면 사망 효과 재생 및 아이템 드롭
-6. **타겟 해제**: 몬스터가 사망하면 타겟 시스템에서 제거
+1. **거리 감지**: CommonMonsterCombat에서 플레이어와의 거리 실시간 체크
+2. **능력 선택**: MonsterAbilityHandler에서 공격 범위 내 타겟 감지
+3. **쿨타임 체크**: 공격 가능 여부 확인 및 쿨타임 관리
+4. **공격 실행**: 몬스터 공격 능력 실행 및 데미지 적용
+5. **상태 전환**: 공격 후 쿨타임 설정 및 다음 공격 준비
 
 ### 주요 사용처
-- 플레이어의 다양한 마법 시전 및 전투 경험 제공
-- 몬스터 AI와의 전략적 전투 구현
-- 룬 시스템과 연동된 전투 능력 강화
-- 실시간 전투 상황에 대한 시각적 및 청각적 피드백
-- 전투 밸런스 조정을 위한 정교한 데미지 계산 시스템
-- 다양한 전투 상황에 대응할 수 있는 유연한 시스템 구조
+- 플레이어 마법 시스템
+- 몬스터 AI 전투 로직
+- 데미지 계산 및 적용 시스템
+- 타겟팅 및 시전 위치 결정
+- 전투 상태 관리 및 쿨타임 제어
+- 게임 내 전투 이벤트 및 콤보 시스템
