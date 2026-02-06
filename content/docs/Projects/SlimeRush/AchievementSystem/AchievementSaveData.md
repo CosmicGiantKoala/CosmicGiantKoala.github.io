@@ -10,13 +10,21 @@ weight = 201
 +++
 ## 개요
 
-`AchievementSaveData` 클래스는 SlimeRush 게임의 업적 시스템에서 플레이어의 진행 상황을 저장하는 데이터 모델입니다. 이 클래스는 업적의 현재 달성 횟수와 완료 여부를 저장하며, 게임 세션 간에 플레이어의 업적 진행 상황을 유지하는 데 사용됩니다. 직렬화 가능하여 다양한 저장소에 영구적으로 저장할 수 있습니다.
+`AchievementSaveData` 클래스는 SlimeRush 게임의 업적 시스템에서 플레이어의 진행 상황을 저장하는 데이터 모델입니다.
+이 클래스는 업적의 현재 달성 횟수와 완료 여부를 저장하며, 게임 세션 간에 플레이어의 업적 진행 상황을 유지하는 데 사용됩니다.
+직렬화 가능하여 다양한 저장소에 영구적으로 저장할 수 있습니다.
 
 ## 역할
 - 플레이어 업적 진행 상황 저장
 - 게임 세션 간 데이터 유지
 - 직렬화 및 역직렬화 지원
 - 업적 시스템 데이터 영속성 제공
+
+## 선언
+```csharp
+[Serializable]
+public class AchievementSaveData
+```
 
 ## 멤버
 ### 속성
@@ -74,12 +82,12 @@ public AchievementSaveData(string id, int currentSuccess, bool isComplete)
 - **네트워크 전송**: JSON 형식으로 네트워크 전송 가능
 
 ## 의존성/상속 관계
-- `Serializable` 속성 사용 (직렬화 지원)
-- `Achievement` 클래스와 연관
-- `IAchievementRepository` 인터페이스와 연관
+- [`Serializable`](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Serializable.html) 속성 사용 (직렬화 지원)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)클래스에서 사용
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스에서 사용
 
 ## 사용 예시
-#### `AchievementSystem`에서 저장 데이터 생성시 사용
+#### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/Achievementsystem)에서 저장 데이터 생성시 사용
 ```csharp
 // Achievement에서 저장 데이터 생성
 private void SaveCurrentAchievementInfo()
@@ -91,8 +99,10 @@ private void SaveCurrentAchievementInfo()
 }
 ```
 
-#### `AchievementInteractor`에서 저장 데이터 로드
+#### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 저장 데이터 로드
 ```csharp
+private IAchievementRepository _achievementRepository;
+
 public List<AchievementSaveData> LoadAchievementSaveData()
 {
     // 업적 저장 데이터를 저장할 새로운 목록을 생성합니다
@@ -113,7 +123,8 @@ public List<AchievementSaveData> LoadAchievementSaveData()
 ```
 
 ## 관련 클래스
-
-- [`AchievementCreator`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementCreator)
-- [`AchievementSheetData`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSheetData)
-- [`IAchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementInteractor)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/Achievementsystem)
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)

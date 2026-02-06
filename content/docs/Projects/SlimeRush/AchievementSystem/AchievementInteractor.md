@@ -9,14 +9,22 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementInteractor` 클래스는 SlimeRush 게임의 업적 시스템에서 `IAchievementInteractor` 인터페이스를 구현하는 구체적인 데이터 인터랙터입니다. 이 클래스는 업적 데이터의 로드, 저장, 초기화 기능을 제공하며, JSON 직렬화를 통해 데이터를 영구 저장소에 저장하고 로드합니다. 클라우드 동기화 및 로컬 저장소를 지원하며, 의존성 주입을 통해 유연한 데이터 소스 관리를 제공합니다.
+`AchievementInteractor` 클래스는 SlimeRush 게임의 업적 시스템에서 [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
+인터페이스를 구현하는 구체적인 데이터 인터랙터입니다. 이 클래스는 업적 데이터의 로드, 저장, 초기화 기능을 제공하며,
+JSON 직렬화를 통해 데이터를 영구 저장소에 저장하고 로드합니다. 클라우드 동기화 및 로컬 저장소를 지원하며, 의존성 주입을 통해
+유연한 데이터 소스 관리를 제공합니다.
 
 ## 역할
-- 업적 시트 데이터 로드
-- 업적 저장 데이터 로드 및 저장
+- 업적 시트 데이터([`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)) 로드
+- 업적 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)) 로드 및 저장
 - 업적 데이터 초기화
 - JSON 직렬화/역직렬화 처리
 - 데이터 저장소와의 상호작용
+
+## 선언
+```csharp
+public class AchievementInteractor : IAchievementInteractor
+```
 
 ## 멤버
 ### 속성
@@ -135,13 +143,11 @@ public void ClearAchievementData(Action onClearCompleteCallBack = null)
 
 ## 기능 설명
 ### 데이터 로드 기능
-- 시트 데이터 로드 및 캐싱
-- 저장 데이터 로드 및 JSON 역직렬화
-- 빈 데이터 처리 (초기 상태)
+- 시트 데이터([`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)) 로드 및 캐싱
+- 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)) 로드 및 JSON 역직렬화
 
 ### 데이터 저장 기능
 - JSON 직렬화를 통한 데이터 저장
-- 포맷팅된 JSON 출력
 - 저장소 인터페이스를 통한 유연한 저장
 
 ### 데이터 초기화 기능
@@ -149,21 +155,16 @@ public void ClearAchievementData(Action onClearCompleteCallBack = null)
 - 시트 데이터를 기반으로 초기화
 - 콜백을 통한 완료 알림
 
-### 캐싱 시스템
-- 시트 데이터 캐싱을 통한 성능 최적화
-- 중복 로드 방지
-- 메모리 효율성 향상
-
 ## 의존성/상속 관계
-- `IAchievementInteractor` 인터페이스 구현
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스 구현
 - `ProjectStreamingAssets` 클래스에 의존 (의존성 주입)
-- `IAchievementRepository` 인터페이스에 의존 (의존성 주입)
-- `Newtonsoft.Json` 라이브러리에 의존 (JSON 처리)
-- `Zenject` DI 프레임워크 사용
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스에 의존 (의존성 주입)
+- [`Newtonsoft.Json`](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html) 라이브러리에 의존 (JSON 처리)
 
 ## 관련 클래스
-
 - [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
 - [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
 - [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)
 - [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)

@@ -10,9 +10,9 @@ weight = 201
 +++
 
 ## 1. 기능 개요
-- **AchievementSystem**은 SlimeRush 게임의 업적 시스템으로, 플레이어의 게임 진행 상황을 추적하고 업적 달성 시 보상을 제공하는 통합 시스템입니다. 이 시스템은 업적의 생성, 상태 관리, 진행 상황 추적, 데이터 저장 및 로드를 중앙에서 관리하며, 다양한 조건 타입을 지원하여 게임 내 다양한 이벤트와 연동할 수 있습니다.
+- **AchievementSystem**은 SlimeRush 게임의 **업적 시스템**으로, 플레이어의 게임 **진행 상황을 추적하고 업적 달성 시 새로운 능력을 해금**하는 통합 시스템입니다. 이 시스템은 업적의 생성, 상태 관리, 진행 상황 추적, 데이터 저장 및 로드를 중앙에서 관리하며, 다양한 조건 타입을 지원하여 게임 내 다양한 이벤트와 연동할 수 있습니다.
 - **제작기간**: 2024.09 ~ 2024.11
-- **시스템 개발 인원**: 1인 (유니티 클라이언트 1인, UI 디자인 1인)
+- **시스템 개발 인원**: 2인 (유니티 클라이언트 1인, UI 디자인 1인)
 
 ### 개발 배경 및 요구사항
 - 플레이어의 게임 진행 상황을 추적하고 성취도를 시각적으로 표시
@@ -32,8 +32,8 @@ weight = 201
 | **데이터 영속성** | 로컬 및 클라우드 저장소를 통한 업적 데이터 저장 및 로드 |
 | **이벤트 알림** | 업적 상태 변경 시 이벤트 발생 및 UI 자동 업데이트 |
 | **선행 조건 시스템** | 선행 조건 업적 검사 및 자동 활성화 |
-| **로컬라이제이션 지원** | 다국어 지원을 위한 로컬라이제이션 시스템 통합 |
-| **업적 팝업 UI** | 업적 목록 표시 및 상태별 정렬 기능 |
+| **로컬라이제이션 지원** | 다국어 지원을 위한 로컬라이제이션 지원 |
+| **업적 팝업 UI** | 업적 목록 표시 및 상태별 정렬 |
 {{< /table >}}<br>
 
 ## 2. 사용된 기술 요소
@@ -42,10 +42,10 @@ weight = 201
 | 요소 | 설명 |
 |-----|-----|
 | **C#** | 전체 핵심 로직 및 유니티 컴포넌트 구현 |
-| **Unity Localization** | 다국어 지원 및 로컬라이제이션 관리 |
-| **Zenject** | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
-| **Newtonsoft.Json** | JSON 직렬화/역직렬화를 통한 데이터 저장 및 로드 |
-| **Steamworks.NET** | Steam 클라우드 저장소와 연동 |
+| [**Unity Localization**](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html) | 다국어 지원 및 로컬라이제이션 관리 |
+| [**Zenject**](https://github.com/modesttree/Zenject) | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
+| [**Newtonsoft.Json**](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html) | JSON 직렬화/역직렬화를 통한 데이터 저장 및 로드 |
+| [**Steamworks.NET**](https://steamworks.github.io/) | Steam 클라우드 저장소와 연동 |
 {{< /table >}}<br>
 
 ### 설계 활용 패턴
@@ -64,104 +64,23 @@ weight = 201
 ```mermaid
 classDiagram
     direction LR
-    class AchievementSystem {
-        +Achievements: List~Achievement~
-        +Report(string)
-        +CheckAchievementCompletion(string)
-        +OnChangedAchievementState: Action
-    }
-
-    class AchievementCreator {
-        +Create(List~AchievementSheetData~, List~AchievementSaveData~)
-    }
-
-    class AchievementInteractor {
-        +LoadAchievementData()
-        +LoadAchievementSaveData()
-        +SaveAchievementData(List~AchievementSaveData~)
-        +ClearAchievementData()
-    }
-
-    class AchievementRepository {
-        +SaveAchievementData(string)
-        +LoadAchievementSaveData()
-    }
-
-    class Achievement {
-        +Id: string
-        +NameKey: string
-        +IsComplete: bool
-        +Report(string)
-        +CreateAchievementSaveData()
-    }
-
-    class AchievementSheetData {
-        +iD: string
-        +nameKey: string
-        +conditionType: string
-    }
-
-    class AchievementSaveData {
-        +ID: string
-        +CurrentSuccess: int
-        +IsComplete: bool
-    }
-
-    class AchievementPopup {
-        +OnEnable()
-        +OnDisable()
-        +CreateAchievementList()
-        +SortAchievementList()
-    }
-
-    class AchievementPopupItem {
-        +InitializeAchievementInfo(Achievement)
-        +SetLocalizedStringReference()
-        +CompareTo(AchievementPopupItem)
-    }
-
-    class LocalAchievementDataSource {
-        +SaveAchievementData(string)
-        +LoadAchievementSaveData()
-    }
-
-    class CloudSyncDataSource {
-        +SaveAchievementData(string)
-        +LoadAchievementSaveData()
-    }
-
-    class AchievementState {
-        <<enum>>
-        InActive
-        Active
-        Complete
-    }
-
-    class AchievementConditionType {
-        <<enum>>
-        StageClear
-        GetMagic
-        RuneMaxLevel
-        None
-    }
-
-    class IAchievementInteractor {
-        +LoadAchievementData()
-        +LoadAchievementSaveData()
-        +SaveAchievementData()
-        +ClearAchievementData()
-    }
-
-    class IAchievementRepository {
-        +LoadAchievementSaveData()
-        +SaveAchievementData()
-    }
-
-    class IAchievementDataSource {
-        +LoadAchievementSaveData()
-        +SaveAchievementData()
-    }
-
+    class AchievementSystem 
+    class AchievementCreator
+    class AchievementInteractor
+    class AchievementRepository
+    class Achievement
+    class AchievementSheetData
+    class AchievementSaveData
+    class AchievementPopup
+    class AchievementPopupItem
+    class LocalAchievementDataSource
+    class CloudSyncDataSource
+    class AchievementState{<<enumeration>>}
+    class AchievementConditionType {<<enumeration>>}
+    class IAchievementInteractor{<<interface>>}
+    class IAchievementRepository{<<interface>>}
+    class IAchievementDataSource{<<interface>>}
+    
     AchievementSystem *--> AchievementCreator : new
     AchievementSystem o--> IAchievementInteractor : uses
 
@@ -192,116 +111,121 @@ classDiagram
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[AchievementSystem](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSystem)** | 업적 시스템의 핵심 관리자, 상태 관리, 진행 상황 추적, 데이터 저장/로드 |
-| **[AchievementCreator](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementCreator)** | 시트 데이터와 저장 데이터를 결합하여 업적 객체 생성 |
-| **[AchievementInteractor](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementInteractor)** <br> --> IAchievementInteractor| 데이터 인터랙터 구현체, JSON 직렬화/역직렬화 처리 |
+| **[AchievementSystem](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)** | 업적 시스템의 핵심 중앙 관리자, 상태 관리, 진행 상황 추적, 데이터 저장/로드 호출|
+| **[AchievementCreator](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)** | 시트 데이터와 저장 데이터를 결합하여 업적 객체 생성 |
+| **[AchievementInteractor](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)** <br> --> IAchievementInteractor| 업적 인터랙터 구현체, JSON 직렬화/역직렬화 처리, Save/Load명령 처리 |
+| **[IAchievementInteractor](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)**<br>*<<interface>>* | 업적 인터랙터 인터페이스. 업적 인터랙터의 기능을 정의 |
 {{< /table >}}<br>
 
 ```mermaid
 classDiagram
     direction LR
     class AchievementSystem {
-        + Achievements: List<Achievement>
-        + Report(string)
-        + CheckAchievementCompletion(string)
-        + OnChangedAchievementState: Action
+        - InActiveAchievements: HashSet~Achievement~
+        - ActiveAchievements: HashSet~Achievement~
+        - CompletedAchievements: HashSet~Achievement~
+        + Achievements: List~Achievement~
+        - ReportNotifier: delegate(~string~)
+        + Report(~string~)
+        + CheckAchievementCompletion(~string~): ~bool~
+        - UpdateAchievementActivate()
+        - OnCompleteAchievement(~Achievement~)
+        - CreateAchievements()
+        - SaveCurrentAchievementInfo()
     }
 
     class AchievementCreator {
-        + Create(List<AchievementSheetData>, List<AchievementSaveData>)
+        + Create(List~AchievementSheetData~, List~AchievementSaveData~):List~Achievement~
     }
 
     class IAchievementInteractor {
         <<interface>>
-        + LoadAchievementData()
-        + LoadAchievementSaveData()
-        + SaveAchievementData(List<AchievementSaveData>)
-        + ClearAchievementData()
+        + LoadAchievementData():List~AchievementSheetData~
+        + LoadAchievementSaveData():List~AchievementSaveData~
+        + SaveAchievementData(List~AchievementSaveData~)
+        + ClearAchievementData(~Action~)
     }
     
     class AchievementInteractor {
-        
+        - SheetData: List~AchievementSheetData~
+        + LoadAchievementData():List~AchievementSheetData~
+        + LoadAchievementSaveData():List~AchievementSaveData~
+        + SaveAchievementData(List~AchievementSaveData~)
+        + ClearAchievementData(~Action~)
     }
     
-    class Achievement {
-        + Active(CompleteHandler onCompleteCallBack)
-    }
-
     AchievementSystem *--> AchievementCreator: uses
+    AchievementSystem "1" --> "n" Achievement : manage
     AchievementSystem o--> IAchievementInteractor: uses
     AchievementCreator "1" --> "n" Achievement : creates
     AchievementInteractor ..|> IAchievementInteractor :implements 
 ```
 <br><br>
 
-### 데이터 모델 및 인터페이스
+### 데이터 모델
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[Achievement](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)** | 개별 업적 데이터 모델, 상태 관리, 이벤트 처리 |
-| **[AchievementSheetData](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSheetData)** | 게임 디자인 데이터 모델 |
-| **[AchievementSaveData](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSaveData)** | 플레이어 진행 상황 데이터 모델 |
-| **[IAchievementInteractor](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementInteractor)**<br>*<<interface>>* | 데이터 인터랙터 인터페이스 |
-| **[IAchievementRepository](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementRepository)**<br>*<<interface>>* | 저장소 인터페이스 |
-| **[IAchievementDataSource](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementDataSource)**<br>*<<interface>>* | 데이터 소스 인터페이스 |
+| **[Achievement](/docs/projects/SlimeRush/AchievementSystem/Achievement)** | 개별 업적 데이터 모델, 상태 관리, 이벤트 처리 |
+| **[AchievementSheetData](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)** | 업적 정보 데이터 모델 |
+| **[AchievementSaveData](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)** | 업적 진행 상황 데이터 모델 |
 {{< /table >}}<br>
 
 ```mermaid
 classDiagram
-    direction LR
-    class AchievementCreator
-    
+    direction TD
     class Achievement {
-        + Id: string
-        + NameKey: string
-        + IsComplete: bool
-        + Report(string)
-        + CreateAchievementSaveData()
+        + Id: ~string~
+        + NameKey: ~string~
+        + Description: ~string~
+        + ConditionType: ~AchievementCondtionType~
+        + ConditionValue: ~string~
+        + RewardDescription: ~string~
+        + NeedSuccess: ~int~
+        + PreRequireCondition: ~string[]~
+        + CurrentSuccess:~int~
+        + State: ~AchievementState~
+        + CompleteEvent: delegate event ~CompleteHandler~
+        + CompleteHandler(~Achievement~)
+        + Achievement(~string~, ~string~, ~string~, ~string~, ~string~, ~string~, ~int~, ~int~, ~bool~, ~string[]~)
+        + Active(~CompleteHandler~)
+        + CreateAchievementSaveData():~AchievementSaveData~
+        + Report(~string~)
     }
 
     class AchievementSheetData {
-        + iD: string
-        + nameKey: string
-        + conditionType: string
+        + Id: ~string~
+        + NameKey: ~string~
+        + Description: ~string~
+        + ConditionType: ~string~
+        + ConditionValue: ~string~
+        + RewardDes: ~string~
+        + NeedScuccess: ~int~
+        + PreRequireCondition: ~string[]~
+        + AchievementSheetData(~string~, ~string~, ~string~, ~string~, ~string~, ~string~, ~int~, ~string[]~)
     }
 
     class AchievementSaveData {
-        + ID: string
-        + CurrentSuccess: int
-        + IsComplete: bool
+        + ID: ~string~
+        + CurrentSuccess: ~int~
+        + IsComplete: ~bool~
+        + AchievementSaveData(~string~, ~int~, ~bool~)
     }
+    
+    class IAchievementInteractor { <<interface>>}
 
-    class IAchievementInteractor {
-        <<interface>>
-        + LoadAchievementData()
-        + LoadAchievementSaveData()
-        + SaveAchievementData()
-        + ClearAchievementData()
-    }
-
-    class IAchievementRepository {
-        <<interface>>
-        + LoadAchievementSaveData()
-        + SaveAchievementData()
-    }
-
-    class IAchievementDataSource {
-        <<interface>>
-        + LoadAchievementSaveData()
-        + SaveAchievementData()
-    }
-
-    AchievementSystem *--> AchievementCreator : create
-    AchievementSystem o--> IAchievementInteractor : use
-    AchievementCreator --> AchievementSheetData: uses
-    AchievementCreator --> AchievementSaveData: uses
-    AchievementCreator "1" --> "n" Achievement: creates
-    AchievementInteractor ..|> IAchievementInteractor: implements
-    AchievementInteractor o--> IAchievementRepository : use
-    AchievementRepository ..|> IAchievementRepository: implements
-    AchievementRepository o--> IAchievementDataSource : use
-    LocalAchievementDataSource ..|> IAchievementDataSource: implements
-    CloudSyncDataSource ..|> IAchievementDataSource: implements
+    AchievementSystem "1" --> "n" Achievement : manage
+    AchievementSystem *--> AchievementCreator : uses
+    AchievementCreator "1" --> "n" Achievement : creates
+    AchievementCreator --> AchievementSheetData : uses
+    AchievementPopupItem --> Achievement : uses
+    ProjectStreamingAsset o--> AchievementSheetData : creates
+    AchievementInteractor --> AchievementSheetData : uses
+    AchievementInteractor --> ProjectStreamingAsset : uses
+    Achievement --> AchievementSaveData : creates
+    AchievementInteractor --> AchievementSaveData : uses
+    AchievementSystem o--> IAchievementInteractor : uses
+    AchievementInteractor ..|> IAchievementInteractor : implements
 ```
 <br><br>
 
@@ -309,17 +233,30 @@ classDiagram
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[AchievementRepository](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementRepository)** <br> --> IAchievementRepository | 저장소 패턴 구현, 데이터 소스 추상화 |
-| **[LocalAchievementDataSource](/docs/projects/rfice/SlimeRush/AchievementSystem/LocalAchievementDataSource)** <br> --> IAchievementDataSource | 로컬 파일 시스템 데이터 소스 |
-| **[CloudSyncDataSource](/docs/projects/rfice/SlimeRush/AchievementSystem/CloudSyncDataSource)** <br> --> IAchievementDataSource | Steam 클라우드 저장소 데이터 소스 |
+| **[IAchievementRepository](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository)**<br>*<<interface>>* | 업적 저장소 인터페이스. 업적 저장소 기능 정의 |
+| **[AchievementRepository](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)** <br> --> IAchievementRepository | 업적 저장소 구현체. 업적 저장소 기능 구현|
+| **[IAchievementDataSource](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)**<br>*<<interface>>* | 업적 데이터 소스 인터페이스. 업적 데이터 소스 정의 |
+| **[LocalAchievementDataSource](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)** <br> --> IAchievementDataSource | 업적 데이터 소스 구현체. 로컬 `AchievementSaveData` 저장 및 로드|
+| **[CloudSyncDataSource](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource)** <br> --> IAchievementDataSource | 업적 데이터 소스 구현체. Steam 클라우드 저장소 `AchievementSaveData` 저장 및 로드|
 {{< /table >}}<br>
 
 ```mermaid
 classDiagram
     direction LR
+    class IAchievementRepository {
+        <<interface>>
+        + SaveAchievementData(~string~)
+        + LoadAchievementSaveData():~string~
+    }
     class AchievementRepository {
-        + SaveAchievementData(string)
-        + LoadAchievementSaveData()
+        + SaveAchievementData(~string~)
+        + LoadAchievementSaveData():~string~
+    }
+    
+    class IAchievementDataSource{
+        <<interface>>
+        + SaveAchievementData(~string~)
+        + LoadAchievementData():~string~
     }
 
     class LocalAchievementDataSource {
@@ -344,16 +281,34 @@ classDiagram
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[AchievementState](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementState)** | 업적 상태 열거형 (InActive, Active, Complete) |
-| **[AchievementConditionType](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementConditionType)** | 업적 조건 타입 열거형 (StageClear, GetMagic, RuneMaxLevel, None) |
+| **[AchievementState](/docs/projects/SlimeRush/AchievementSystem/AchievementState)** | 업적 상태 열거형 (InActive, Active, Complete) |
+| **[AchievementConditionType](/docs/projects/SlimeRush/AchievementSystem/AchievementConditionType)** | 업적 조건 타입 열거형 (StageClear, GetMagic, RuneMaxLevel, None) |
 {{< /table >}}<br>
+
+```mermaid
+classDiagram
+    direction LR
+    class AchievementState {
+        <<enum>>
+        InActive, Active, Complete
+    }
+    
+    class AchievementConditionType{
+        <<enum>>
+        StageClear, GetMagic, RuneMaxLevel, None
+    }
+    
+    Achievement --> AchievementState : uses
+    Achievement --> AchievementConditionType : uses
+```
+<br><br>
 
 ### UI 컴포넌트
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[AchievementPopup](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementPopup)** | 업적 팝업 UI 관리, 업적 목록 표시 및 자동 업데이트 |
-| **[AchievementPopupItem](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementPopupItem)** | 개별 업적 아이템 UI, 로컬라이제이션 및 정렬 기능 |
+| **[AchievementPopup](/docs/projects/SlimeRush/AchievementSystem/AchievementPopup)** | 업적 팝업 UI 관리, 업적 목록 표시 및 자동 업데이트 |
+| **[AchievementPopupItem](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)**<br> --> IComparable | 개별 업적 아이템 UI, 로컬라이제이션 및 정렬 비교 기능 |
 {{< /table >}}<br>
 ```mermaid
 classDiagram
@@ -362,24 +317,25 @@ classDiagram
         + OnEnable()
         + OnDisable()
         + CreateAchievementList()
-        + SortAchievementList()
+        - SortAchievementList()
+        - UpdateContentsContextRect(~int~)
     }
 
     class AchievementPopupItem {
-        + InitializeAchievementInfo(Achievement)
+        + InitializeAchievementInfo(~Achievement~)
         + SetLocalizedStringReference()
-        + CompareTo(AchievementPopupItem)
+        + CompareTo(~AchievementPopupItem~): ~int~
     }
 
-    AchievementPopup "1" --> "n" AchievementPopupItem: manages
-    AchievementPopup o--> AchievementSystem: subscribes
+    AchievementPopup "1" --> "n" AchievementPopupItem: creates
+    AchievementPopup o--> AchievementSystem: subscribes, uses
     AchievementPopupItem --> Achievement: uses
 ```
 <br><br>
 
 ## 5. 주요 특징
 ### 기능의 특징
-- **유연한 업적 조건 시스템**: 다양한 조건 타입을 지원하고 확장 가능
+- **업적 조건 시스템**: 다양한 조건 타입을 지원하고 확장 가능
 - **데이터 영속성**: 로컬 및 클라우드 저장소를 통한 데이터 동기화
 - **상태 관리**: 업적의 생명 주기 관리 및 자동 상태 전환
 - **이벤트 기반 아키텍처**: 업적 상태 변경 시 자동 UI 업데이트
@@ -392,13 +348,13 @@ classDiagram
 1. **업적 초기화**: 게임 시작 시 업적 시스템 초기화 및 데이터 로드
 2. **업적 활성화**: 선행 조건 만족 시 업적 자동 활성화
 3. **조건 달성**: 게임 진행 중 조건 달성 시 진행 상황 업데이트
-4. **업적 완료**: 모든 조건 달성 시 업적 완료 처리 및 보상 지급
+4. **업적 완료**: 모든 조건 달성 시 업적 완료 처리 및 기능 해금
 5. **상태 저장**: 게임 종료 시 진행 상황 자동 저장
 6. **UI 표시**: 업적 팝업을 통해 달성 현황 확인
 
 ### 주요 사용처
 - 게임 내 성취도 시스템
-- 플레이어 동기 부여 및 보상 시스템
+- 플레이어 동기 부여 및 해금 시스템
 - 게임 진행 상황 추적 및 분석
 - 소셜 기능과 연동된 업적 공유
 - 게임 내 이벤트 및 프로모션 연동

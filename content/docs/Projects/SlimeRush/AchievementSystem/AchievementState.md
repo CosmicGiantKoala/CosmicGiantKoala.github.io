@@ -9,13 +9,17 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementState` 열거형은 SlimeRush 게임의 업적 시스템에서 업적의 상태를 정의합니다. 이 열거형은 업적의 생명 주기를 표현하며, 업적의 현재 상태를 추적하고 관리하는 데 사용됩니다. 업적은 비활성 상태에서 시작하여 활성 상태로 전환되고, 최종적으로 완료 상태로 도달합니다.
+`AchievementState` 열거형은 SlimeRush 게임의 업적 시스템에서 업적의 상태를 정의합니다. 이 열거형은 업적의 현재 상태를 추적하고 관리하는 데 사용됩니다. 업적은 비활성 상태에서 시작하여 활성 상태로 전환되고, 최종적으로 완료 상태로 도달합니다.
 
 ## 역할
 - 업적 상태 정의
-- 업적 생명 주기 관리
 - 상태 전환 로직 지원
 - 상태 기반 조건 검사
+
+## 선언
+```csharp
+public enum AchievementState
+```
 
 ## 멤버
 ### 열거형
@@ -43,20 +47,20 @@ Complete
 - **Complete**: 최종 상태, 더 이상 변경되지 않음
 
 ### 상태별 특징
-- **InActive**: 초기 상태, 조건 달성 불가능
+- **InActive**: 초기 상태, 선행조건 달성 안됨. 조건 달성 불가능
 - **Active**: 진행 중인 상태, 조건 달성 가능
 - **Complete**: 완료된 상태, 보상 지급 대상
 
 ### 상태 관리
-- 업적 시스템에서 상태 전환 관리
+- 업적 시스템([`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem))에서 상태 전환 관리
 - 상태에 따른 다른 동작 수행
 - 상태 기반 UI 표시 변경
 
 ## 의존성/상속 관계
-- `Achievement` 클래스에서 사용
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에서 사용
 
 ## 사용 예시
-#### `Achievement` 클래스에서 현재 상태 확인
+#### [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에서 현재 상태 확인
 ```csharp
 // Achievement 클래스에서 상태 확인
 private AchievementState _state;
@@ -66,7 +70,7 @@ public bool IsActive => _state == AchievementState.Active;
 public bool IsComplete => _state == AchievementState.Complete;
 ```
 
-#### `AchievementPopupItem` 에서 `AchievementState`상태에 따라 동작 변화
+#### [`AchievementPopupItem`](/docs/projects/slimerush/AchievementSystem/AchievementPopupItem) 에서 `AchievementState`상태에 따라 동작 변화
 ```csharp
 public void InitializeAchievementInfo(Reward.Achievement info)
 {
@@ -99,7 +103,7 @@ public void InitializeAchievementInfo(Reward.Achievement info)
 }
 ```
 
-#### `AchievementSystem`에서 업적 상태를 필터링 하여 목록 관리
+#### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 업적 상태를 필터링 하여 목록 관리
 ```csharp
 private void CreateAchievements()
 {
@@ -119,7 +123,7 @@ private void CreateAchievements()
 ```
 
 ## 관련 클래스
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)
-- [`AchievementSystem`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSystem)
-- [`AchievementCreator`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementCreator)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)
 - [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)

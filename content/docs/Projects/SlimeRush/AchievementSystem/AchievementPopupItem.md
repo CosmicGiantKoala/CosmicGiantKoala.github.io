@@ -9,7 +9,9 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementPopupItem` 클래스는 SlimeRush 게임의 업적 시스템에서 개별 업적 정보를 UI로 표시하는 컴포넌트입니다. 이 클래스는 업적 팝업 창에서 개별 업적을 나타내며, 업적의 이름, 설명, 보상, 완료 상태 등을 시각적으로 표시합니다. 또한 로컬라이제이션 기능을 통해 다국어 지원을 제공하며, 업적 아이템 간의 정렬 기능을 구현합니다.
+`AchievementPopupItem` 클래스는 SlimeRush 게임의 업적 시스템에서 개별 업적 정보를 UI로 표시하는 컴포넌트입니다.
+이 클래스는 업적 팝업 창에서 개별 업적을 나타내며, 업적의 이름, 설명, 보상(해금요소), 완료 상태 등을 시각적으로 표시합니다.
+또한 로컬라이제이션 기능을 통해 다국어 지원을 제공하며, 업적 아이템 간의 정렬 기능을 구현합니다.
 
 ## 역할
 - 개별 업적 아이템 UI 관리
@@ -17,6 +19,11 @@ weight = 201
 - 다국어 로컬라이제이션 지원
 - 아이템 정렬 기능을 위한 비교 로직 제공
 - 완료 상태에 따른 시각적 효과 적용
+
+## 선언
+```csharp
+public class AchievementPopupItem : MonoBehaviour, IComparable<AchievementPopupItem>
+```
 
 ## 멤버
 ### 속성
@@ -183,7 +190,7 @@ public int CompareTo(AchievementPopupItem otherItem)
 ## 기능 설명
 ### UI 표시 기능
 - 업적 이름과 설명 표시
-- 보상 정보 표시
+- 보상 정보 표시(해금요소)
 - 완료/잠금 상태 시각적 표시
 - 완료 시 랜덤 회전 효과 적용
 
@@ -200,14 +207,14 @@ public int CompareTo(AchievementPopupItem otherItem)
 - 업적 목록 정렬에 사용
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받음 (Unity 컴포넌트)
+- `MonoBehaviour`를 상속받음
 - `IComparable<AchievementPopupItem>` 인터페이스 구현
-- `Reward.Achievement` 클래스에 의존
-- Unity Localization 패키지에 의존
-- TMP (TextMeshPro) 패키지에 의존
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
+- [`Unity Localization`](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html) 패키지에 의존
+- [`TMP (TextMeshPro)`](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html) 패키지에 의존
 
 ## 사용 예시
-#### `AchievementPopup`에서 개별 업적 아이템들의 초기화 명령
+#### [`AchievementPopup`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopup)에서 개별 업적 아이템들의 초기화 명령
 ```csharp
 private void CreateAchievementList()
 {
@@ -243,7 +250,6 @@ private void CreateAchievementList()
 ```
 
 ## 관련 클래스
-
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)
-- [`AchievementPopup`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementPopup)
-- [`AchievementSystem`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSystem)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
+- [`AchievementPopup`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopup)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)

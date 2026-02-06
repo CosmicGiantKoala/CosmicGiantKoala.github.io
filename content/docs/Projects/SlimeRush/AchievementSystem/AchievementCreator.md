@@ -9,13 +9,20 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementCreator` 클래스는 SlimeRush 게임의 업적 시스템에서 업적 객체를 생성하는 팩토리 클래스입니다. 이 클래스는 `AchievementSheetData`와 `AchievementSaveData`를 결합하여 `Achievement` 객체를 생성하는 역할을 담당합니다. 게임 데이터와 플레이어 진행 상황을 통합하여 업적 시스템이 사용할 수 있는 객체로 변환합니다.
+`AchievementCreator` 클래스는 SlimeRush 게임의 업적 시스템에서 업적 객체를 생성하는 팩토리 클래스입니다. 
+이 클래스는 [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)와 [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)를 결합하여 [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 객체를 생성하는 역할을 담당합니다. 
+게임 데이터와 플레이어 진행 상황을 통합하여 업적 시스템이 사용할 수 있는 객체로 변환합니다.
 
 ## 역할
 - 시트 데이터와 저장 데이터 매핑
-- `Achievement` 객체 생성 및 초기화
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 객체 생성 및 초기화
 - 데이터 통합 및 변환
 - 업적 초기 상태 설정
+
+## 선언
+```csharp
+public class AchievementCreator
+```
 
 ## 멤버
 ### 메서드
@@ -79,20 +86,20 @@ public List<Achievement> Create(List<AchievementSheetData> sheetData, List<Achie
 1. **시트 데이터 반복**: 업적 시트 데이터 목록을 순회
 2. **저장 데이터 매칭**: 각 시트 데이터에 해당하는 저장 데이터 찾기
 3. **데이터 통합**: 시트 데이터와 저장 데이터를 결합하여 업적 초기화
-4. **객체 생성**: 매핑된 데이터를 기반으로 `Achievement` 객체 생성
+4. **객체 생성**: 매핑된 데이터를 기반으로 [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 객체 생성
 
 ### 데이터 매핑 및 통합
-- 시트 데이터(AchievementSheetData)와 저장 데이터(AchievementSaveData) 매핑
+- 시트 데이터([`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData))와 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)) 매핑
 - ID를 기준으로 데이터 연결
-- 저장 데이터가 없는 경우 기본값 사용
+- 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData))가 없는 경우 기본값 사용
 
 ## 의존성/상속 관계
-- `Achievement` 클래스에 의존
-- `AchievementSheetData` 클래스에 의존
-- `AchievementSaveData` 클래스에 의존
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData) 클래스에 의존
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
 
 ## 사용 예시
-### `AchievementSystem` 초기화
+#### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)가 초기화 될 때 호출 
 ```csharp
 private void CreateAchievements()
 {

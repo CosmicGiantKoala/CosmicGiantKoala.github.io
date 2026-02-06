@@ -17,6 +17,11 @@ weight = 201
 - 업적 시스템의 조건 평가 기준 제공
 - 다양한 게임 이벤트 기반 업적 조건 정의
 
+## 선언
+```csharp
+public enum AchievementConditionType
+```
+
 ## 멤버
 ### 열거형 값
 ```csharp
@@ -50,14 +55,14 @@ None = 99
 
 ### 사용 패턴
 - 업적 시스템에서 조건 타입을 식별하는 데 사용
-- `Achievement` 클래스의 `ConditionType` 속성으로 사용
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스의 `ConditionType` 속성으로 사용
 - 조건 평가 로직에서 타입별 처리 기준 제공
 
 ## 의존성/상속 관계
-- `Achievement` 클래스에서 사용
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에서 사용
 
 ## 사용 예시
-#### `Achievement` 생성자에서 직렬화 데이터를 열거문으로 파싱하여 사용
+#### [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 생성자에서 직렬화 데이터를 열거문으로 파싱하여 사용
 ```csharp
 public Achievement(string id, string nameKey, string description, string conditionType,
     string conditionValue, string rewardDescription, int currentSuccess, int needSuccess,

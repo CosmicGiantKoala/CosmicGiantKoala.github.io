@@ -12,13 +12,18 @@ weight = 201
 `AchievementSystem` 클래스는 SlimeRush 게임의 업적 시스템을 관리하는 핵심 클래스입니다. 이 클래스는 업적의 생성, 상태 관리, 진행 상황 추적, 저장 및 로드 기능을 담당하며, 게임 내 모든 업적 관련 로직을 중앙에서 관리합니다. 플레이어의 업적 달성 과정을 모니터링하고, 업적 완료 시 관련된 시스템과 연동합니다.
 
 ## 역할
-- 업적 데이터의 초기화 및 생성
+- 업적 데이터([`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement))의 초기화 및 생성([`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator))
 - 업적 상태(비활성, 활성, 완료) 관리
 - 업적 진행 상황 보고 및 처리
 - 업적 완료 조건 검증
 - 업적 데이터의 저장 및 로드
 - 선행 조건 업적 검사
 - 업적 상태 변경 알림
+
+## 선언
+```csharp
+public class AchievementSystem : MonoBehaviour
+```
 
 ## 멤버
 ### 이벤트
@@ -277,13 +282,12 @@ public bool CheckAchievementCompletion(string achievementId)
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음 (Unity 컴포넌트)
-- `IAchievementInteractor` 인터페이스에 의존 (의존성 주입)
-- `AchievementCreator` 클래스에 의존
-- `Achievement` 클래스에 의존
-- `Zenject` DI 프레임워크 사용
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스에 의존 (의존성 주입)
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator) 클래스에 의존
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
 
 ## 사용 예시
-### `MagicBookLibrary`에서 마법 획득시 보고
+#### [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)에서 마법 획득시 보고
 ```csharp
 private void OnUpdatedMagic(MagicInfo magicInfo)
 {
@@ -309,7 +313,7 @@ private void OnUpdatedMagic(MagicInfo magicInfo)
 }
 ```
 
-### `RuneController`에서 업적 완료 여부를 확인하여 인게임 상점 아이템 구성
+#### `RuneController`에서 업적 완료 여부를 확인하여 인게임 상점 아이템 구성
 ```csharp
 private void CheckAchievement()
 {
@@ -326,8 +330,9 @@ private void CheckAchievement()
 
 ## 관련 클래스
 
-- [`IAchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementInteractor)
-- [`AchievementCreator`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementCreator)
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)
-- [`AchievementSaveData`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSaveData)
-- [`AchievementSheetData`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSheetData)
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)

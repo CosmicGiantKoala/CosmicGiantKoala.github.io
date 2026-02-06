@@ -9,13 +9,21 @@ toc = true
 weight = 201
 +++
 ## 개요
-`CloudSyncDataSource` 클래스는 SlimeRush 게임의 업적 시스템에서 `IAchievementDataSource` 인터페이스를 구현하는 클라우드 데이터 소스입니다. 이 클래스는 Steam 클라우드 저장소(Steam Remote Storage)를 통해 업적 데이터를 저장하고 로드하며, 클라우드 동기화를 통해 여러 기기 간에 업적 진행 상황을 공유할 수 있도록 합니다. Steamworks.NET 라이브러리를 사용하여 Steam 클라우드와 상호작용합니다.
+`CloudSyncDataSource` 클래스는 SlimeRush 게임의 업적 시스템에서 [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)
+인터페이스를 구현하는 클라우드 데이터 소스입니다. 이 클래스는 Steam 클라우드 저장소(Steam
+Remote Storage)를 통해 업적 데이터를 저장하고 로드하며, 클라우드 동기화를 통해 여러 기기 간에 업적
+진행 상황을 공유할 수 있도록 합니다. [Steamworks.NET](https://steamworks.github.io/) 라이브러리를 사용하여 Steam 클라우드와 상호작용합니다.
 
 ## 역할
 - Steam 클라우드 저장소를 통한 데이터 저장
 - Steam 클라우드 저장소를 통한 데이터 로드
 - 클라우드 동기화 지원
 - 오류 처리 및 로깅
+
+## 선언
+```csharp
+public class CloudSyncDataSource : IAchievementDataSource
+```
 
 ## 멤버
 ### 속성
@@ -156,12 +164,11 @@ private string LoadData(string fileName)
 - Steam 사용자 계정 연동
 
 ## 의존성/상속 관계
-- `IAchievementDataSource` 인터페이스 구현
-- `Steamworks.NET` 라이브러리에 의존
-- `Steamworks.NET.CloudSync` 네임스페이스 사용
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스 구현
+- [`Steamworks.NET`](https://steamworks.github.io/) 라이브러리에 의존
 
 ## 사용 예시
-#### AchievementRepository에서 저장 및 로드시 사용
+#### [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)에서 저장 및 로드시 사용
 ```csharp
 [Inject]
 private IAchievementDataSource _achievementDataSource;
@@ -178,7 +185,7 @@ public string LoadAchievementSaveData()
 ```
 
 ## 관련 클래스
-- [`IAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementDataSource)
-- [`LocalAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/LocalAchievementDataSource)
-- [`AchievementRepository`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementRepository)
-- [`AchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementInteractor)
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)
+- [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)
+- [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)

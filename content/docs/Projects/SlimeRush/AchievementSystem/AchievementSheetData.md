@@ -9,13 +9,20 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementSheetData` 클래스는 SlimeRush 게임의 업적 시스템에서 업적의 기본 정보를 정의하는 데이터 모델입니다. 이 클래스는 업적의 기본 정보(ID, 이름, 설명, 조건 등)를 저장하며, 게임 디자이너가 정의한 업적 스펙을 코드에서 사용할 수 있는 형태로 변환합니다. 직렬화 가능하여 다양한 데이터 소스에서 로드 및 저장할 수 있습니다.
+`AchievementSheetData` 클래스는 SlimeRush 게임의 업적 시스템에서 업적의 기본 정보를 정의하는 데이터 모델입니다.
+이 클래스는 업적의 기본 정보(ID, 이름, 설명, 조건 등)를 저장하며, 게임 디자이너가 정의한 업적 스펙을 코드에서 사용할 수 있는 형태로 변환합니다.
 
 ## 역할
 - 업적 기본 정보 정의
 - 게임 디자인 데이터 표현
 - 직렬화 및 역직렬화 지원
 - 업적 생성 시 기본 데이터 제공
+
+## 선언
+```csharp
+[Serializable]
+public class AchievementSheetData
+```
 
 ## 멤버
 ### 속성
@@ -122,13 +129,13 @@ public AchievementSheetData(string id, string nameKey, string description, strin
 - 대부분의 속성이 private로 읽기 전용
 
 ## 의존성/상속 관계
-- `Serializable` 속성 사용 (직렬화 지원)
-- `Achievement` 클래스와 연관
-- `AchievementCreator` 클래스와 연관
-- `IAchievementInteractor` 인터페이스와 연관
+- [`Serializable`](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Serializable.html) 속성 사용 (직렬화 지원)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스와 연관
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator) 클래스와 연관
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스에서 사용
 
 ## 사용 예시
-### `ProjectStreamingAssets`에서 역직렬화를 통해 외부 데이터를 로드하여 시트 데이터로 변경
+#### `ProjectStreamingAssets`에서 역직렬화를 통해 외부 데이터를 로드하여 시트 데이터로 변경
 ```csharp
 public List<AchievementSheetData> LoadAchievementSheetData()
 {
@@ -137,7 +144,7 @@ public List<AchievementSheetData> LoadAchievementSheetData()
 }
 ```
 
-### `AchievementInteractor`에서 데이터 초기화시 기본 시트 데이터 활용
+#### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 데이터 초기화시 기본 시트 데이터 활용
 ```csharp
 public void ClearAchievementData(Action onClearCompleteCallBack = null)
 {
@@ -154,7 +161,8 @@ public void ClearAchievementData(Action onClearCompleteCallBack = null)
 
 ## 관련 클래스
 
-- [`AchievementCreator`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementCreator): 업적 생성기
-- [`AchievementSaveData`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSaveData): 업적 저장 데이터
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement): 생성된 업적 객체
-- [`IAchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementInteractor): 데이터 인터랙터 인터페이스
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)

@@ -9,12 +9,20 @@ toc = true
 weight = 201
 +++
 ## 개요
-`IAchievementRepository` 인터페이스는 SlimeRush 게임의 업적 시스템에서 데이터 저장소의 기본 기능을 정의합니다. 이 인터페이스는 업적 데이터의 로드와 저장 기능을 추상화하여, 다양한 저장소 구현체(로컬, 클라우드 등)에서 일관된 방식으로 업적 데이터를 관리할 수 있도록 합니다. 저장소 계층의 추상화를 통해 유연한 데이터 관리 아키텍처를 제공합니다.
+`IAchievementRepository` 인터페이스는 SlimeRush 게임의 업적 시스템에서 데이터 저장소의 기본
+기능을 정의합니다. 이 인터페이스는 업적 데이터의 로드와 저장 기능을 추상화하여, 
+다양한 저장소 구현체(로컬, 클라우드 등)에서 일관된 방식으로 업적 데이터를 관리할 수 있도록 합니다. 
+저장소 계층의 추상화를 통해 유연한 데이터 관리 아키텍처를 제공합니다.
 
 ## 역할
 - 업적 데이터 로드 기능 정의
 - 업적 데이터 저장 기능 정의
 - 저장소 계층 추상화 제공
+
+## 선언
+```csharp
+public interface IAchievementRepository
+```
 
 ## 멤버
 ### 메서드
@@ -38,7 +46,11 @@ public void SaveAchievementData(string saveDataJson);
 - 인터페이스를 통한 일관된 접근
 - 다양한 저장소 백엔드 지원
 
-### `AchievementInteractor`에서 세이브/로드시 사용
+## 의존성/상속 관계
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
+
+## 사용 예시
+#### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 세이브/로드시 사용
 ```csharp
 // 의존성 주입을 통한 사용
 [Inject]
@@ -72,7 +84,7 @@ public List<AchievementSaveData> LoadAchievementSaveData()
 ```
 
 ## 관련 클래스
-- [`AchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementInteractor)
-- [`AchievementRepository`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementRepository)
-- [`IAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementDataSource)
-- [`LocalAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/LocalAchievementDataSource)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)
+- [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)
+- [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)

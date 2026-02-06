@@ -9,13 +9,20 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementRepository` 클래스는 SlimeRush 게임의 업적 시스템에서 `IAchievementRepository` 인터페이스를 구현하는 구체적인 데이터 저장소 클래스입니다. 이 클래스는 데이터 소스 계층과 업적 시스템 간의 브리지 역할을 하며, 의존성 주입을 통해 다양한 데이터 소스(로컬, 클라우드 등)를 유연하게 사용할 수 있도록 합니다. 저장소 패턴을 구현하여 데이터 접근을 추상화합니다.
+`AchievementRepository` 클래스는 SlimeRush 게임의 업적 시스템에서 [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository)
+인터페이스를 구현하는 구체적인 데이터 저장소 클래스입니다. 이 클래스는 데이터 소스 계층과 업적 시스템 간의 브리지 역할을 하며,
+의존성 주입을 통해 다양한 데이터 소스(로컬, 클라우드 등)를 유연하게 사용할 수 있도록 합니다. 저장소 패턴을 구현하여 데이터 접근을 추상화합니다.
 
 ## 역할
 - 데이터 소스와 시스템 간의 브리지
 - 데이터 저장 기능 제공
 - 데이터 로드 기능 제공
 - 의존성 주입을 통한 유연한 데이터 소스 관리
+
+## 선언
+```csharp
+public class AchievementRepository : IAchievementRepository
+```
 
 ## 멤버
 ### 속성
@@ -73,33 +80,14 @@ public string LoadAchievementSaveData()
 - 데이터 소스로 데이터 전달
 - 결과 반환
 
-### 의존성 주입
-- `IAchievementDataSource` 인터페이스 사용
-- 다양한 데이터 소스 지원
-
 ## 의존성/상속 관계
-- `IAchievementRepository` 인터페이스 구현
-- `IAchievementDataSource` 인터페이스에 의존 (의존성 주입)
-- `AchievementInteractor` 사용자
-- `Zenject` DI 프레임워크 사용
-
-## 사용 예시
-#### `AchievementInteractor`에서 사용
-```csharp
-// 의존성 주입을 통한 사용
-[Inject]
-private IAchievementRepository _achievementRepository;
-
-// 데이터 저장
-_achievementRepository.SaveAchievementData(jsonData);
-
-// 데이터 로드
-string loadedData = _achievementRepository.LoadAchievementSaveData();
-```
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스 구현
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스에 의존 (의존성 주입)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor) 사용자
 
 ## 관련 클래스
-
-- [`IAchievementRepository`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementRepository): 구현하는 인터페이스
-- [`IAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/IAchievementDataSource): 데이터 소스 인터페이스
-- [`LocalAchievementDataSource`](/docs/projects/rfice/SlimeRush/AchievementSystem/LocalAchievementDataSource): 로컬 데이터 소스 구현체
-- [`AchievementInteractor`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementInteractor): 데이터 인터랙터
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository)
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)
+- [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)
+- [`CloudSyncDataSource`](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)

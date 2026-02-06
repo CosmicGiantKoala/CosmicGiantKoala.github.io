@@ -9,13 +9,20 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementPopup` 클래스는 SlimeRush 게임의 업적 시스템에서 업적 팝업 UI를 관리하는 컴포넌트입니다. 이 클래스는 업적 목록을 표시하고, 업적 상태 변경 시 자동으로 UI를 업데이트하며, 업적 아이템의 정렬 및 레이아웃 관리를 담당합니다. 플레이어의 업적 진행 상황을 시각적으로 표시하여 게임 내 성취도를 확인할 수 있도록 합니다.
+`AchievementPopup` 클래스는 SlimeRush 게임의 업적 시스템에서 업적 팝업 UI를 관리하는 컴포넌트입니다. 
+이 클래스는 업적 목록을 표시하고, 업적 상태 변경 시 자동으로 UI를 업데이트하며, 업적 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem))의 정렬 및 레이아웃 관리를 담당합니다.
+플레이어의 업적 진행 상황을 시각적으로 표시하여 게임 내 성취도를 확인할 수 있도록 합니다.
 
 ## 역할
 - 업적 목록 UI 관리
-- 업적 아이템 동적 생성 및 초기화
+- 업적 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)) 동적 생성 및 초기화
 - 업적 상태 변경 감지 및 UI 업데이트
-- 업적 아이템 동적 정렬
+- 업적 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)) 동적 정렬
+
+## 선언
+```csharp
+public class AchievementPopup : MonoBehaviour
+```
 
 ## 멤버
 ### 속성
@@ -175,12 +182,12 @@ private void UpdateContentsContextRect(int count)
 
 ## 기능 설명
 ### 동적 업적 목록 관리
-- **데이터 바인딩**: AchievementSystem에서 업적 데이터 가져오기
-- **아이템 재사용**: 기존 아이템이 있으면 재사용, 없으면 새로 생성
+- **데이터 바인딩**: [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 업적 데이터 가져오기
+- **아이템 재사용**: 기존 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem))이 있으면 재사용, 없으면 새로 생성
 - **동적 업데이트**: 업적 상태 변경 시 자동으로 UI 갱신
 
 ### 이벤트 기반 업데이트
-- **상태 변경 감지**: AchievementSystem의 OnChangedAchievementState 이벤트 구독
+- **상태 변경 감지**: [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)의 OnChangedAchievementState 이벤트 구독
 - **자동 갱신**: 업적 상태 변경 시 자동으로 UI 갱신
 - **효율적 갱신**: 변경된 데이터만 갱신하여 성능 최적화
 
@@ -190,13 +197,12 @@ private void UpdateContentsContextRect(int count)
 - **시각적 일관성**: 일관된 아이템 간격 및 레이아웃 유지
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받음 (Unity 컴포넌트)
-- `AchievementSystem` 클래스에 의존 (의존성 주입)
-- `AchievementPopupItem` 클래스에 의존
-- `Zenject` DI 프레임워크 사용
-- `UnityEngine.UI` 네임스페이스 사용
+- `MonoBehaviour`를 상속받음
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem) 클래스에 의존 (의존성 주입)
+- [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem) 클래스에 의존
+- [`UnityEngine.UI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/api/UnityEngine.UI.html) 네임스페이스 사용
 
 ## 관련 클래스
-- [`AchievementSystem`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementSystem)
-- [`AchievementPopupItem`](/docs/projects/rfice/SlimeRush/AchievementSystem/AchievementPopupItem)
-- [`Achievement`](/docs/projects/rfice/SlimeRush/AchievementSystem/Achievement)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
+- [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)
