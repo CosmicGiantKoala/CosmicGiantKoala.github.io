@@ -6,7 +6,7 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 209
 +++
 ## 개요
 `IAchievementRepository` 인터페이스는 SlimeRush 게임의 업적 시스템에서 데이터 저장소의 기본

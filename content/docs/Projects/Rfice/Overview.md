@@ -39,4 +39,4 @@ weight = 301
 4. **SettingManagementSystem** : 시스템 설정 시스템 (작성중)
 5. **PlayerVehicle** : 플레이어 탈것 시스템 (작성중)
 6. **MobileController** : 모바일 플랫폼 컨트롤러 (작성중)
-7. [**AssistCamera** : 서브카메라 유틸리티]({{< ref "docs/projects/rfice/assistantcamera/" >}})
+7. **AssistCamera** : 서브카메라 유틸리티(작성중)

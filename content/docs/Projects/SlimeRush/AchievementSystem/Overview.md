@@ -15,10 +15,10 @@ weight = 201
 - **시스템 개발 인원**: 2인 (유니티 클라이언트 1인, UI 디자인 1인)
 
 ### 개발 배경 및 요구사항
-- 플레이어의 게임 진행 상황을 추적하고 성취도를 시각적으로 표시
-- 업적 달성을 통해 게임 요소 해금
+- 플레이어의 게임 **진행 상황을 추적하고 성취도를 시각적으로 표시**
+- 업적 달성을 통해 **게임 요소 해금**
 - 다양한 업적 조건 타입 지원 (스테이지 클리어, 마법 획득, 룬 최대 레벨 등)
-- 업적 데이터의 영구 저장 및 클라우드 동기화 지원
+- 업적 데이터의 **저장 및 클라우드 동기화 지원**
 - 업적 시스템과 UI의 분리 및 유연한 확장성 제공
 - 의존성 주입을 통한 테스트 용이성 및 유지보수성 향상
 
@@ -46,6 +46,7 @@ weight = 201
 | [**Zenject**](https://github.com/modesttree/Zenject) | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
 | [**Newtonsoft.Json**](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html) | JSON 직렬화/역직렬화를 통한 데이터 저장 및 로드 |
 | [**Steamworks.NET**](https://steamworks.github.io/) | Steam 클라우드 저장소와 연동 |
+| [**UGUI**](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/api/UnityEngine.UI.html)| 동적 UI 구성 및 오브젝트 편집 인터페이스 구현.|
 {{< /table >}}<br>
 
 ### 설계 활용 패턴

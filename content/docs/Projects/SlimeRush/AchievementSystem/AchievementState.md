@@ -6,7 +6,7 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 214
 +++
 ## 개요
 `AchievementState` 열거형은 SlimeRush 게임의 업적 시스템에서 업적 객체([`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement))의 상태를 정의합니다.

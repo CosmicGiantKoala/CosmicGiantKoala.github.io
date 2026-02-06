@@ -6,7 +6,7 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 205
 +++
 ## 개요
 `IAchievementInteractor` 인터페이스는 SlimeRush 게임의 업적 시스템에서 데이터 저장소와 상호작용하는
