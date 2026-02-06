@@ -48,8 +48,9 @@ public void SaveAchievementData(string saveDataJson);
 - 다양한 데이터 소스 지원
 
 ### 의존성/상속 관계
-- [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource): 로컬 데이터 소스 구현 클래스
-- [`CloudSyncDataSource`](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource): 클라우드 데이터 소스 구현 클래스
+- 구현 클래스
+  - [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource): 로컬 데이터 소스 구현 클래스
+  - [`CloudSyncDataSource`](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource): 클라우드 데이터 소스 구현 클래스
 
 ## 사용 예시
 #### [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)에서 사용

@@ -9,13 +9,15 @@ toc = true
 weight = 201
 +++
 ## 개요
-`AchievementSystem` 클래스는 SlimeRush 게임의 업적 시스템을 관리하는 핵심 클래스입니다. 이 클래스는 업적의 생성, 상태 관리, 진행 상황 추적, 저장 및 로드 기능을 담당하며, 게임 내 모든 업적 관련 로직을 중앙에서 관리합니다. 플레이어의 업적 달성 과정을 모니터링하고, 업적 완료 시 관련된 시스템과 연동합니다.
+`AchievementSystem` 클래스는 SlimeRush 게임의 업적 시스템을 관리하는 핵심 클래스입니다. 
+이 클래스는 업적의 생성, 상태 관리, 진행 상황 추적, 저장 및 로드 기능을 담당하며, 게임 내 모든
+업적 관련 로직을 중앙에서 관리합니다. 플레이어의 업적 달성 과정을 모니터링하고, 업적 완료 시
+이벤트를 통해 관련된 시스템과 연동합니다.
 
 ## 역할
 - 업적 데이터([`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement))의 초기화 및 생성([`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator))
-- 업적 상태(비활성, 활성, 완료) 관리
+- 업적 상태([`AchievementState`](/docs/projects/SlimeRush/AchievementSystem/AchievementState))별 업적 리스트 관리
 - 업적 진행 상황 보고 및 처리
-- 업적 완료 조건 검증
 - 업적 데이터의 저장 및 로드
 - 선행 조건 업적 검사
 - 업적 상태 변경 알림
@@ -254,10 +256,10 @@ public bool CheckAchievementCompletion(string achievementId)
 - **완료(Complete)**: 모든 조건을 달성한 업적
 
 ### 업적 생명주기 관리
-1. **초기화**: Awake()에서 CreateAchievements() 호출
-2. **활성화**: 선행 조건 만족 시 자동 활성화
-3. **진행**: Report()를 통해 진행 상황 갱신
-4. **완료**: 조건 달성 시 자동 완료 처리
+1. **초기화**: `Awake()`에서 `CreateAchievements()` 호출
+2. **활성화**: 선행 조건(`Achievement.PreRequireCondition`) 만족 시 자동 활성화
+3. **진행**: `Report(string conditionValue)`를 통해 진행 상황 갱신
+4. **완료**: 조건 달성 시 `Achievement.OnCompleteEvent`를 받아 완료 처리
 5. **저장**: 애플리케이션 종료 시 자동 저장
 
 ### 진행 상황 추적 및 보고
@@ -273,7 +275,7 @@ public bool CheckAchievementCompletion(string achievementId)
 ### 데이터 영속성
 - `CreateAchievements()`: 초기 데이터 로드 및 업적 생성
 - `SaveCurrentAchievementInfo()`: 현재 상태 저장
-- `IAchievementInteractor`를 통해 데이터 저장소와 상호작용
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)를 통해 데이터 저장소와 상호작용
 
 ### 이벤트 알림 시스템
 - `OnChangedAchievementState`: 업적 상태 변경 시 알림
@@ -282,9 +284,9 @@ public bool CheckAchievementCompletion(string achievementId)
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음 (Unity 컴포넌트)
-- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스에 의존 (의존성 주입)
-- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator) 클래스에 의존
-- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
+- [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스를 통해 데이터 로드/세이브 (의존성 주입)
+- [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator) 클래스를 통해 업적 객체 생성
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스 관리
 
 ## 사용 예시
 #### [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)에서 마법 획득시 보고
@@ -319,6 +321,8 @@ private void CheckAchievement()
 {
     foreach (var runeStoreData in _allRuneStoreDatas)
     {
+        // 룬상점에서 해당 아이템의 출연 조건이 없거나
+        // 업적시스템에서 업적이 완료된 경우 룬상점에 해당 아이템을 출연시킨다.
         if (runeStoreData.achievementCondition == "" ||
             _achievementSystem.CheckAchievementCompletion(runeStoreData.achievementCondition))
         {
@@ -329,7 +333,7 @@ private void CheckAchievement()
 ```
 
 ## 관련 클래스
-
+- [`AchievementState`](/docs/projects/SlimeRush/AchievementSystem/AchievementState)
 - [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)
 - [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)
 - [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)

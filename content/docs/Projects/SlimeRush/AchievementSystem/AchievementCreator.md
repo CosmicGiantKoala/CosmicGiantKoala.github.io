@@ -83,8 +83,8 @@ public List<Achievement> Create(List<AchievementSheetData> sheetData, List<Achie
 
 ## 기능 설명
 ### 데이터 매핑 프로세스
-1. **시트 데이터 반복**: 업적 시트 데이터 목록을 순회
-2. **저장 데이터 매칭**: 각 시트 데이터에 해당하는 저장 데이터 찾기
+1. **시트 데이터 반복**: 업적 시트 데이터([`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData)) 목록을 순회
+2. **저장 데이터 매칭**: 각 시트 데이터에 해당하는 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)) 찾기
 3. **데이터 통합**: 시트 데이터와 저장 데이터를 결합하여 업적 초기화
 4. **객체 생성**: 매핑된 데이터를 기반으로 [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 객체 생성
 
@@ -94,9 +94,9 @@ public List<Achievement> Create(List<AchievementSheetData> sheetData, List<Achie
 - 저장 데이터([`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData))가 없는 경우 기본값 사용
 
 ## 의존성/상속 관계
-- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
-- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData) 클래스에 의존
-- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스 생성 및 목록 반환
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData), [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)를 통해 업적 객체 생성
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 생성됨
 
 ## 사용 예시
 #### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)가 초기화 될 때 호출 

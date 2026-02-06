@@ -1,6 +1,6 @@
 +++
 title = "LocalAchievementDataSource"
-description = "업적 시스템에서 `IAchievementDataSource` 인터페이스를 구현하는 로컬 데이터 소스"
+description = "`IAchievementDataSource` 인터페이스를 구현하는 로컬 데이터 소스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
@@ -9,13 +9,17 @@ toc = true
 weight = 201
 +++
 ## 개요
-`LocalAchievementDataSource` 클래스는 SlimeRush 게임의 업적 시스템에서 `IAchievementDataSource` 인터페이스를 구현하는 로컬 데이터 소스입니다. 이 클래스는 로컬 파일 시스템을 통해 업적 데이터를 저장하고 로드하며, JSON 형식의 데이터를 Unity의 영구 저장소 경로에 저장합니다. 로컬 저장소로의 데이터 영속성을 제공하며, 오프라인 환경에서도 업적 진행 상황을 유지할 수 있도록 합니다.
+`LocalAchievementDataSource` 클래스는 SlimeRush 게임의 업적 시스템에서
+[`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스를 구현하는 로컬 데이터 소스입니다. 
+이 클래스는 로컬 파일 시스템을 통해 업적 데이터를 저장하고 로드하며, JSON 형식의 데이터를 
+Unity의 영구 저장소 경로에 저장합니다. 로컬 저장소로의 데이터 영속성을 제공하며, 오프라인 환경에서도
+업적 진행 상황을 유지할 수 있도록 합니다.
 
 ## 역할
 - 로컬 파일 시스템을 통한 데이터 저장
 - 로컬 파일 시스템을 통한 데이터 로드
 - 파일 입출력 오류 처리
-- 로컬 저장소 경로 관리
+- 로컬 저장소 경로([`Application.persistanDataPath`](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Application-persistentDataPath.html)) 관리
 - 파일 I/O 관리
 
 ## 선언
@@ -120,8 +124,8 @@ public void SaveAchievementData(string saveData)
 - 유연한 데이터 형식 지원
 
 ## 의존성/상속 관계
-- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스 구현
-- [`System.IO`](https://learn.microsoft.com/ko-kr/dotnet/api/system.io?view=net-8.0) 네임스페이스 사용 (파일 입출력)
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스를 구현
+- [`System.IO`](https://learn.microsoft.com/ko-kr/dotnet/api/system.io?view=net-8.0) 네임스페이스를 통해 파일 입출력
 
 ## 사용 예시
 #### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 사용

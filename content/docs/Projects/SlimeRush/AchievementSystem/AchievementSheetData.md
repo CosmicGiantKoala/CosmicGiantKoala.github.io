@@ -84,8 +84,8 @@ public string[] preRequireCondition { get; set;}
 public AchievementSheetData(string id, string nameKey, string description, string conditionType,
     string conditionValue, string rewardDes, int needSuccess = 1, string[] preRequireCondition = null)
 ```
-## 주요 코드 스니펫
 
+## 주요 코드 스니펫
 ### 데이터 구조
 ```csharp
 [Serializable]

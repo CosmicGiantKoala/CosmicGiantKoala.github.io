@@ -1,6 +1,6 @@
 +++
 title = "CloudSyncDataSource"
-description = "업적 시스템에서 `IAchievementDataSource` 인터페이스를 구현하는 클라우드 데이터 클래스"
+description = "`IAchievementDataSource` 인터페이스를 구현하는 클라우드 데이터 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
@@ -147,25 +147,20 @@ private string LoadData(string fileName)
 
 ### 데이터 저장 프로세스
 1. **데이터 변환**: JSON 문자열을 바이트 배열로 변환
-2. **클라우드 쓰기**: SteamRemoteStorage.FileWrite() 호출
+2. **클라우드 쓰기**: `SteamRemoteStorage.FileWrite()` 호출
 3. **결과 확인**: 저장 성공 여부 확인
 4. **로그 출력**: 저장 결과 로그 출력
 
 ### 데이터 로드 프로세스
-1. **파일 존재 확인**: SteamRemoteStorage.FileExists() 호출
-2. **파일 크기 확인**: SteamRemoteStorage.GetFileSize() 호출
-3. **데이터 읽기**: SteamRemoteStorage.FileRead() 호출
+1. **파일 존재 확인**: `SteamRemoteStorage.FileExists(string)` 호출
+2. **파일 크기 확인**: `SteamRemoteStorage.GetFileSize(string)` 호출
+3. **데이터 읽기**: `SteamRemoteStorage.FileRead(string, byte[], int)` 호출
 4. **데이터 변환**: 바이트 배열을 JSON 문자열로 변환
 5. **로그 출력**: 로드 결과 로그 출력
 
-### Steamworks 통합
-- Steam Remote Storage API 사용
-- Steam 클라우드 기능 활용
-- Steam 사용자 계정 연동
-
 ## 의존성/상속 관계
-- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스 구현
-- [`Steamworks.NET`](https://steamworks.github.io/) 라이브러리에 의존
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스를 구현
+- [`Steamworks.NET`](https://steamworks.github.io/) 라이브러리를 통해 [`Steamworks API`](https://partner.steamgames.com/doc/sdk/api)사용
 
 ## 사용 예시
 #### [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)에서 저장 및 로드시 사용

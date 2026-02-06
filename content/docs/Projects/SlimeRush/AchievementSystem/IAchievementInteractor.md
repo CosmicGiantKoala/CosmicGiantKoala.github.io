@@ -71,6 +71,7 @@ void ClearAchievementData(Action onClearCompleteCallBack = null);
 ## 의존성/상속 관계
 - [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSheetData) 클래스에 의존
 - [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor) 에서 해당 인터페이스 구현 
 
 ## 사용 예시
 #### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 업적 초기화시 사용
@@ -116,3 +117,4 @@ private void SaveCurrentAchievementInfo()
 - [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)
 - [`LocalAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)
 - [`CloudSyncDataSource`](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)

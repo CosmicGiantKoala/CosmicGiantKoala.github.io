@@ -182,7 +182,7 @@ private void UpdateContentsContextRect(int count)
 
 ## 기능 설명
 ### 동적 업적 목록 관리
-- **데이터 바인딩**: [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 업적 데이터 가져오기
+- **데이터 바인딩**: [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)에서 업적 데이터([`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)) 가져오기
 - **아이템 재사용**: 기존 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem))이 있으면 재사용, 없으면 새로 생성
 - **동적 업데이트**: 업적 상태 변경 시 자동으로 UI 갱신
 
@@ -198,8 +198,8 @@ private void UpdateContentsContextRect(int count)
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음
-- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem) 클래스에 의존 (의존성 주입)
-- [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem) 클래스에 의존
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem) 클래스의 이벤트를 구독하고, [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) List를 가져옴 (의존성 주입)
+- [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem) 클래스를 생성 및 관리
 - [`UnityEngine.UI`](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/api/UnityEngine.UI.html) 네임스페이스 사용
 
 ## 관련 클래스

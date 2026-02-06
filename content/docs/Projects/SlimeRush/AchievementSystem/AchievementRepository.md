@@ -81,9 +81,9 @@ public string LoadAchievementSaveData()
 - 결과 반환
 
 ## 의존성/상속 관계
-- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스 구현
-- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스에 의존 (의존성 주입)
-- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor) 사용자
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스를 구현
+- [`IAchievementDataSource`](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource) 인터페이스를 통해 DataSource에 접근 (의존성 주입)
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 인터페이스를 통해 해당 클래스 접근(기본값)
 
 ## 관련 클래스
 - [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository)

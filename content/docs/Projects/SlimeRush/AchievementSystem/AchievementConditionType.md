@@ -59,7 +59,7 @@ None = 99
 - 조건 평가 로직에서 타입별 처리 기준 제공
 
 ## 의존성/상속 관계
-- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에서 사용
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에서 해당 열거형을 통해 업적 조건 구분
 
 ## 사용 예시
 #### [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 생성자에서 직렬화 데이터를 열거문으로 파싱하여 사용

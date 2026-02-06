@@ -48,6 +48,7 @@ public void SaveAchievementData(string saveDataJson);
 
 ## 의존성/상속 관계
 - [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
+- [`AchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository) 에서 인터페이스 구현 
 
 ## 사용 예시
 #### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 세이브/로드시 사용

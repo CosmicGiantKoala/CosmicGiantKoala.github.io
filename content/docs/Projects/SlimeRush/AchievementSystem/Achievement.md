@@ -13,7 +13,7 @@ weight = 201
 
 ## 역할
 - 업적의 기본 데이터(ID, 이름, 설명, 조건 등) 관리
-- 업적의 현재 데이터(비활성, 활성, 완료) 추적 및 관리
+- 업적의 저장 데이터(비활성, 활성, 완료) 추적 및 관리
 - 업적 완료 조건 검증 및 진행 상황 업데이트
 - 업적 완료 시 이벤트 발생 및 콜백 처리
 - 업적 데이터의 직렬화 및 저장소와의 호환성 제공
@@ -153,7 +153,7 @@ private AchievementConditionType ParseConditionType(string conditionTypeString)
 ```
 
 ## 주요 코드 스니펫
-### 업적 생성 및 초기화
+### 업적 생성자
 ```csharp
 public Achievement(string id, string nameKey, string description, string conditionType,
     string conditionValue, string rewardDescription, int currentSuccess, int needSuccess,
@@ -255,15 +255,14 @@ private AchievementConditionType ParseConditionType(string conditionTypeString)
 - 이벤트 발생 후 핸들러 자동 제거로 메모리 관리
 
 ### 데이터 호환성
-- 업적 기본 정보(시트 데이터)와 진행 상태(저장 데이터) 분리 관리
 - `CreateAchievementSaveData()`를 통해 저장 가능한 데이터 생성
-- `AchievementSaveData` 객체로 변환하여 직렬화 데이터 제공
+- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 객체로 변환하여 직렬화 데이터 제공
 - 조건 타입 문자열을 열거형으로 변환하여 타입 안전성 보장
 
 ## 의존성/상속 관계
-- [`AchievementConditionType`](/docs/projects/SlimeRush/AchievementSystem/AchievementConditionType) 열거형에 의존
-- [`AchievementState`](/docs/projects/SlimeRush/AchievementSystem/AchievementState) 열거형에 의존
-- [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스에 의존
+- [`AchievementConditionType`](/docs/projects/SlimeRush/AchievementSystem/AchievementConditionType) 열거형을 통해 업적 조건 구분
+- [`AchievementState`](/docs/projects/SlimeRush/AchievementSystem/AchievementState) 열거형을 통해 현재 상태 관리
+- `CreateAchievementSaveData()` 호출시 [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData) 클래스 생성 
 
 ## 사용 예시
 #### [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)에서 시트데이터와 저장데이터를 통해 업적 데이터 생성
@@ -359,5 +358,6 @@ public void Report(string conditionValue)
 - [`AchievementConditionType`](/docs/projects/SlimeRush/AchievementSystem/AchievementConditionType)
 - [`AchievementState`](/docs/projects/SlimeRush/AchievementSystem/AchievementState)
 - [`AchievementSaveData`](/docs/projects/SlimeRush/AchievementSystem/AchievementSaveData)
+- [`AchievementSheetData`](/docs/projects/SlimeRush/AchievementSystem/AchievementsheetData)
 - [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
 - [`AchievementCreator`](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)

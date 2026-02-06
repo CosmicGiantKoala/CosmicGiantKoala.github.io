@@ -1,6 +1,6 @@
 ﻿+++
 title = "AchievementInteractor"
-description = "`IAchievementInteractor`의 구현체"
+description = "`IAchievementInteractor` 인터페이스를 구현하는 구체적인 데이터 인터랙터"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
@@ -158,8 +158,8 @@ public void ClearAchievementData(Action onClearCompleteCallBack = null)
 ## 의존성/상속 관계
 - [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor) 인터페이스 구현
 - `ProjectStreamingAssets` 클래스에 의존 (의존성 주입)
-- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스에 의존 (의존성 주입)
-- [`Newtonsoft.Json`](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html) 라이브러리에 의존 (JSON 처리)
+- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스를 통해 저장소 기능 호출 (의존성 주입)
+- [`Newtonsoft.Json`](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html) 라이브러리를 통해 저장 데이터 직렬화/역직렬화 처리
 
 ## 관련 클래스
 - [`IAchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)

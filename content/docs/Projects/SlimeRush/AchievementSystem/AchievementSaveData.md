@@ -83,8 +83,8 @@ public AchievementSaveData(string id, int currentSuccess, bool isComplete)
 
 ## 의존성/상속 관계
 - [`Serializable`](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Serializable.html) 속성 사용 (직렬화 지원)
-- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)클래스에서 사용
-- [`IAchievementRepository`](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository) 인터페이스에서 사용
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement)클래스에서 해당 클래스 생성
+- [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor) 에서 해당 클래스 직렬화/역직렬화를 통해 문자열/클래스로 변경
 
 ## 사용 예시
 #### [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/Achievementsystem)에서 저장 데이터 생성시 사용
@@ -99,9 +99,17 @@ private void SaveCurrentAchievementInfo()
 }
 ```
 
-#### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 저장 데이터 로드
+#### [`AchievementInteractor`](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)에서 저장 데이터 저장/로드
 ```csharp
 private IAchievementRepository _achievementRepository;
+
+public void SaveAchievementData(List<AchievementSaveData> saveData)
+{
+    // 업적 데이터를 JSON 형식으로 직렬화합니다
+    var saveDataJson = JsonConvert.SerializeObject(saveData, Formatting.Indented);
+    // 직렬화된 데이터를 저장소에 저장합니다
+    _achievementRepository.SaveAchievementData(saveDataJson);
+}
 
 public List<AchievementSaveData> LoadAchievementSaveData()
 {

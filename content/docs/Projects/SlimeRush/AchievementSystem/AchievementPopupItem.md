@@ -14,7 +14,7 @@ weight = 201
 또한 로컬라이제이션 기능을 통해 다국어 지원을 제공하며, 업적 아이템 간의 정렬 기능을 구현합니다.
 
 ## 역할
-- 개별 업적 아이템 UI 관리
+- 업적 객체([`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement))의 정보를 UI로 표시
 - 업적 정보 표시 및 시각적 피드백 제공
 - 다국어 로컬라이제이션 지원
 - 아이템 정렬 기능을 위한 비교 로직 제공
@@ -195,23 +195,23 @@ public int CompareTo(AchievementPopupItem otherItem)
 - 완료 시 랜덤 회전 효과 적용
 
 ### 로컬라이제이션 시스템
-- Unity Localization 패키지 사용
+- Unity Localization 패키지([`Unity Localization`](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html)) 사용
 - 다국어 지원 (한국어, 영어 등)
 - 로컬라이제이션 테이블 참조
 - 동적 문자열 갱신
 
 ### 정렬 기능
-- `IComparable<AchievementPopupItem>` 인터페이스 구현
+- [`IComparable<AchievementPopupItem>`](https://learn.microsoft.com/ko-kr/dotnet/api/system.icomparable-1?view=net-9.0) 인터페이스 구현
 - 완료 상태에 따른 우선 정렬
 - ID에 따른 보조 정렬
 - 업적 목록 정렬에 사용
 
 ## 의존성/상속 관계
 - `MonoBehaviour`를 상속받음
-- `IComparable<AchievementPopupItem>` 인터페이스 구현
-- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스에 의존
-- [`Unity Localization`](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html) 패키지에 의존
-- [`TMP (TextMeshPro)`](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html) 패키지에 의존
+- [`IComparable<AchievementPopupItem>`](https://learn.microsoft.com/ko-kr/dotnet/api/system.icomparable-1?view=net-9.0) 인터페이스 구현으로 업적 비교 기능 구현
+- [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 클래스의 정보 표시
+- [`Unity Localization`](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html) 패키지를 통해 로컬라이제이션
+- [`TMP (TextMeshPro)`](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/index.html) 패키지를 통해 UGUI상에 텍스트 표기
 
 ## 사용 예시
 #### [`AchievementPopup`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopup)에서 개별 업적 아이템들의 초기화 명령
