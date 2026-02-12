@@ -14,33 +14,34 @@ weight = 201
 - **제작기간**: 2024.09 ~ 2024.11
 - **담당범위**
   - 플레이어
-    - 마법 생성 및 관리(`MagicBookLibrary`, `MagicBookParameters`, `MagicBookCreator`)
-    - 마법 발동(`MagicBook`)
-    - 마법 부가효과(`MagicAbilityInfo`, `MagicAbilityType`)
+    - 마법 생성 및 관리([`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary),
+      [`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters), [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator))
+    - 마법 핸들링 및 타겟팅([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook))
+    - 마법 부가 효과 설정([`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo), [`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType))
   - 몬스터
-    - 공격 능력 관리(`CommonMonsterCombat`, `MonsterCombatBehaviour`)
-    - 공격 능력 핸들링(`MonsterAbilityHandler`)
+    - 몬스터 공격 능력 핸들링([`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat),
+      [`MonsterCombatBehaviour`](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour))
+    - 몬스터 개별 능력 쿨타임, 정거리 관리 및 공격 명령([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler))
   - 공통
-    - 데미지 시스템(`CommonBattleManager`, `IDamageAble`, `DamageInfo`, `DamageResult`) 
-    - 타겟 시스템(`ITarget`, `TargetingOption`, `TargetScanner`, `TargetSystem`)
+    - 전투 관련 유틸리티, 데미지 관련 인터페이스 및 구조체([`CommonBattleManager`](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager), [`IDamageAble`](/docs/projects/SlimeRush/BattleSystem/IDamageAble), [`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo), [`DamageResult`](/docs/projects/SlimeRush/BattleSystem/DamageResult)) 
+    - 타겟팅 시스템, 타겟정의 및 타겟 스캐닝([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget), [`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption), [`TargetScanner`](/docs/projects/SlimeRush/BattleSystem/TargetScanner), [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem))
 
 ### 개발 배경 및 요구사항
-- **표준 전투 로직 제공**: 정확한 데미지 계산과 다양한 전투 상황에 대응할 수 있는 로직 구현
-- **유연한 마법 시스템**: 다양한 마법 타입과 시전 방식을 지원하는 확장 가능한 마법 시스템 구축
-- **실시간 전투 처리**: 플레이어와 몬스터 간의 실시간 전투 상호작용 및 상태 관리
-- **효율적인 타겟팅 시스템**: 다양한 타겟팅 옵션과 정확한 타겟 추적 기능 제공
-- **몬스터 전투 행동 연동**: 몬스터의 지능적인 전투 행동과 플레이어와의 원활한 상호작용 구현
-- **성능 최적화**: 대규모 전투 상황에서도 안정적인 성능을 유지할 수 있는 시스템 설계
-- **확장성과 유지보수성**: 새로운 전투 요소 추가와 코드 유지보수를 용이하게 하는 아키텍처 구현
+- **플레이어의 표준 전투 및 데미지를 정의** 할 수 있는 로직 구현
+- 다양한 마법 타입과 시전 방식을 지원하는 **확장 가능한 마법 시스템 구축**
+- **다양한 타겟팅 옵션과 정확한 타겟 추적** 기능 제공
+- 상황에 따른 **몬스터의 전투 행동** 기능 제공
+- 대규모 전투 상황에서도 안정적인 성능을 유지할 수 있는 시스템 설계
+- **새로운 전투 요소 추가와 코드 유지보수**를 용이하게 하는 아키텍처 구현
 
 ### 주요 기능
 {{< table "table-striped">}}
 | 기능 | 설명 |
 |-----|-----|
-| **마법 생성 및 관리** | 마법책 라이브러리 기반의 마법 할당, 업데이트, 생성 관리 |
-| **마법 발동 시스템** | 실시간 쿨타임 관리, 타겟팅 옵션 적용, 마법 시전 처리 |
+| **마법 생성 및 관리** | 마법책 라이브러리(중앙관리) 기반의 마법 생성, 업데이트, 관리 |
+| **마법 발동 시스템** | 개별 마법책 객체의 실시간 쿨타임 관리, 타겟팅 옵션 적용, 마법 시전 처리 |
 | **몬스터 공격 능력 관리** | 몬스터 공격 능력 관리, 거리 기반 전투 행동 결정 |
-| **몬스터 공격 능력 핸들링** | 개별 공격 능력 처리, 쿨타임 관리, 거리 감지 |
+| **몬스터 공격 능력 핸들링** | 몬스터의 다중/단일 공격 능력 처리, 쿨타임 관리, 거리 감지 |
 | **데미지 계산 시스템** | 통상 데미지 공식 구현, 크리티컬 히트, 룬 시스템 연동 |
 | **데미지 정보/결과 관리** | 데미지 데이터 구조화, 속성 변환, 최종 적용 결과 제공 |
 | **타겟 정의 및 서칭** | 타겟 인터페이스 표준화, 다양한 타겟팅 옵션 지원 |
@@ -53,10 +54,9 @@ weight = 201
 | 요소 | 설명 |
 |-----|-----|
 | **C#** | 전체 핵심 로직 및 유니티 컴포넌트 구현 |
-| **Unity Physics** | 레이캐스트, 거리 계산, 물리 연산 |
-| **Zenject** | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
-| **Unity Coroutines** | 실시간 쿨타임 관리 및 타겟 추적 코루틴 기반 처리 |
-| **Unity Events** | 마법 시전, 데미지 적용, 타겟 변경 이벤트 시스템 |
+| [**Zenject**](https://github.com/modesttree/Zenject) | 객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도 구현 |
+| **Coroutine** | 실시간 쿨타임 관리 및 타겟 추적 코루틴 처리 |
+| **Unity Event** | 이벤트 기반 객체 셋업 및 상태 이벤트 기반 동작 |
 {{< /table >}}<br>
 
 ### 설계 활용 패턴
@@ -74,7 +74,7 @@ weight = 201
 {{< alert context="info" text="작업 범위 위주" />}}
 ```mermaid
 classDiagram
-  direction LR
+  direction TD
 
 %% 핵심 시스템 클래스
   class MagicBookLibrary
@@ -86,8 +86,10 @@ classDiagram
   class MonsterAbilityHandler
   class CommonBattleManager
   class IDamageAble{<<interface>>}
-  class DamageInfo
+  class DamageInfo{<<struct>>}
+  class DamageResult{<<struct>>}
   class ITarget{<<interface>>}
+  class TargetingOption{<<enumeration>>}
   class TargetSystem
   class TargetScanner
   class MagicAbilityInfo{<<struct>>}
@@ -111,6 +113,8 @@ classDiagram
   CommonMonsterCombat o--> TargetSystem : uses
   MonsterAbilityHandler o--> IDamageAble : uses
   MonsterAbilityHandler o--> ITarget : uses
+  IDamageAble --> DamageResult : use
+  IDamageAble --> DamageInfo : use
 
   CommonBattleManager --> DamageInfo : creates
   CommonBattleManager --> MagicAbilityInfo : creates
@@ -123,14 +127,16 @@ classDiagram
 
 ## 4. 주요 클래스별 역할 및 관계
 ### 플레이어 마법 관리 시스템
+{{< alert context="info" text="🧑‍💻: 팀원 제작 기능" />}}
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[MagicBookLibrary](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)** | 활성화된 마법을 중앙에서 관리 클래스, 마법 할당 이벤트 구독 및 처리 |
-| **[MagicBookCreator](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)** | 마법책 생성 전용 팩토리 클래스|
-| **[MagicBook](/docs/projects/SlimeRush/BattleSystem/MagicBook)** | 마법 쿨타임관리/발사 클래스, 실시간 타겟 추적 |
-| **[MagicAbilityInfo](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)** | 마법의 부가 효과 정보를 저장하는 구조체|
-| **[MagicAbilityType](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)** | 마법의 부가 효과 종류를 정의하는 열거형|
+| **[MagicBookLibrary](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)** | 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook))객체를 생성하기 위한 파라메터([`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters))를 생성하고 활성화된 마법책을 중앙에서 관리하는 클래스, 마법 할당 이벤트 구독 및 처리 |
+| **[MagicBookCreator](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)** <br> : PlaceholderFactory<MagicBookParameters, MagicBook> | 파라메터([`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters))를 통해 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook))을 생성하는 전용 팩토리 클래스|
+| **[MagicBook](/docs/projects/SlimeRush/BattleSystem/MagicBook)** | 마법 쿨타임 관리, 타겟팅 대상을 타겟 시스템([`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem))을 통해 추적하고 및 마법 객체(`🧑‍💻Magic`) 클래스 생성 및 타겟 전달
+| **[MagicBookParameters](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters)** | [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator) 클래스에서 [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook) 객체를 만들기 위한 매개변수를 가진 구조체 |
+| **[MagicAbilityInfo](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)** | 마법의 부가 효과 정보를 저장하는 구조체 |
+| **[MagicAbilityType](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)** | 마법의 부가 효과 종류를 정의하는 열거형 |
 {{< /table >}}<br>
 
 ```mermaid
@@ -217,6 +223,7 @@ classDiagram
     MagicBook --> Magic : creates
     DamageInfo --> MagicAbilityInfo : contains
     MagicAbilityInfo --> MagicAbilityType : uses
+    
 ```
 <br><br>
 
@@ -224,9 +231,9 @@ classDiagram
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[MonsterCombatBehaviour](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour)** | 게임 상태 감지 및 상태별 동작 이벤트 호출 |
-| **[CommonMonsterCombat](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)**<br>-->MonsterCombatBehaviour | 게임 상태별 몬스터 동작. 타겟 관련 동작 및 능력 핸들러 관리 |
-| **[MonsterAbilityHandler](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)** | 몬스터 능력 핸들러, 개별 공격 능력 처리, 쿨타임 관리, 거리 감지 |
+| **[MonsterCombatBehaviour](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour)** | 게임 상태 이벤트(`🧑‍💻IGameStateObservable`) 리스닝 및 상태별 동작 이벤트 호출 |
+| **[CommonMonsterCombat](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)**<br>: MonsterCombatBehaviour | 게임 상태별 몬스터 동작. 타겟 시스템([`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem))을 통해 플레이어와 거리 체크<br> 몬스터 능력 핸들러([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)) 생성, 관리 |
+| **[MonsterAbilityHandler](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)** | 몬스터 능력(`🧑‍💻IMonsterAttackAbility`) 핸들러, 개별 공격 능력 처리, 쿨타임 관리, 공격 범위 감지 |
 {{< /table >}}<br>
 
 ```mermaid
@@ -249,8 +256,8 @@ classDiagram
     class CommonMonsterCombat {
         - CombatBehaviour: delegate(~float~, ~float~)
         - AbilityHandler: List~MonsterAbilityHandler~
-        # OnPlayed()
-        # OnPaused()
+        - OnPlayed()
+        - OnPaused()
         - CoCheckDistance(): ~IEnumerator~
         - OnSetupMonsterCombat()
     }
@@ -263,12 +270,17 @@ classDiagram
     class IMonsterAttackAbility {
         <<interface>>
     }
+    
+    class MonsterAbilityBehaviour { }
+    class IMonsterAttackAbility {<<interface>>} 
 
     MonsterCombatBehaviour o--> IGameStateObservable : subscribe
     MonsterCombatBehaviour --> GameState: uses
-    CommonMonsterCombat "1" *--> "n" MonsterAbilityHandler : manage 
+    CommonMonsterCombat --> MonsterAbilityBehaviour : uses
+    CommonMonsterCombat "1" *--> "n" MonsterAbilityHandler : creates 
     CommonMonsterCombat o--> TargetSystem : uses
     CommonMonsterCombat --|> MonsterCombatBehaviour : inheritance
+    CommonMonsterCombat --> IMonsterAttackAbility: uses
     MonsterAbilityHandler o--> IMonsterAttackAbility : uses
 ```
 <br><br>
@@ -277,19 +289,19 @@ classDiagram
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-| **[CommonBattleManager](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)** | 플레이어 정보와 마법정보 바탕으로 데미지 구조체 생성 및 데미지 공식 구현. 쿨타임, 마법 부가능력, 크리티컬 결정 등을 하는 정적 클래스 |
-| **[IDamageAble](/docs/projects/SlimeRush/BattleSystem/IDamageAble)** | 데미지를 입을 수 있는 객체를 정의하는 인터페이스, 표준화된 데미지 처리 제공 |
-| **[DamageInfo](/docs/projects/SlimeRush/BattleSystem/DamageInfo)** | 데미지 정보를 구조화한 데이터 컨테이너, 일반/치명타 데미지, 확률, 물리력 등 핵심 속성 포함 |
+| **[CommonBattleManager](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)** | 플레이어 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData))와 마법정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)) 바탕으로 데미지 구조체([`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)) 생성 및 데미지 공식([`예시전투공식`](/docs/projects/SlimeRush/BattleSystem/CombatFormula)) 구현.<br> 쿨타임, 마법 부가능력([`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)) 설정, 크리티컬 결정 등을 하는 정적 클래스 |
+| **[IDamageAble](/docs/projects/SlimeRush/BattleSystem/IDamageAble)** | 데미지를 입을 수 있는 객체를 정의하는 인터페이스, 표준화된 데미지 처리 정의 |
+| **[DamageInfo](/docs/projects/SlimeRush/BattleSystem/DamageInfo)** | 데미지 정보 구조체, 일반/치명타 데미지, 확률, 물리력 등 핵심 속성 포함 |
 | **[DamageResult](/docs/projects/SlimeRush/BattleSystem/DamageResult)** | 데미지 적용 결과를 담는 구조체, 실제 적용된 데미지 값과 치명타 여부, 대상 객체의 사망 여부 추적 |
-| **[ITarget](/docs/projects/SlimeRush/BattleSystem/ITarget)** | 타겟 인터페이스 표준화, 위치, Transform, 데미지 가능 객체 접근 인터페이스 제공 |
+| **[ITarget](/docs/projects/SlimeRush/BattleSystem/ITarget)** | 타겟이 될 수 있는 오브젝트 정의. 위치(`Vector3`), `Transform`, 데미지 가능 객체([`IDamageAble`](/docs/projects/SlimeRush/BattleSystem/IDamageAble)) 접근 인터페이스 제공 |
 | **[TargetingOption](/docs/projects/SlimeRush/BattleSystem/TargetingOption)** | 마법 타겟팅 옵션 정의 구조체, 타겟 타입(단일/다중/위치), 수량, 범위 설정 |
 | **[TargetScanner](/docs/projects/SlimeRush/BattleSystem/TargetScanner)** | 타겟 탐색 및 위치 찾기 전용 클래스, 거리 기반 타겟 정렬 및 필터링, 랜덤 타겟 선택 |
-| **[TargetSystem](/docs/projects/SlimeRush/BattleSystem/TargetSystem)** | 타겟 관리의 중앙 허브, 플레이어와 적 타겟의 통합 관리, 마우스 레이캐스트 기반 위치 감지 |
+| **[TargetSystem](/docs/projects/SlimeRush/BattleSystem/TargetSystem)** | 타겟 객체([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 관리 및 타겟 스캔 명령 처리, 마우스 레이캐스트 기반 위치 감지 |
 {{< /table >}}<br>
 
 ```mermaid
 classDiagram
-    direction LR
+    direction DT
     class CommonBattleManager {
         <<static>>
         + CreateDamageInfo(~PlayerDataInfo~, ~MagicInfo~):~DamageInfo~
@@ -381,6 +393,15 @@ classDiagram
         + TargetingRange: ~float~
         + TargetingOption(~MagicTargetType~, ~int~, ~float~)
     }
+    
+    BaseMonster ..|> ITarget : impl
+    BaseMonster ..|> IDamageAble : impl
+    BaseMonster --> CommonBattleManager : uses
+    PlayerTarget ..|> ITarget : impl
+    PlayerTarget ..|> IDamageAble : impl
+    PlayerTarget --> CommonBattleManager : uses
+    MagicObject --> CommonBattleManager : uses
+    ITarget --> IDamageAble : uses
 
     CommonBattleManager --> DamageInfo : creates
     CommonBattleManager --> MagicAbilityInfo : creates
@@ -395,44 +416,38 @@ classDiagram
     MagicBook *--> TargetingOption : creates
     MagicBook --> ITarget : uses
     TargetingOption --> MagicTargetType : uses
-    Player ..|> ITarget : impl
-    Monster ..|> ITarget : impl
-    Player ..|> IDamageAble : impl
-    Monster ..|> IDamageAble : impl
-    Player o--> TargetSystem : uses
-    Monster o--> TargetSystem : uses
-
+    TargetScanner --> ITarget : uses
 ```
 <br><br>
 
 ## 5. 주요 특징
 ### 기능의 특징
-- **데미지 계산 시스템**: 기본 데미지 + 속성 보너스 + 크리티컬 + 룬 효과 적용
+- **플레이어 데미지 정보**: 기본 데미지 + 속성 보너스 + 크기 보너스 + 크리티컬 + 룬 효과 적용
 - **타겟팅 시스템**: 단일/다중 타겟, 위치 기반 시전, 마우스 지정 등 다양한 시전 방식 지원
 - **실시간 쿨타임 관리**: 타이밍 제어 및 시각적 피드백 제공, 코루틴 기반 처리
-- **몬스터 행동**: 거리 기반 전투 행동 결정, 다중 공격 능력 동시 관리, 게임 상태에 따라 행동 결정
+- **몬스터 공격 행동 제어**: 거리 기반 전투 행동 결정, 다중 공격 능력 동시 관리, 게임 상태에 따라 행동 결정
 - **의존성 주입 아키텍처**: Zenject 기반 DI, 객체 생성과 의존성 관리 자동화
 - **확장 가능한 설계**: 플러그인 가능한 마법 시스템, 새로운 마법 타입 쉽게 추가 가능
 
 ## 6. UseCase
 ### 마법 시전 시나리오
-1. **마법 할당**: 플레이어가 마법을 획득하면 MagicBookLibrary에서 마법책 생성
-2. **쿨타임 관리**: MagicBook에서 실시간 쿨타임 체크 및 타이밍 제어
-3. **타겟팅 결정**: TargetingOption에 따라 타겟 탐색 및 위치 지정
-4. **마법 시전**: MagicFactory를 통해 마법 객체 생성 및 시전 효과 재생
-5. **데미지 적용**: CommonBattleManager에서 데미지 계산 후 적용
-6. **결과 처리**: DamageResult를 통해 대상 객체의 사망 여부 및 최종 데미지 확인
+1. **마법 할당**: 플레이어가 마법을 획득하면 [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary) 마법책 생성
+2. **쿨타임 관리**: [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook) 실시간 쿨타임 체크 및 타이밍 제어
+3. **타겟팅 결정**: [`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption)에 따라 타겟 탐색 및 위치 지정
+4. **마법 시전**: `🧑‍💻 MagicFactory`를 통해 마법 객체 생성 및 시전 효과 재생
+5. **데미지 적용**: [`CommonBattleManager`](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)에서 데미지 계산 후 적용
+6. **결과 처리**: [`DamageResult`](/docs/projects/SlimeRush/BattleSystem/DamageResult)를 통해 대상 객체의 사망 여부 및 최종 데미지 확인
 
 ### 몬스터 전투 시나리오
-1. **거리 감지**: CommonMonsterCombat에서 플레이어와의 거리 실시간 체크
-2. **능력 선택**: MonsterAbilityHandler에서 공격 범위 내 타겟 감지
+1. **거리 감지**: [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)에서 플레이어와의 거리 실시간 체크
+2. **능력 선택**: [`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)에서 공격 범위 내 타겟 감지
 3. **쿨타임 체크**: 공격 가능 여부 확인 및 쿨타임 관리
 4. **공격 실행**: 몬스터 공격 능력 실행 및 데미지 적용
 5. **상태 전환**: 공격 후 쿨타임 설정 및 다음 공격 준비
 
 ### 주요 사용처
-- 플레이어 마법 시스템
-- 몬스터 AI 전투 로직
+- 플레이어 마법 관리 시스템
+- 몬스터 공격 행동 제어
 - 데미지 계산 및 적용 시스템
 - 타겟팅 및 시전 위치 결정
 - 전투 상태 관리 및 쿨타임 제어

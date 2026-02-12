@@ -1,21 +1,26 @@
 ﻿+++
 title = "MagicBook"
-description = "마법 쿨타임 관리, 발사 및 대미지 계산을 담당하는 클래스"
+description = "SlimeRush 게임의 마법 시스템에서 마법 쿨타임 관리 및 마법 캐스팅을 담당하는 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 204
 +++
 ## 개요
-
-`MagicBook` 클래스는 SlimeRush 게임의 마법 시스템에서 마법 쿨타임 관리 및 마법 캐스팅을 담당하는 클래스입니다. 이 클래스는 플레이어의 마법 정보를 기반으로 마법을 생성하고, 타겟을 검색하여 마법을 시전하는 기능을 제공합니다.
+`MagicBook` 클래스는 SlimeRush 게임의 마법 시스템에서 마법 쿨타임 관리 및 마법 캐스팅을 담당하는 클래스입니다. 이 클래스는 플레이어의 마법 정보(
+[`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData))를 기반으로 마법(`Magic`)을 생성하고, 타겟을 검색([`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem))하여 마법을 시전하는 기능을 제공합니다.
 
 ## 역할
 - 마법 쿨타임 관리
-- 타겟 검색 및 마법 시전
-- 마법 정보 업데이트
+- 타겟 검색([`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)) 및 마법 시전
+- 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)) 업데이트
+
+## 선언
+```csharp
+public class MagicBook : MonoBehaviour
+```
 
 ## 멤버
 ### 이벤트
@@ -509,13 +514,9 @@ private IEnumerator CoSearch<T>(Action<T> castAction, Func<MagicTargetType, T> f
 
 ## 기능 설명
 ### 마법책 초기화 프로세스
-- 마법 정보 캐싱 및 업데이트
-- 플레이어 정보 캐싱 및 업데이트
-- 타겟팅 옵션 및 프로세스 설정
-
-### 마법책 정보 업데이트
-- 기존 검색 루틴이 실행 중이면 중지하고 새로운 루틴 실행
-- 쿨타임 계산
+- 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)) 캐싱 및 업데이트
+- 플레이어 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData)) 캐싱 및 업데이트
+- 타겟팅 옵션([`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption)) 및 프로세스 설정
 
 ### 타겟팅 프로세스 설정
 - 타겟 타입이 자기 자신인 경우 자신의 포지션에서 발동하는 프로세스 반환.
@@ -525,13 +526,19 @@ private IEnumerator CoSearch<T>(Action<T> castAction, Func<MagicTargetType, T> f
 ### 타겟 or 위치를 대상으로 마법 시전
 - `MagicHolderFactory`를 사용해 마법 생성 후 마법 시전
 - 위치 기준 마법시전이면 파라메터로 `Vector3`배열을 받아 시전
-- 타겟 기준 마법시전이면 Parameter를 `ITarget`배열을 받아 시전
+- 타겟 기준 마법시전이면 Parameter를 [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget) 배열을 받아 시전
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받습니다.
+- `MonoBehaviour`를 상속받음
+- `Magic` 컴포넌트를 가진 마법 객체 생성
+- `MagicEffect` 클래스를 통해 마법 시전 효과 재생
+- `MagicInfo` 구조체를 통해 마법 생성 및 정보 업데이트
+- [`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption) 구조체를 통해 타겟팅에 관련된 옵션을 설정
+- [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem) 클래스를 통해 타겟 서칭
+- [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)을 통해 마법의 타겟이 되는 객체 구분
 
 ## 사용 예시
-#### `MagicBookCreator`에서 마법책이 생성 될 때 `MagicBook.InitializeMagicBook(MagicInfo magicInfo, PlayerDataInfo plyaerDataInfo)` 호출
+#### [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)에서 마법책이 생성 될 때 `MagicBook.InitializeMagicBook(<MagicInfo>, <PlayerDataInfo>)` 호출
 ```csharp
 public MagicBook Create(MagicBookParameters param)
 {
@@ -547,7 +554,7 @@ public MagicBook Create(MagicBookParameters param)
 }
 ```
 
-#### `MagicBookLibrary`에서 플레이어 정보가 변경 될 때 `MagicBook.OnUpdatedPlayerInfo(PlayerDataInfo playerDataInfo)` 호출
+#### [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)에서 플레이어 정보가 변경 될 때 `MagicBook.OnUpdatedPlayerInfo(<PlayerDataInfo>)` 호출
 ```csharp
 public void UpdatePlayerInfo(PlayerDataInfo playerDataInfo)
 {
@@ -562,7 +569,7 @@ public void UpdatePlayerInfo(PlayerDataInfo playerDataInfo)
 }
 ```
 
-#### `MagicBookLibrary`에서 마법 정보가 업데이트 될 때 `MagicBook.OnUpdatedMagicInfo(MagicInfo magicInfo)` 호출
+#### [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)에서 마법 정보가 업데이트 될 때 `MagicBook.OnUpdatedMagicInfo(<MagicInfo>)` 호출
 ```csharp
 private void UpdateMagicBook(MagicInfo magicInfo)
 {
@@ -574,11 +581,9 @@ private void UpdateMagicBook(MagicInfo magicInfo)
 ```
 
 ## 관련 클래스
-- `TargetSystem`: 타겟 시스템을 관리하는 클래스
-- `IGameStateObservable`: 게임 상태를 관찰하는 인터페이스
-- `MagicHolderFactory`: 마법을 생성하는 팩토리 클래스
-- `Magic`: 마법을 정의하는 클래스
-- `MagicEffect`: 마법 효과를 관리하는 클래스
-- `PlayerDataInfo`: 플레이어 데이터 정보를 담는 클래스
-- `MagicInfo`: 마법 정보를 담는 클래스
-- `ITarget`: 타겟을 정의하는 인터페이스
+- [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)
+- [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)
+- [`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption)
+- [`TargetScanner`](/docs/projects/SlimeRush/BattleSystem/TargetScanner)
+- [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)
+- [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)

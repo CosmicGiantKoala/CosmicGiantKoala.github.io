@@ -1,20 +1,29 @@
 ﻿+++
 title = "MonsterAbilityHandler"
-description = "몬스터의 공격 능력을 처리하는 핸들러"
+description = "SlimeRush 게임의 몬스터의 공격 능력을 처리하는 핸들러"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 209
 +++
 ## 개요
-`MonsterAbilityHandler` 클래스는 몬스터의 공격 능력을 처리하는 핸들러입니다. 이 클래스는 몬스터와 플레이어 사이의 거리를 기반으로 공격 범위 내에 플레이어가 있는지 확인하고, 쿨타임에 따라 공격을 수행합니다. `CommonMonsterCombat` 클래스 내에서 내부 클래스로 사용됩니다.
+`MonsterAbilityHandler` 클래스는 SlimeRush 게임의 몬스터의 공격 능력을 처리하는 핸들러입니다. 이 클래스는 몬스터와 플레이어 사이의 거리를 기반으로 공격 범위 내에 플레이어가 있는지 확인하고, 쿨타임에 따라 공격을 수행합니다. [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat) 클래스 내에서 내부 클래스로 사용됩니다.
 
 ## 역할
 - 몬스터와 플레이어 사이의 거리를 기반으로 공격 범위를 확인
 - 쿨타임을 관리하고, 쿨타임이 완료되면 공격을 수행
-- 공격 범위 내에 플레이어가 없는 경우 쿨타임을 감소
+- 공격 범위 내에 쿨타임이 완료되지 않거나 플레이어가 없는 경우 쿨타임을 감소
+
+## 선언
+```csharp
+public class CommonMonsterCombat : MonsterCombatBehaviour
+{
+    ...
+    private class MonsterAbilityHandler
+}
+```
 
 ## 멤버
 ### 속성
@@ -122,27 +131,26 @@ internal void Update(float distance, float interval)
 ```
 
 ## 기능 설명
-
 ### 공격 범위 확인
-- 몬스터와 플레이어 사이의 거리를 기반으로 공격 범위를 확인합니다.
-- 거리가 공격 범위 내에 있는 경우, 쿨타임을 확인하여 공격을 수행합니다.
+- 몬스터와 플레이어 사이의 거리를 기반으로 공격 범위를 확인
+- 거리가 공격 범위 내에 있는 경우, 쿨타임을 확인하여 공격을 수행
 
 ### 쿨타임 관리
-- 쿨타임이 0 이하인 경우, 공격을 수행하고 쿨타임을 재설정합니다.
-- 쿨타임이 0 초과인 경우, 쿨타임을 간격만큼 감소시킵니다.
+- 쿨타임이 0 이하인 경우, 공격(`IMonsterAttackAbility`)을 수행하고 쿨타임을 재설정
+- 쿨타임이 0 초과인 경우, 쿨타임을 간격만큼 감소
 
 ### 공격 수행
-- 공격 범위 내에 플레이어가 있고 쿨타임이 0 이하인 경우, 공격을 수행합니다.
-- 공격 후 쿨타임을 재설정하고, 공격 범위를 업데이트합니다.
+- 공격 범위 내에 플레이어가 있고 쿨타임이 0 이하인 경우, 공격(`IMonsterAttackAbility`)을 수행
+- 공격 후 쿨타임을 재설정하고, 공격 범위를 업데이트
 
 ## 의존성/상속 관계
-- `IMonsterAttackAbility`: 몬스터 공격 능력을 정의하는 인터페이스
-- `ITarget`: 플레이어 타겟을 정의하는 인터페이스
-- `IDamageAble`: 플레이어 대미지 가능 오브젝트를 정의하는 인터페이스
-- `CommonMonsterCombat`: MonsterAbilityHandler를 사용하는 클래스로, MonsterAbilityHandler는 CommonMonsterCombat 내부에 정의된 내부 클래스입니다.
+- `IMonsterAttackAbility` 인터페이스를 통해 몬스터 공격 능력 호출
+- [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget) 인터페이스를 통해 플레이어 타겟 정의
+- [`IDamageAble`](/docs/projects/SlimeRush/BattleSystem/IDamageAble)` 인터페이스를 통해 데미지 메서드 호출
+- [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat) 내부에 정의된 클래스
 
 ## 사용 예시
-#### `CommonMonsterCombat.CoCheckDistance()`에서 이벤트 호출을 통해 `MonsterAbilityHandler`의 `Update`호출
+#### [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)에서 이벤트 호출을 통해 `MonsterAbilityHandler`의 `Update`호출
 ```csharp
 private IEnumerator CoCheckDistance()
 {
@@ -169,6 +177,5 @@ private IEnumerator CoCheckDistance()
 
 ## 관련 클래스
 - [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)
-- [`IMonsterAttackAbility`](/docs/projects/SlimeRush/BattleSystem/IMonsterAttackAbility)
 - [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)
 - [`IDamageAble`](/docs/projects/SlimeRush/BattleSystem/IDamageAble)

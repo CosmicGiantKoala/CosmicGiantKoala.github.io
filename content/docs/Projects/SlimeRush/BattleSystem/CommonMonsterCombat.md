@@ -1,20 +1,25 @@
 ﻿+++
 title = "CommonMonsterCombat"
-description = "전투 시스템에서 일반 몬스터의 전투 행동을 관리"
+description = "SlimeRush 게임의 전투 시스템에서 일반 몬스터의 전투 행동을 관리"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 208
 +++
 ## 개요
-`CommonMonsterCombat` 클래스는 SlimeRush 게임의 전투 시스템에서 일반 몬스터의 전투 행동을 관리합니다. 이 클래스는 몬스터의 능력 설정, 거리 체크, 몬스터 능력 핸들러 관리 등을 담당합니다.
+`CommonMonsterCombat` 클래스는 SlimeRush 게임의 전투 시스템에서 일반 몬스터의 전투 행동을 관리합니다. 이 클래스는 몬스터의 능력(`MonsterAbilityBehaviour`) 클래스를 사용해 거리 체크, 몬스터 능력 핸들러([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)) 관리 등을 담당합니다.
 
 ## 역할
 - 거리 체크 및 전투 행동 관리
-- 몬스터 능력 핸들러 생성 및 관리
+- 몬스터 능력 핸들러([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)) 생성 및 관리
 - 코루틴을 통한 거리 체크 및 전투 행동 업데이트
+
+## 선언
+```csharp
+public class CommonMonsterCombat : MonsterCombatBehaviour
+```
 
 ## 멤버
 ### 속성
@@ -107,13 +112,13 @@ private void ResetMonsterAbility()
 /// 몬스터 전투를 설정합니다.
 /// 몬스터의 공격 능력을 가져와 각 능력에 대한 핸들러를 생성하고, 핸들러를 목록에 추가한 후 전투 행동을 등록합니다.
 /// </summary>
-private void OnSetupSetupMonsterCombat()
+private void OnSetupMonsterCombat()
 ```
 
 ## 주요 코드 스니펫
 ### 몬스터 능력 설정
 ```csharp
-private void OnSetupSetupMonsterCombat()
+private void OnSetupMonsterCombat()
 {
     // 기존 능력 핸들러를 초기화합니다
     _abilityHandlers.Clear();
@@ -156,29 +161,27 @@ private IEnumerator CoCheckDistance()
 
 ## 기능 설명
 ### 몬스터 능력 설정
-- 기존 능력 핸들러를 초기화합니다.
-- 몬스터의 공격 능력을 가져옵니다.
-- 각 공격 능력에 대한 핸들러를 생성합니다.
-- 핸들러를 목록에 추가합니다.
-- 핸들러의 업데이트 메서드를 전투 행동에 등록합니다.
-- 거리 체크 코루틴을 시작합니다.
+- `MonsterAbilityBehaviour` 클래스에서 몬스터의 공격 능력(`List<IMonsterAttackAbility>`) 인터페이스 반환
+- 각 공격 능력에 대한 핸들러([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler))를 생성
+- 핸들러 목록 관리
+- 핸들러 업데이트 메서드 동작
+- 거리 체크 코루틴 동작
 
 ### 거리 체크 코루틴
-- 플레이어가 초기화될 때까지 대기합니다.
-- 몬스터와 플레이어 사이의 거리를 계산합니다.
-- 거리와 간격을 매개변수로 전투 행동을 호출합니다.
-- 다음 체크까지 대기합니다.
+- 몬스터와 플레이어 사이의 거리(`float`)를 계산
+- 거리와 인터벌 간격을 매개변수로 핸들러 `Update(<float>, <float>)` 호출
 
 ### 몬스터 능력 핸들러 업데이트
-- 거리가 공격 범위 내인 경우, 쿨타임에 따라 공격을 실행합니다.
-- 거리가 공격 범위 밖인 경우, 쿨타임을 감소시킵니다.
+- 거리가 공격 범위 내인 경우, 쿨타임에 따라 공격 실행
+- 거리가 공격 범위 밖인 경우, 쿨타임을 감소
 
 ## 의존성/상속 관계
-- `Zenject` 네임스페이스에 의존합니다.
-- `MonsterCombatBehaviour` 클래스를 상속받습니다.
+- `MonoBehaviour`를 상속받음([`MonsterCombatBehaviour`](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour)에서)
+- [`MonsterCombatBehaviour`](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour) 클래스를 상속받고 이벤트에 따라 동작 제어
+- [`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler) 클래스 생성 및 관리
+- [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem) 클래스를 통해 거리체크 동작
 
 ## 관련 클래스
-- `MonsterCombatBehaviour`: 몬스터 전투 행동을 정의하는 클래스
-- `TargetSystem`: 타겟 시스템을 관리하는 클래스
-- `MonsterAbilityBehaviour`: 몬스터 능력 행동을 정의하는 클래스
-- `MonsterAbilityHandler`: 몬스터 능력 핸들러를 정의하는 클래스
+- [`MonsterCombatBehaviour`](/docs/projects/SlimeRush/BattleSystem/MonsterCombatBehaviour)
+- [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)
+- [`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)

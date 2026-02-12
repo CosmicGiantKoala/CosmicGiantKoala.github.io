@@ -61,9 +61,9 @@ weight = 401
 | 요소 | 설명 |
 |-----|-----|
 |**C#**| 전체 핵심 로직 및 유니티 컴포넌트 구현. |
-|**Input System**|Action 기반 입력 통합 및 디바이스 독립적 처리.|
-|**Physics.Raycast**|편집 씬에서 마우스 좌표와 오브젝트간 상호작용 및 선택 로직 구현.|
-|**UGUI / EventSystem**|동적 UI 구성 및 오브젝트 편집 인터페이스 구현.|
+|[**Input System**](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.18/manual/index.html)|Action 기반 입력 통합 및 디바이스 독립적 처리.|
+|[**Physics.Raycast**](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.Raycast.html)|편집 씬에서 마우스 좌표와 오브젝트간 상호작용 및 선택 로직 구현.|
+|[**UGUI / EventSystem**](https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/index.html)|동적 UI 구성 및 오브젝트 편집 인터페이스 구현.|
 |[**Zenject**](https://github.com/modesttree/Zenject)|객체 간 의존성 주입을 자동화하여 높은 응집도와 낮은 결합도의 코드베이스 구축.|
 {{< /table >}}
 <br>

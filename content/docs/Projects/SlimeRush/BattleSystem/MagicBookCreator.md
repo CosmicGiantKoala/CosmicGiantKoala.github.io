@@ -1,20 +1,25 @@
 +++
 title = "MagicBookCreator"
-description = "마법책을 생성하는 팩토리 클래스"
+description = "SlimeRush 게임에서 마법책을 생성하는 팩토리 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 203
 +++
 ## 개요
-MagicBookCreator는 마법책을 생성하는 팩토리 클래스입니다. Zenject의 PlaceholderFactory를 상속받아 의존성 주입을 활용한 객체 생성을 지원합니다.
+`MagicBookCreator` 클래스는 SlimeRush 게임에서 마법책을 생성하는 팩토리 클래스입니다. [`Zenject`](https://github.com/modesttree/Zenject) `PlaceholderFactory`를 상속받아 의존성 주입을 활용한 객체 생성을 지원합니다.
 
 ## 역할
-- MagicBookParameters를 사용하여 마법책 인스턴스 생성
-- Zenject 의존성 주입 컨테이너를 통한 객체 관리
+- [`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters)를 사용하여 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)) 인스턴스 생성
+- [`Zenject`](https://github.com/modesttree/Zenject) 의존성 주입 컨테이너를 통한 객체 관리
 - 마법책 생성 프로세스의 캡슐화
+
+## 선언
+```csharp
+public class MagicBookCreator : PlaceholderFactory<MagicBookParameters, MagicBook>
+```
 
 ## 멤버
 ### 속성
@@ -74,19 +79,18 @@ public MagicBook Create(MagicBookParameters param)
 
 ## 기능 설명
 ### 팩토리 패턴
-- Zenject 컨테이너를 통해 객체 생성 및 관리
+- [`Zenject`](https://github.com/modesttree/Zenject) 컨테이너를 통해 객체 생성 및 관리
 - 객체 생성 로직을 캡슐화하여 클라이언트 코드와 분리
 - 생성 프로세스의 일관성 보장
 - 코드 유지보수성 향상
 
 ## 의존성/상속 관계
-- `PlaceholderFactory<MagicBookParameters, MagicBook>`를 상속
-- `DiContainer` 클래스에 의존
-- `MagicBookParameters` 구조체에 의존
-- `MagicBook` 클래스에 의존
+- `PlaceholderFactory<MagicBookParameters, MagicBook>`를 상속받음
+- [`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters) 구조체를 통해 생성할 객체 정의
+- [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook) 클래스 생성
 
 ## 사용 예시
-#### `MagicBookLibrary`에서 마법책 생성 시 파라메터와 함께 호출
+#### [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)에서 마법책 생성 시 파라메터와 함께 호출
 ```csharp
 private IEnumerator CreateMagicBook(MagicInfo magicInfo)
 {
@@ -107,5 +111,4 @@ private IEnumerator CreateMagicBook(MagicInfo magicInfo)
 - [`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters)
 - [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)
 - [`MagicBookLibrary`](/docs/projects/SlimeRush/BattleSystem/MagicBookLibrary)
-- `DiContainer`
 

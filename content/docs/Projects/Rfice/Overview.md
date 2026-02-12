@@ -10,6 +10,9 @@ weight = 301
 
 +++
 
+### 제품영상
+{{<video src="videos/rfice_trailer.mp4" width="70%" class="responsive-video">}}
+
 ### 프로젝트 타입 : 3D 메타버스 기반 협업 플랫폼 개발 (SaaS)
 ### 제작사 : 알서포트 주식회사
 ### 서비스 링크 : https://www.rfice.com/ko/

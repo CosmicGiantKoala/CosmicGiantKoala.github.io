@@ -6,15 +6,21 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 202
 +++
 ## 개요
-`MagicBookLibrary` 클래스는 SlimeRush 게임의 마법 시스템에서 활성화된 마법을 관리하는 클래스입니다. 이 클래스는 플레이어의 마법 정보를 기반으로 마법책을 생성하고, 마법책 목록을 관리합니다.
+`MagicBookLibrary` 클래스는 SlimeRush 게임의 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook))을 관리하는 클래스입니다. 이 클래스는 플레이어의 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)
+)를 기반으로 마법책을 생성 및 관리, 정보 업데이트를 합니다.
 
 ## 역할
-- 활성화된 마법 관리
-- 마법책 생성 및 관리
-- 플레이어 정보 업데이트
+- 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)) 생성 및 관리
+- 플레이어 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData)
+  ) 및 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData))업데이트
+
+## 선언
+```csharp
+public class MagicBookLibrary : MonoBehaviour
+```
 
 ## 멤버
 ### 속성
@@ -150,18 +156,7 @@ private IEnumerator CreateMagicBook(MagicInfo magicInfo)
 }
 ```
 
-### 마법책 업데이트
-```csharp
-private void UpdateMagicBook(MagicInfo magicInfo)
-{
-    // 동일한 그룹 ID의 마법책을 찾아 정보를 업데이트합니다
-    _magicBooks
-        .Find(m => m.GetMagicGroupId.Equals(magicInfo.groupId))
-        .OnUpdatedMagicInfo(magicInfo);
-}
-```
-
-### 마법 업데이트
+### 마법 정보 업데이트
 ```csharp
 private void OnUpdatedMagic(MagicInfo magicInfo)
 {
@@ -185,6 +180,14 @@ private void OnUpdatedMagic(MagicInfo magicInfo)
         StartCoroutine(CreateMagicBook(magicInfo));
     }
 }
+
+private void UpdateMagicBook(MagicInfo magicInfo)
+{
+    // 동일한 그룹 ID의 마법책을 찾아 정보를 업데이트합니다
+    _magicBooks
+        .Find(m => m.GetMagicGroupId.Equals(magicInfo.groupId))
+        .OnUpdatedMagicInfo(magicInfo);
+}
 ```
 
 ### 플레이어 정보 업데이트
@@ -205,28 +208,30 @@ public void UpdatePlayerInfo(PlayerDataInfo playerDataInfo)
 ## 기능 설명
 ### 마법책 생성
 - 플레이어 초기화가 완료될 때까지 대기
-- 마법책 생성 매개변수를 설정
-- 새로운 마법책을 생성
+- 마법책 생성 매개변수([`MagicBookParameters`](/docs/projects/SlimeRush/BattleSystem/MagicBookParameters))를 설정
+- 새로운 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook))을 생성
 - 첫 번째 마법책인 경우 이벤트를 호출
 - 생성된 마법책을 목록에 추가
 
 ### 마법 업데이트
-- 업적 시스템에 마법 획득을 보고
-- 첫 번째 마법인 경우 기본 속성을 설정
-- 이미 해당 마법이 있는 경우 업데이트
-- 새로운 마법을 생성
+- 업적 시스템([`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem))에 마법 획득을 보고
+- 첫 번째 마법책인 경우 기본 속성을 설정
+- 이미 해당 마법책이 있는 경우 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)) 업데이트
+- 보유하지 않은 마법책이 업데이트 된 경우 새로운 마법책을 생성
 
 ### 플레이어 정보 업데이트
-- 플레이어 정보를 업데이트
+- 플레이어 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData)
+  )를 업데이트
 - 모든 마법책에 플레이어 정보를 업데이트
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받습니다.
-- `Battle.Common` 네임스페이스에 의존합니다.
-- `Common.Tools` 네임스페이스에 의존합니다.
-- `Magics.Handler` 네임스페이스에 의존합니다.
-- `Player.Stats` 네임스페이스에 의존합니다.
-- `Reward` 네임스페이스에 의존합니다.
+- `MonoBehaviour`를 상속받음.
+- `IMagicHandler` 인터페이스를 통해 마법 정보 업데이트 이벤트를 받음
+- `MagicHistory` 클래스를 통해 마법 기록 관리
+- `MagicInfo` 및 `PlayerDataInfo` 구조체를 통해 마법책 생성 및 정보 업데이트
+- [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator) 클래스를 통해 마법책([`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)
+  ) 생성 및 관리
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem) 클래스에 획득한 마법 보고
 
 ## 사용 예시
 #### `MagicHandler`에서 마법이 할당 될 때 발생하는 이벤트로 마법 업데이트 발생
@@ -278,10 +283,6 @@ private void ChangedPlayerDataInfo(PlayerDataInfo dataInfo)
 ```
 
 ## 관련 클래스
-- `IMagicHandler`
-- `MagicBookCreator`
-- `AchievementSystem`
-- `MagicHistory`
-- `MagicBook`
-- `PlayerDataInfo`
-- `MagicInfo`
+- [`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)
+- [`AchievementSystem`](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)
+- [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)

@@ -1,22 +1,27 @@
 ﻿+++
 title = "CommonBattleManager"
-description = "전투 시스템에서 기본적인 전투 매니저 기능을 제공"
+description = "SlimeRush 게임의 전투 시스템에서 공통 전투 계산 로직을 제공하는 정적 유틸리티 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 210
 +++
 ## 개요
-`CommonBattleManager` 클래스는 SlimeRush 게임의 전투 시스템에서 기본적인 전투 매니저 기능을 제공합니다. 이 클래스는 정적 클래스로, 플레이어의 공격력과 마법 정보를 기반으로 데미지를 계산하고, 크리티컬 히트 여부를 결정하며, 쿨타임을 계산하는 기능을 제공합니다.
+`CommonBattleManager` 클래스는 SlimeRush 게임의 전투 시스템에서 공통 전투 계산 로직을 제공하는 유틸리티 클래스입니다. 이 클래스는 정적 클래스로, 데미지 계산, 크리티컬 판정, 쿨타임 계산 등의 핵심 전투 로직을 캡슐화하여 플레이어와 몬스터 모두에서 재사용할 수 있도록 설계되었습니다.
 
 ## 역할
-- 플레이어의 정보와 마법 정보를 기반으로 데미지 정보 구조체를 생성
-- 마법 부가 능력 정보 생성
+- 플레이어의 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData))와 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData))를 기반으로 데미지 정보 구조체([`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo))를 생성
+- 마법 부가 능력 정보([`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)) 생성
 - 일반 데미지 및 크리티컬 데미지 계산
 - 크리티컬 히트 여부 결정
 - 쿨타임 계산
+
+## 선언
+```csharp
+public static class CommonBattleManager
+```
 
 ## 멤버
 ### 속성
@@ -126,11 +131,11 @@ public static float GetCoolTime(float attackerSpeed, float speedMultiplierRate =
 
 ## 주요 코드 스니펫
 - **예시 데이터**
-  - `PlayerDataInfo`
+  - `PlayerDataInfo` - [`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData)
     - StrikingPower = 100
     - CriticalChance = 10
     - CriticalDamage = 150
-  - `MagicInfo`
+  - `MagicInfo` - [`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)
     - StrikingPower = 70
     - PhysicalPower = 0.1
     - Element = Fire
@@ -305,20 +310,24 @@ public static float GetCoolTime(float attackerSpeed, float speedMultiplierRate =
 
 ## 기능 설명
 ### 데미지 정보 생성
-- 플레이어의 정보와 마법 정보를 기반으로 일반 데미지를 계산합니다.
-- 일반 데미지를 기반으로 크리티컬 데미지를 계산합니다.
-- 데미지 정보를 생성하여 반환합니다.
+- 플레이어의 정보와 마법 정보를 기반으로 일반 데미지를 계산
+- 일반 데미지를 기반으로 크리티컬 데미지를 계산
+- 데미지 정보를 생성하여 반환
 
 ### 마법 부가 능력 생성
-- 플레이어의 룬능력 정보를 가져옵니다.
-- 룬능력에 부가 능력이 없는 경우 부가 능력 없는 상태를 반환합니다.
-- 마법의 속성과 조건에 따라 다른 룬 부가 능력을 적용합니다.
+- 플레이어의 룬능력 정보 기반하여
+  - 룬능력에 부가 능력이 없는 경우 부가 능력 없는 상태를 반환
+  - 마법의 속성과 조건에 따라 다른 룬 부가 능력을 적용
 
 ### 크리티컬 히트 결정
-- 크리티컬 확률이 0이면 일반 데미지만 반환합니다.
-- 0부터 1 사이의 랜덤 값을 생성합니다.
-- 크리티컬 확률이 랜덤 값보다 크거나 같으면 크리티컬 히트입니다.
-- 크리티컬 히트가 아니면 일반 데미지를 반환합니다.
+- 크리티컬 확률이 0이면 일반 데미지만 반환
+- 0부터 1 사이의 랜덤 값을 생성
+- 크리티컬 확률이 랜덤 값보다 크거나 같으면 크리티컬 히트 처리
+- 크리티컬 히트가 아니면 일반 데미지를 반환
+
+## 의존성/상속 관계
+- `PlayerDataInfo` 및 `MagicInfo`에 기반하여 [`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo) 생성
+- `PlayerDataInfo` 및 `MagicInfo`에 기반하여 [`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo) 생성
 
 ## 사용 예시
 #### 적에게 피해를 줄 때 데미지 정보 생성
@@ -343,7 +352,6 @@ public void ApplyDamage(PlayerDataInfo playerDataInfo, DamageInfo damageInfo, Da
 ```
 
 ## 관련 클래스
-- `DamageInfo`
-- `MagicInfo`
-- `PlayerDataInfo`
-- `MagicAbilityInfo`
+- [`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)
+- [`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)
+- [`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)

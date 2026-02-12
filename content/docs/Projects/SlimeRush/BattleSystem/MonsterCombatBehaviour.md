@@ -1,19 +1,24 @@
 ﻿+++
 title = "MonsterCombatBehaviour"
-description = "몬스터 전투 시스템에서 게임의 상태에 따라 몬스터 전투 행동을 관리하는 클래스"
+description = "SlimeRush 게임의 몬스터 전투 시스템에서 몬스터 전투 행동을 관리하는 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 207
 +++
 ## 개요
-`MonsterCombatBehaviour` 클래스는 SlimeRush 게임의 몬스터 전투 시스템에서 몬스터 전투 행동을 관리하는 클래스입니다. 이 클래스는 게임 상태 변경에 따라 몬스터의 전투 행동을 제어하는 기능을 제공합니다.
+`MonsterCombatBehaviour` 클래스는 SlimeRush 게임의 몬스터 전투 시스템에서 몬스터 전투 행동을 관리하는 클래스입니다. 이 클래스는 게임 상태(`IGameStateObservatle`) 변경에 따라 몬스터의 전투 행동을 제어하는 기능을 제공합니다.
 
 ## 역할
-- 게임 상태 변경에 따른 전투 행동 제어
+- 게임 상태(`IGameStateObservatle`) 변경에 따른 전투 행동 제어
 - 일시 정지 및 재생 이벤트 처리
+
+## 선언
+```csharp
+public class MonsterCombatBehaviour : MonoBehaviour
+```
 
 ## 멤버
 ### 이벤트
@@ -70,12 +75,12 @@ private void OnChangedGameState(GameState state)
 
 ## 기능 설명
 ### 게임 상태 변경
-- 게임 상태가 Play인 경우 재생 이벤트를 호출합니다.(서브클래스: `CommonMonsterCombat`)
-- 게임 상태가 Play가 아닌 경우 일시 정지 이벤트를 호출합니다.(서브클래스: `CommonMonsterCombat`)
+- 게임 상태가 Play인 경우 재생 이벤트를 호출(서브클래스: [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat))
+- 게임 상태가 Play가 아닌 경우 일시 정지 이벤트를 호출(서브클래스: [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat))
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받습니다.
-- `Common.GameStates` 네임스페이스에 의존합니다.
+- `MonoBehaviour`를 상속받음.
+- [`CommonBattleManager`](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)의 base클래스.
 
 ## 사용 예시
 #### `GameSystem`에서 게임 상태 변환시 이벤트 발생
@@ -145,5 +150,4 @@ private void OnPaused()
 ```
 
 ## 관련 클래스
-- `IGameStateObservable`
-- `GameState`
+- [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)

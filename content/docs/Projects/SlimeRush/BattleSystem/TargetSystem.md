@@ -1,18 +1,18 @@
 ﻿+++
 title = "TargetSystem"
-description = "전투 시스템에서 타겟을 관리하는 클래스"
+description = "SlimeRush 게임의 전투 시스템에서 타겟을 관리하는 클래스"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 217
 +++
 ## 개요
-`TargetSystem` 클래스는 SlimeRush 게임의 전투 시스템에서 타겟을 관리하는 클래스입니다. 이 클래스는 플레이어 타겟과 적 타겟을 관리하고, 타겟을 찾는 기능을 제공합니다.
+`TargetSystem` 클래스는 SlimeRush 게임의 전투 시스템에서 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget))을 관리하는 클래스입니다. 이 클래스는 플레이어 타겟과 적 타겟을 관리하고, 타겟을 찾는 기능을 제공합니다.
 
 ## 역할
-- 타겟 관리
+- 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 관리
 - 플레이어 타겟 초기화
 - 적 타겟 추가 및 제거
 - 타겟 찾기
@@ -239,28 +239,29 @@ public Vector3[] FindPositions(Vector3 scanPoint, MagicTargetType magicTargetTyp
 ```
 
 ## 기능 설명
-### 플레이어 타겟 설정
-- 플레이어 타겟을 설정 및 반환(`ITarget`)
+### 플레이어 설정
+- 플레이어 타겟을 설정 및 반환([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget))
 - 플레이어 타겟 초기화 여부 확인
 
-### 적 타겟 설정
-- 적 타겟을 추가 및 제거
+### 몬스터 설정
+- 몬스터 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget))을 추가 및 제거
 
-### 타겟 찾기
-- 타겟 타입에 따라 타겟 반환
+### 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 타겟 타입(`MagicTargetType`)에 따라 타겟 반환(([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)))
 - 가장 가까운 타겟 반환
 - 랜덤한 타겟 반환
 
-### 위치 찾기
-- 타겟 타입에 따라 위치 반환
+### 위치(`Vector3`) 찾기
+- 타겟 타입(`MagicTargetType`)에 따라 위치(`Vector3`) 반환
 - 마우스 위치 반환
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받습니다.
-- `Battle.Common.Target` 네임스페이스에 의존합니다.
+- `MonoBehaviour`를 상속받음
+- ([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 인터페이스 등록 및 관리
+- `MagicTargetType` 열거형과 [`TargetScanner`](/docs/projects/SlimeRush/BattleSystem/TargetScanner) 클래스를 호출해 조건에 맞는 타겟 및 위치 반환
 
 ## 사용 예시
-#### `CommonMonsterCombat`에서 플레이어 타겟의 초기화 여부를 확인하여 몬스터 동작
+#### [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)에서 플레이어 타겟의 초기화 여부(`bool`)를 확인하여 몬스터 동작
 ```csharp
 private IEnumerator CoCheckDistance()
 {
@@ -298,7 +299,7 @@ public void DeregisterTarget()
 }
 ```
 
-#### `MagicBook` 에서 타겟팅 프로세스 설정 시 `TargetSystem`의 메서드 사용
+#### [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook) 에서 타겟팅 프로세스 설정 시 `TargetSystem`의 메서드 사용
 ```csharp
 private IEnumerator SetTargetingProcess(TargetingOption option)
 {
@@ -374,5 +375,7 @@ private IEnumerator SetTargetingProcess(TargetingOption option)
 ```
 
 ## 관련 클래스
-- `TargetScanner`
-- `ITarget`
+- [`TargetScanner`](/docs/projects/SlimeRush/BattleSystem/TargetScanner)
+- [`TargetingOption`](/docs/projects/SlimeRush/BattleSystem/TargetingOption)
+- [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)
+- [`CommonMonsterCombat`](/docs/projects/SlimeRush/BattleSystem/CommonMonsterCombat)

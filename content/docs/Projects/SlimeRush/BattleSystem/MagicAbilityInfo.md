@@ -1,21 +1,25 @@
 ﻿+++
 title = "MagicAbilityInfo"
-description = "마법의 부가 효과 정보를 저장하고 관리하는 데이터 구조체"
+description = "SlimeRush 게임에서 마법의 부가 효과 정보를 저장하고 관리하는 데이터 구조체"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 206
 +++
 ## 개요
-`MagicAbilityInfo` 구조체는 SlimeRush 게임에서 마법의 부가 효과 정보를 저장하고 관리하는 핵심 데이터 구조체입니다. 이 구조체는 마법이 가진 특수 능력의 종류, 파라미터, 지속 시간 등을 체계적으로 정의하며, 메서드 체이닝을 지원하는 Factory 패턴을 통해 다양한 마법 능력 정보를 간편하게 생성할 수 있도록 설계되었습니다.
+`MagicAbilityInfo` 구조체는 SlimeRush 게임에서 마법의 부가 효과 정보를 저장하고 관리하는 핵심 데이터 구조체입니다. 이 구조체는 마법이 가진 특수 능력의 종류([`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)), 파라미터, 지속 시간 등을 정의하며, 메서드 체이닝을 지원하는 Factory 패턴을 통해 다양한 마법 능력 정보를 간편하게 생성할 수 있도록 설계되었습니다.
 
 ## 역할
-- **마법 능력 정보 저장**: 마법의 부가 효과에 대한 모든 파라미터를 구조화된 형태로 저장
-- **마법 능력 생성 팩토리**: 다양한 마법 능력 정보를 생성하는 Factory 메서드 제공
-- **메서드 체이닝 지원**: 연쇄 호출을 통해 간결한 코드 작성 가능
-- **데이터 직렬화**: 에디터에서 마법 능력 정보를 직렬화하여 편집 가능
+- 마법의 부가 효과에 대한 모든 파라미터를 구조화된 형태로 저장
+- 다양한 마법 능력 정보를 생성하는 Factory 메서드 제공
+- 연쇄 호출을 통해 간결한 코드 작성 가능
+
+## 선언
+```csharp
+public struct MagicAbilityInfo
+```
 
 ## 멤버
 ### 속성
@@ -108,7 +112,6 @@ public MagicAbilityInfo CreateIgnition(float dmg, float duration = 5f)
     AppliedDamage = dmg;
     // 지속 시간을 설정합니다
     Duration = duration;
-    // 현재 객체를 반환하여 메서드 체이닝을 지원합니다
     return this;
 }
 
@@ -120,7 +123,6 @@ public MagicAbilityInfo CreateFreezing(float decreaseValue = 0.3f, float duratio
     DecreaseValue = decreaseValue;
     // 지속 시간을 설정합니다
     Duration = duration;
-    // 현재 객체를 반환하여 메서드 체이닝을 지원합니다
     return this;
 }
 
@@ -130,7 +132,6 @@ public MagicAbilityInfo CreateStatic(float probability = 0.5f)
     AbilityType = MagicAbilityType.Static;
     // 활성화 확률을 설정합니다
     ActiveProbability = probability;
-    // 현재 객체를 반환하여 메서드 체이닝을 지원합니다
     return this;
 }
 
@@ -144,25 +145,20 @@ public MagicAbilityInfo CreateWeathering(float magnification = 0.1f, int activeT
     ActiveTimes = activeTimes;
     // 지속 시간을 설정합니다
     Duration = duration;
-    // 현재 객체를 반환하여 메서드 체이닝을 지원합니다
     return this;
 }
 ```
 
 ## 기능 설명
-### 메서드 체이닝 패턴
-- 각 Factory 메서드는 생성된 객체를 반환함으로써 메서드 체이닝을 지원
-
 ### Factory 패턴
-- 정적 메서드를 통해 다양한 마법 능력 정보를 생성하는 Factory 패턴을 구현
+- 정적 메서드를 통해 다양한 마법 능력 정보를 생성하는 Factory 패턴 구현
 - 각 메서드는 해당 마법 능력에 맞는 기본값을 제공하며, 필요에 따라 파라미터를 커스터마이징
 
 ## 의존성/상속 관계
-- **의존 클래스**:
-    - [`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType): 마법 능력 타입 열거형
+- 구조체 생성시 호출된 메서드에 따라 마법 능력 타입 열거형([`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType) ) 설정
 
 ## 사용 예시
-#### `CommonBattleManager`에서 마법 부가 능력이 생성될 때, 데이터의 열거형 값에 따라 부가 능력 생성
+#### [`CommonBattleManager`](/docs/projects/SlimeRush/BattleSystem/CommonBattleManager)에서 마법 부가 능력이 생성될 때, 데이터의 열거형 값에 따라 부가 능력 생성
 ```csharp
 private static MagicAbilityInfo CreateMagicAbility(PlayerDataInfo playerInfo, MagicInfo magicInfo)
 {
@@ -229,7 +225,6 @@ private IEnumerator TakeBurnDamage(IDamageAble damageAble, DamageInfo damageInfo
 ```
 
 ## 관련 클래스
-
-- **[`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)**
-- **[`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)**
-- **[`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)**
+- [`MagicAbilityType`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityType)
+- [`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)
+- [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)

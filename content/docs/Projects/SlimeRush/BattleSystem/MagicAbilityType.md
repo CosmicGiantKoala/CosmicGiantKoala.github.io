@@ -1,21 +1,25 @@
 ﻿+++
 title = "MagicAbilityType"
-description = "마법의 부가 효과 종류를 정의하는 열거형"
+description = "SlimeRush 게임에서 마법의 부가 효과 종류를 정의하는 열거형"
 icon = "code"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 207
 +++
 ## 개요
-`MagicAbilityType` 열거형은 SlimeRush 게임에서 마법의 부가 효과 종류를 정의하는 핵심 열거형입니다. 이 열거형은 마법이 가질 수 있는 다양한 부가 능력의 타입을 명확히 구분하고, 타입 안전성을 보장함으로써 마법 시스템의 일관성과 유지보수성을 높이는 역할을 합니다.
+`MagicAbilityType` 열거형은 SlimeRush 게임에서 마법의 부가 효과 종류를 정의하는 열거형입니다. 이 열거형은 마법이 가질 수 있는 다양한 부가 능력의 타입을 구분하고, 타입 안전성을 보장함으로써 마법 시스템의 일관성과 유지보수성을 높이는 역할을 합니다.
 
 ## 역할
-- **마법 능력 타입 정의**: 마법의 부가 효과 종류를 명확히 구분
-- **타입 안전성 제공**: 열거형을 통해 마법 능력 타입의 오류를 컴파일 타임에 검출
-- **확장성 보장**: 새로운 마법 능력 타입 추가 시 체계적으로 관리 가능
-- **의미 전달**: 타입 이름만으로도 효과를 직관적으로 이해 가능
+- 마법의 부가 효과 종류를 명확히 정의
+- 열거형을 통해 마법 능력 타입의 오류를 컴파일 타임에 검출
+- 새로운 마법 능력 타입 추가 시 체계적으로 관리 가능
+
+## 선언
+```csharp
+public enum MagicAbilityType
+```
 
 ## 멤버
 ### 열거형 값
@@ -58,15 +62,8 @@ Weathering
 - **Static**: 정전기 효과를 나타냅니다 (확률 기반 추가 효과)
 - **Weathering**: 풍화 효과를 나타냅니다 (데미지 배율 증가)
 
-### 사용 패턴
-- 마법 시스템에서 마법 능력 타입을 식별하는 데 사용
-- `MagicAbilityInfo` 구조체의 `AbilityType` 속성으로 사용
-- 마법 효과 적용 로직에서 타입별 처리 기준 제공
-- 마법 능력 검증 및 타입 확인에 활용
-
 ## 의존성/상속 관계
-- **의존 클래스**:
-    - [`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo): 마법 능력 정보 구조체
+- [`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo) 구조체에서 부가효과 타입 지정
 
 ## 사용 예시
 #### `MonsterCondition`에서 마법 부가 효과에 따른 데미지 적용
@@ -105,7 +102,6 @@ public float TakeDamage(IDamageAble damageAble, DamageInfo damageInfo, float dam
 ```
 
 ## 관련 클래스
-
-- **[`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)**
-- **[`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)**
-- **[`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)**
+- [`MagicAbilityInfo`](/docs/projects/SlimeRush/BattleSystem/MagicAbilityInfo)
+- [`DamageInfo`](/docs/projects/SlimeRush/BattleSystem/DamageInfo)
+- [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook)

@@ -12,7 +12,7 @@ weight = 201
 ## 1. 기능 개요
 - **AchievementSystem**은 SlimeRush 게임의 **업적 시스템**으로, 플레이어의 게임 **진행 상황을 추적하고 업적 달성 시 새로운 능력을 해금**하는 통합 시스템입니다. 이 시스템은 업적의 생성, 상태 관리, 진행 상황 추적, 데이터 저장 및 로드를 중앙에서 관리하며, 다양한 조건 타입을 지원하여 게임 내 다양한 이벤트와 연동할 수 있습니다.
 - **제작기간**: 2024.09 ~ 2024.11
-- **시스템 개발 인원**: 2인 (유니티 클라이언트 1인, UI 디자인 1인)
+- **시스템 개발 인원**: 2인 (👨‍💻 유니티 클라이언트 1인,👩‍🎨 UI 디자인 1인)
 
 ### 개발 배경 및 요구사항
 - 플레이어의 게임 **진행 상황을 추적하고 성취도를 시각적으로 표시**
@@ -114,7 +114,7 @@ classDiagram
 |-----|-----|
 | **[AchievementSystem](/docs/projects/SlimeRush/AchievementSystem/AchievementSystem)** | 업적 시스템의 핵심 중앙 관리자, 상태 관리, 진행 상황 추적, 데이터 저장/로드 호출|
 | **[AchievementCreator](/docs/projects/SlimeRush/AchievementSystem/AchievementCreator)** | 시트 데이터와 저장 데이터를 결합하여 업적 객체 생성 |
-| **[AchievementInteractor](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)** <br> --> IAchievementInteractor| 업적 인터랙터 구현체, JSON 직렬화/역직렬화 처리, Save/Load명령 처리 |
+| **[AchievementInteractor](/docs/projects/SlimeRush/AchievementSystem/AchievementInteractor)** <br>: IAchievementInteractor| 업적 인터랙터 구현체, JSON 직렬화/역직렬화 처리, Save/Load명령 처리 |
 | **[IAchievementInteractor](/docs/projects/SlimeRush/AchievementSystem/IAchievementInteractor)**<br>*<<interface>>* | 업적 인터랙터 인터페이스. 업적 인터랙터의 기능을 정의 |
 {{< /table >}}<br>
 
@@ -235,10 +235,10 @@ classDiagram
 | 클래스 | 역할 |
 |-----|-----|
 | **[IAchievementRepository](/docs/projects/SlimeRush/AchievementSystem/IAchievementRepository)**<br>*<<interface>>* | 업적 저장소 인터페이스. 업적 저장소 기능 정의 |
-| **[AchievementRepository](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)** <br> --> IAchievementRepository | 업적 저장소 구현체. 업적 저장소 기능 구현|
+| **[AchievementRepository](/docs/projects/SlimeRush/AchievementSystem/AchievementRepository)** <br>: IAchievementRepository | 업적 저장소 구현체. 업적 저장소 기능 구현|
 | **[IAchievementDataSource](/docs/projects/SlimeRush/AchievementSystem/IAchievementDataSource)**<br>*<<interface>>* | 업적 데이터 소스 인터페이스. 업적 데이터 소스 정의 |
-| **[LocalAchievementDataSource](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)** <br> --> IAchievementDataSource | 업적 데이터 소스 구현체. 로컬 `AchievementSaveData` 저장 및 로드|
-| **[CloudSyncDataSource](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource)** <br> --> IAchievementDataSource | 업적 데이터 소스 구현체. Steam 클라우드 저장소 `AchievementSaveData` 저장 및 로드|
+| **[LocalAchievementDataSource](/docs/projects/SlimeRush/AchievementSystem/LocalAchievementDataSource)** <br>: IAchievementDataSource | 업적 데이터 소스 구현체. 로컬 `AchievementSaveData` 저장 및 로드|
+| **[CloudSyncDataSource](/docs/projects/SlimeRush/AchievementSystem/CloudSyncDataSource)** <br>: IAchievementDataSource | 업적 데이터 소스 구현체. Steam 클라우드 저장소 `AchievementSaveData` 저장 및 로드|
 {{< /table >}}<br>
 
 ```mermaid
@@ -309,7 +309,7 @@ classDiagram
 | 클래스 | 역할 |
 |-----|-----|
 | **[AchievementPopup](/docs/projects/SlimeRush/AchievementSystem/AchievementPopup)** | 업적 팝업 UI 관리, 업적 목록 표시 및 자동 업데이트 |
-| **[AchievementPopupItem](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)**<br> --> IComparable | 개별 업적 아이템 UI, 로컬라이제이션 및 정렬 비교 기능 |
+| **[AchievementPopupItem](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)**<br>: IComparable | 개별 업적 아이템 UI, 로컬라이제이션 및 정렬 비교 기능 |
 {{< /table >}}<br>
 ```mermaid
 classDiagram

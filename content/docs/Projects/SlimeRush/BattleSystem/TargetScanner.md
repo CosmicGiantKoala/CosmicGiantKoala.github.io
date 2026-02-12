@@ -6,28 +6,18 @@ date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 201
+weight = 216
 +++
 ## 개요
-`TargetScanner` 클래스는 SlimeRush 게임의 전투 시스템에서 타겟을 스캔하는 기능을 제공하는 클래스입니다. 이 클래스는 플레이어의 위치와 스캔 범위를 기반으로 가장 가까운 타겟, 랜덤한 타겟, 랜덤한 위치를 찾는 기능을 제공합니다.
+`TargetScanner` 클래스는 SlimeRush 게임의 전투 시스템에서 타겟을 스캔하는 기능을 제공하는 클래스입니다. 이 클래스는 스캔 위치(`Vector3`)와 스캔 범위(`float`)를 기반으로 가장 가까운 타겟, 랜덤한 타겟, 랜덤한 위치를 찾는 기능을 제공합니다.
 
 ## 역할
-- 타겟 스캔
-- 가장 가까운 타겟 찾기
-- 랜덤한 타겟 찾기
-- 랜덤한 위치 찾기
+- 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 스캔
+- 가장 가까운 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 랜덤한 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 랜덤한 위치(`Vector3`) 찾기
 
 ## 멤버
-### 속성
-```csharp
-/// <summary>
-/// 타겟 시스템
-/// 타겟을 찾고 관리하는 시스템입니다.
-/// </summary>
-[Inject]
-private TargetSystem targetSystem;
-```
-
 ### 메서드
 ```csharp
 /// <summary>
@@ -248,37 +238,37 @@ private List<ITarget> GetDistanceSortedTargetsInRange(Vector3 scanBeginPoint, IT
 ```
 
 ## 기능 설명
-### 가장 가까운 타겟 찾기
-- 스캔 시작 위치와 스캔 범위를 기반으로 타겟 서칭
-- 거리순으로 정렬된 타겟 목록을 반환
-- 가장 가까운 타겟을 반환
+### 가장 가까운 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 스캔 시작 위치(`Vector3`)와 스캔 범위(`float`)를 기반으로 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 서칭
+- 거리순으로 정렬된 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 목록을 반환
+- 가장 가까운 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget))을 반환
 
-### 랜덤한 타겟 찾기
-- 스캔 시작 위치와 스캔 범위를 기반으로 타겟 서칭
-- 랜덤한 타겟을 선택하여 반환
+### 랜덤한 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 스캔 시작 위치(`Vector3`)와 스캔 범위(`float`)를 기반으로 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 서칭
+- 랜덤한 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget))을 선택하여 반환
 
-### 랜덤한 위치 찾기
-- 스캔 시작 위치와 타겟 범위를 기반으로 랜덤한 위치 생성
-- 랜덤한 위치를 반환
+### 랜덤한 위치(`Vector3`) 찾기
+- 스캔 시작 위치(`Vector3`)와 타겟 범위(`float`)를 기반으로 랜덤한 위치(`Vector3`) 생성
+- 랜덤한 위치(`Vector3`)를 반환
 
-### 스캔 범위 내 타겟 찾기
-- 스캔 시작 위치와 스캔 범위를 기반으로 타겟 필터링
-- 필터링된 타겟 목록을 반환
+### 스캔 범위 내 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 스캔 시작 위치(`Vector3`)와 스캔 범위(`float`)를 기반으로 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 필터링
+- 필터링된 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 목록을 반환
 
-### 거리순으로 정렬된 타겟 찾기
-- 스캔 시작 위치와 스캔 범위를 기반으로 타겟 필터링
-- 거리를 계산하고, 거리순으로 정렬된 타겟 목록을 반환
+### 거리순으로 정렬된 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
+- 스캔 시작 위치(`Vector3`)와 스캔 범위(`float`)를 기반으로 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 필터링
+- 거리를 계산하고, 거리순으로 정렬된 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 목록을 반환
 
-### 랜덤한 위치 생성
-- 스캔 시작 위치와 타겟 범위를 기반으로 랜덤한 위치 생성
-- 랜덤한 위치를 반환
+### 랜덤한 위치(`Vector3`) 생성
+- 스캔 시작 위치(`Vector3`)와 타겟 범위(`float`)를 기반으로 랜덤한 위치(`Vector3`) 생성
+- 랜덤한 위치(`Vector3`)를 반환
 
 ## 의존성/상속 관계
-- `MonoBehaviour`를 상속받습니다.
-- `Battle.Common.Target` 네임스페이스에 의존합니다.
+- `MonoBehaviour`를 상속받음
+- 조건에 맞는 [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget) 인터페이스 반환
 
 ## 사용 예시
-#### `TargetSystem`에서 타겟 타입에 따라 랜덤 혹은 가장 가까운 타겟 찾아 반환
+#### [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)에서 타겟 타입에 따라 랜덤 혹은 가장 가까운 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾아 반환
 ```csharp
 public ITarget FindTarget(
     Vector3 scanPoint, MagicTargetType magicTargetType, float targetRadius = DefaultScanRadius)
@@ -301,7 +291,7 @@ public ITarget FindTarget(
 }
 ```
 
-#### `TargetSystem`에서 타겟 타입에 따라 랜덤 혹은 가장 가까운 타겟 여러개를 찾아 반환
+#### [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)에서 타겟 타입에 따라 랜덤 혹은 가장 가까운 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 여러개를 찾아 반환
 ```csharp
 public ITarget[] FindTargets(
     Vector3 scanPoint, MagicTargetType magicTargetType, int targetLength, float targetRadius = DefaultScanRadius)
@@ -326,7 +316,7 @@ public ITarget[] FindTargets(
 }
 ```
 
-#### `TargetSystem`에서 타겟 타입에 따라 랜덤 포지션 혹은 여러개의 랜덤 포지션을 생성해 반환
+#### [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)에서 타겟 타입에 따라 랜덤 포지션(`Vector3`) 혹은 여러개의 랜덤 포지션(`Vector3[]`)을 생성해 반환
 ```csharp
 public Vector3 FindPosition(Vector3 scanPoint, MagicTargetType magicTargetType, float targetRadius = DefaultScanRadius)
 {
@@ -365,5 +355,5 @@ public Vector3[] FindPositions(Vector3 scanPoint, MagicTargetType magicTargetTyp
 ```
 
 ## 관련 클래스
-- `TargetSystem`
-- `ITarget`
+- [`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)
+- [`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)
