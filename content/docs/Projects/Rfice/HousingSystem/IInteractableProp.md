@@ -17,6 +17,11 @@ weight = 423
 - MyRoomEditor에서 사용자 상호작용을 처리
 - 상호작용 이벤트에 대한 응답 로직 제공
 
+## 선언
+```csharp
+public interface IInteractableProp
+```
+
 ## 멤버
 ### 메서드
 ```csharp
@@ -41,7 +46,7 @@ void Interact()
 
 ## 사용 예시
 
-### [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)에서 상호작용 가능 여부 확인 용도로 사용
+#### [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase)에서 상호작용 가능 여부 확인 용도로 사용
 ```csharp
 // SpawnablePropBase.cs 에서 상호작용 처리
 if (TryGetComponent(out IInteractableProp interactableProp))

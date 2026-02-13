@@ -18,6 +18,11 @@ weight = 422
 - 자유 회전 및 스냅 회전 기능 제공
 - 회전 값의 설정과 조회 지원
 
+## 선언
+```csharp
+public interface IRotatableProp : IMyRoomEditorEditableObject
+```
+
 ## 멤버
 ### 메서드
 ```csharp
@@ -57,7 +62,7 @@ void RotationBySnapValue(float snapStepValue)
 
 ## 사용 예시
 
-### 회전 값 설정
+#### 회전 값 설정
 ```csharp
 if (editableObject.IsRotatableProp(out IRotatableProp rotatableProp))
 {
@@ -66,12 +71,12 @@ if (editableObject.IsRotatableProp(out IRotatableProp rotatableProp))
 }
 ```
 
-### 스냅 회전 적용
+#### 스냅 회전 적용
 ```csharp
 rotatableProp.RotationBySnapValue(15f); // 15도 단위로 스냅 회전
 ```
 
-### 회전 값 조회
+#### 회전 값 조회
 ```csharp
 Quaternion currentRotation = rotatableProp.GetRotation();
 float yAngle = currentRotation.eulerAngles.y;

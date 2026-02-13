@@ -17,6 +17,11 @@ weight = 428
 - 부모 프로퍼티 참조 관리
 - 배치 가능 여부 및 위치 정보 제공
 
+## 선언
+```csharp
+public class PlacementAreaInProp : MonoBehaviour, IPlaceableArea
+```
+
 ## 멤버
 ### 속성
 ```csharp
@@ -69,7 +74,7 @@ public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 - - `Collider` 컴포넌트 필요 (RequireComponent).
 
 ## 사용 예시
-### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
+#### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
 ```csharp
 public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
 {

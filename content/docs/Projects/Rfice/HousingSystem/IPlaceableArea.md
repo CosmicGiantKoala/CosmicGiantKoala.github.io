@@ -18,6 +18,11 @@ weight = 426
 - 배치 시 적용될 회전 값 정의
 - 오브젝트 위의 배치영역 검사
 
+## 선언
+```csharp
+public interface IPlaceableArea
+```
+
 ## 멤버
 ### 메서드
 ```csharp
@@ -60,7 +65,7 @@ bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 - [`PlacementAreaProp`](/docs/projects/rfice/housingsystem/placementareaprop/), [`PlacementAreaInProp`](/docs/projects/rfice/housingsystem/placementareainprop/): 배치 가능한 공간을 정의하는 오브젝트에서 구현
 
 ## 사용 예시
-### 배치가능영역 검증 및 타입 확인
+#### 배치가능영역 검증 및 타입 확인
 ```csharp
 if (raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea)
 {
@@ -68,7 +73,7 @@ if (raycastHit.transform.TryGetComponent(out IPlaceableArea placeableArea)
 }
 ```
 
-### 배치영역이 오브젝트가 소유한 슬롯 영역인지 확인
+#### 배치영역이 오브젝트가 소유한 슬롯 영역인지 확인
 ```csharp
 if (editableObject.IsPlacementArea(out IPlaceableArea placeableArea))
 {

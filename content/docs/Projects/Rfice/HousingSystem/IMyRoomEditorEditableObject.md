@@ -19,6 +19,11 @@ weight = 419
 - 객체의 선택/해제, 포커스 상태 관리
 - 다양한 편집 기능(색상, 이동, 회전 등)의 지원 여부 검사
 
+## 선언
+```csharp
+public interface IMyRoomEditorEditableObject : IEquatable<IMyRoomEditorEditableObject>
+```
+
 ## 멤버
 ### 속성
 ```csharp
@@ -144,7 +149,7 @@ string GetPlacePropId()
 
 ## 사용 예시
 
-### 인터페이스 검증 및 사용
+#### 인터페이스 검증 및 사용
 ```csharp
 if (editableObject.IsMovableProp(out IMoveableProp movableProp))
 {
@@ -161,7 +166,7 @@ if (editableObject.IsEditableColor(out IColorEditableProp colorProp))
 }
 ```
 
-### 상태 변경
+#### 상태 변경
 ```csharp
 // 오브젝트 선택
 editableObject.Focused();

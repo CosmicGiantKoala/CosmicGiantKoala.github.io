@@ -16,6 +16,11 @@ weight = 418
 - 셰이더 키워드를 통한 시각적 피드백 제공
 - 편집 중 상태 표시 (선택됨, 유효함, 무효함 등)
 
+## 선언
+```csharp
+public class PropEditingState : MonoBehaviour
+```
+
 ## 멤버
 ### 열거형
 ```csharp
@@ -32,7 +37,7 @@ public enum HighlightState
 }
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 하이라이트 효과를 적용할 대상 Material 리스트
@@ -196,7 +201,7 @@ private void ChangeKeyword(string keyword)
   - `_HIGHLIGHTSTATE_RED`
 
 ## 사용 예시
-### 하이라이트 기능 셋업 
+#### 하이라이트 기능 셋업 
 ```csharp
 // 배치 오브젝트 클래스(SpawnablePropBase의서브 클래스)에서 Setup() 호출
 protected override void SetupPropHighlight()
@@ -221,7 +226,7 @@ public void Setup()
 }
 ```
 
-### 하이라이트 표시
+#### 하이라이트 표시
 ```csharp
 //오브젝트 이동시 배치 가능한 위치일때 Valid 하이라이트 처리
 public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)

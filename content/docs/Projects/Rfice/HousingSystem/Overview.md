@@ -224,8 +224,8 @@ classDiagram
 | 클래스 | 역할 |
 |-----|-----|
 |[**MyRoomEditorState**](/docs/projects/rfice/housingsystem/myroomeditorstate/)<br> *<<abstract>>*| ️💡 MyRoomEditor의 상태를 관리하는 abstract 클래스.<br> 💡 `InputDispatcher`와 상태 핸들을 통해 입력 이벤트를 처리. 상태 변화 시 입력 활성화/비활성화 담당.<br> 💡 다양한 편집 상태를 관리하고, 상태 변화 로직을 처리. |
-|[**MyRoomEditorPlacementManager**](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/)<br>-->MyRoomEditorState| ️💡 오브젝트 생성 및 배치 상태를 관리하는 implement 클래스.<br> 💡 `Raycast` 를 이용해 사용자의 입력에 따라 오브젝트 배치 위치를 검증.<br> 💡 `InputDispatcher` 를 통해 받는 이벤트와 배치 검증을 통해 오브젝트를 월드에 배치.<br> 💡 배치상태에서 이동 및 회전 처리.|
-|[**MyRoomEditorPropEditingManager**](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)<br>-->MyRoomEditorState| ️💡 오브젝트 편집 상태를 관리하는 implement 클래스.<br> 💡 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행.<br> 💡 서브 클래스`(MyRoomPropEditor)`와 UI이벤트를 통해 편집 동작을 처리.<br> 💡 실행취소를 포함한 상태 스택 관리.|
+|[**MyRoomEditorPlacementManager**](/docs/projects/rfice/housingsystem/myroomeditorplacementmanager/)<br>: MyRoomEditorState| ️💡 오브젝트 생성 및 배치 상태를 관리하는 implement 클래스.<br> 💡 `Raycast` 를 이용해 사용자의 입력에 따라 오브젝트 배치 위치를 검증.<br> 💡 `InputDispatcher` 를 통해 받는 이벤트와 배치 검증을 통해 오브젝트를 월드에 배치.<br> 💡 배치상태에서 이동 및 회전 처리.|
+|[**MyRoomEditorPropEditingManager**](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)<br>: MyRoomEditorState| ️💡 오브젝트 편집 상태를 관리하는 implement 클래스.<br> 💡 오브젝트 선택, 이동, 회전, 색상 변경, 삭제 등의 기능을 수행.<br> 💡 서브 클래스`(MyRoomPropEditor)`와 UI이벤트를 통해 편집 동작을 처리.<br> 💡 실행취소를 포함한 상태 스택 관리.|
 {{< /table >}}
 <br>
 
@@ -312,9 +312,9 @@ classDiagram
 | 클래스 | 역할 |
 |-----|-----|
 |[**MyRoomPropEditor**](/docs/projects/rfice/housingsystem/myroompropeditor/)<br> *<<abstract>>*| ️💡 각각의 편집 기능에서 사용 할 공통 메서드와 멤버를 정의하는 abstract 클래스.<br> 💡 `MyRoomEditorPropEditingManager` 를 통해 받은 입력 및 UI 동작에 대한 처리를 implement 클래스의 override로 호출. |
-|[**MyRoomPropSelector**](/docs/projects/rfice/housingsystem/myroompropselector/)<br>-->MyRoomPropEditor| ️💡 오브젝트의 선택을 담당하는 implement 클래스.<br> 💡 `Raycast`를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생. |
-|[**MyRoomPropMover**](/docs/projects/rfice/housingsystem/myroompropmover/)<br>-->MyRoomPropEditor| ️💡 오브젝트의 이동을 담당하는 implement 클래스.<br> 💡`Raycast`를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생. |
-|[**MyRoomPropRotator**](/docs/projects/rfice/housingsystem/myroomproprotator/)<br>-->MyRoomPropEditor| ️💡 오브젝트의 회전을 담당하는 implement 클래스.<br> 💡`InputUtils`를 통해 초기 마우스 상태를 캐싱하고 마우스의 이동범위만큼 오브젝트를 좌/우로 회전. |
+|[**MyRoomPropSelector**](/docs/projects/rfice/housingsystem/myroompropselector/)<br>: MyRoomPropEditor| ️💡 오브젝트의 선택을 담당하는 implement 클래스.<br> 💡 `Raycast`를 이용해 편집 가능한 오브젝트를 선택하고, 결과 이벤트를 발생. |
+|[**MyRoomPropMover**](/docs/projects/rfice/housingsystem/myroompropmover/)<br>: MyRoomPropEditor| ️💡 오브젝트의 이동을 담당하는 implement 클래스.<br> 💡`Raycast`를 통해 마우스 포인터 위치에 배치 영역 검증을 수행하고 오브젝트 이동 이벤트를 발생. |
+|[**MyRoomPropRotator**](/docs/projects/rfice/housingsystem/myroomproprotator/)<br>: MyRoomPropEditor| ️💡 오브젝트의 회전을 담당하는 implement 클래스.<br> 💡`InputUtils`를 통해 초기 마우스 상태를 캐싱하고 마우스의 이동범위만큼 오브젝트를 좌/우로 회전. |
 |[**MyRoomEditorInteractionManager**](/docs/projects/rfice/housingsystem/myroomeditorinteractionmanager/)| ️💡 오브젝트의 특수 인터렉션을 담당하는 클래스.<br> 💡`MyRoomEditorPropEditingManager` 를 통해 특정 인터렉션 호출을 처리. |
 {{< /table >}}
 <br>
@@ -474,10 +474,10 @@ direction LR
 | 클래스 | 역할 |
 |-----|-----|
 |[**SpawnablePropBase**](/docs/projects/rfice/housingsystem/spawnablepropbase/)<br>*<<abstract>>*| ️💡 모든 배치 가능한 오브젝트의 abstract 클래스. <br> 💡 공용 Property 데이터 설정, 상태 정보 관리, 부모-자식 오브젝트 관계 구성, 상태 표현 등 공통 로직 처리. |
-|[**SpawnableFloorAndCeilProp**](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)<br>-->SpawnablePropBase<br>-->IColorEditableProp<br>-->IMoveableProp<br>-->IRotatableProp| ️💡 바닥과 천장에 배치되는 일반적인 오브젝트 클래스. |
-|[**SpawnableWallProp**](/docs/projects/rfice/housingsystem/spawnablewallprop/)<br>-->SpawnablePropBase<br>-->IColorEditableProp<br>-->IMoveableProp| ️💡 벽에 배치되는 일반적인 오브젝트 클래스. |
-|[**SpawnablePhotoFrameProp**](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)<br>-->SpawnablePropBase<br>-->IPhotoFrameProp<br>-->IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 텍스처 업로드 및 이미지 적용 기능 포함. |
-|[**SpawnableScreenProp**](/docs/projects/rfice/housingsystem/spawnablescreenprop/)<br>-->SpawnablePropBase<br>-->IScreenProp<br>-->IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 개인공간에서 실시간 파일 공유 기능 모듈(`NetworkedScreen`)을 사용 할 수 있게 세팅.  |
+|[**SpawnableFloorAndCeilProp**](/docs/projects/rfice/housingsystem/spawnablefloorandceilprop/)<br>: SpawnablePropBase<br>: IColorEditableProp<br>: IMoveableProp<br>: IRotatableProp| ️💡 바닥과 천장에 배치되는 일반적인 오브젝트 클래스. |
+|[**SpawnableWallProp**](/docs/projects/rfice/housingsystem/spawnablewallprop/)<br>: SpawnablePropBase<br>: IColorEditableProp<br>: IMoveableProp| ️💡 벽에 배치되는 일반적인 오브젝트 클래스. |
+|[**SpawnablePhotoFrameProp**](/docs/projects/rfice/housingsystem/spawnablephotoframeprop/)<br>: SpawnablePropBase<br>: IPhotoFrameProp<br>: IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 텍스처 업로드 및 이미지 적용 기능 포함. |
+|[**SpawnableScreenProp**](/docs/projects/rfice/housingsystem/spawnablescreenprop/)<br>: SpawnablePropBase<br>: IScreenProp<br>: IMoveableProp| ️💡 특수한 인터렉션을 포함한 오브젝트 클래스.<br> 💡 개인공간에서 실시간 파일 공유 기능 모듈(`NetworkedScreen`)을 사용 할 수 있게 세팅.  |
 |[**PropEditingState**](/docs/projects/rfice/housingsystem/propeditingstate/)| ️💡 오브젝트 편집 상태에 따라 오브젝트의 `Material` 효과를 표현하는 클래스. |
 {{< /table >}}
 <br>
@@ -584,16 +584,16 @@ direction LR
 | 클래스 | 역할 |
 |-----|-----|
 |[**IMyRoomEditorEditableObject**](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/)<br>*<<interface>>*| ️💡 편집 가능한 오브젝트 정의 및 기능 정의 |
-|[**IColorEditableProp**](/docs/projects/rfice/housingsystem/icoloreditableprop/) <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡 색상 편집 가능한 오브젝트 정의. 컬러 리스트 제공 및 색상 적용 기능 정의. |
-|[**IMoveableProp**](/docs/projects/rfice/housingsystem/imoveableprop/) <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡 이동 가능한 오브젝트 정의. 배치 영역 검증 및 위치 변경 기능 정의. |
-|[**IRotateableProp**](/docs/projects/rfice/housingsystem/irotateableprop/) <br> *<<interface>>*<br>-->IMyRoomEditorEditableObject | ️💡회전 가능한 오브젝트 정의. 자유 회전 및 스냅 회전 기능 정의. |
+|[**IColorEditableProp**](/docs/projects/rfice/housingsystem/icoloreditableprop/) <br> *<<interface>>*<br>: IMyRoomEditorEditableObject | ️💡 색상 편집 가능한 오브젝트 정의. 컬러 리스트 제공 및 색상 적용 기능 정의. |
+|[**IMoveableProp**](/docs/projects/rfice/housingsystem/imoveableprop/) <br> *<<interface>>*<br>: IMyRoomEditorEditableObject | ️💡 이동 가능한 오브젝트 정의. 배치 영역 검증 및 위치 변경 기능 정의. |
+|[**IRotateableProp**](/docs/projects/rfice/housingsystem/irotateableprop/) <br> *<<interface>>*<br>: IMyRoomEditorEditableObject | ️💡회전 가능한 오브젝트 정의. 자유 회전 및 스냅 회전 기능 정의. |
 {{< /table >}}
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
 |[**IInteractableProp**](/docs/projects/rfice/housingsystem/iinteractableprop/) <br> *<<interface>>* | ️💡 특수한 인터렉션 가능한 오브젝트 정의 및 사용자 인터렉션 기능 정의. |
-|[**IPhotoFrameProp**](/docs/projects/rfice/housingsystem/iphotoframeprop/) <br> *<<interface>>* <br> -->IInteractableProp | ️💡 사진 프레임 정의 및 이미지 설정 기능 정의. |
-|[**IScreenProp**](/docs/projects/rfice/housingsystem/iscreenprop/) <br> *<<interface>>* <br> -->IInteractableProp | ️💡 실시간 파일 공유 모듈 정의. |
+|[**IPhotoFrameProp**](/docs/projects/rfice/housingsystem/iphotoframeprop/) <br> *<<interface>>* <br> : IInteractableProp | ️💡 사진 프레임 정의 및 이미지 설정 기능 정의. |
+|[**IScreenProp**](/docs/projects/rfice/housingsystem/iscreenprop/) <br> *<<interface>>* <br> : IInteractableProp | ️💡 실시간 파일 공유 모듈 정의. |
 {{< /table >}}
 <br>
 
@@ -682,8 +682,8 @@ direction LR
 | 클래스 | 역할 |
 |-----|-----|
 |[**IPlaceableArea**](/docs/projects/rfice/housingsystem/iplaceablearea/)<br>*<<interface>>*| ️💡 배치 영역 정의 및 배치 영역 기능 정의. |
-|[**PlacementAreaProp**](/docs/projects/rfice/housingsystem/placementareaprop/) <br> -->IPlaceableArea | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
-|[**PlacementAreaInProp**](/docs/projects/rfice/housingsystem/placementareainprop/) <br> -->IPlaceableArea | ️💡 책상, 탁자, 데크 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.<br> 💡 부모 오브젝트 내 자식 오브젝트 처리. |
+|[**PlacementAreaProp**](/docs/projects/rfice/housingsystem/placementareaprop/) <br> : IPlaceableArea | ️💡 바닥, 천장, 벽면과 같은 배치 영역을 정의하는 클래스. <br> 💡 오브젝트가 배치 될 수 있는 공간의 범위와 규칙 지정. |
+|[**PlacementAreaInProp**](/docs/projects/rfice/housingsystem/placementareainprop/) <br> : IPlaceableArea | ️💡 책상, 탁자, 데크 등 오브젝트 위에 배치되는 영역을 관리하는 클래스.<br> 💡 부모 오브젝트 내 자식 오브젝트 처리. |
 {{< /table >}}
 <br>
 

@@ -19,6 +19,11 @@ weight = 407
 - 부모 프로퍼티 관계 관리
 - ESC 키로 이동 취소 및 원래 위치 복원
 
+## 선언
+```csharp
+public class MyRoomEditorPropMover : MyRoomEditorPropEditor
+```
+
 ## 멤버
 ### 이벤트
 ```csharp
@@ -79,7 +84,7 @@ private bool _isPlaceable;
 private Quaternion _nonRotatablePropCachedRotation;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 이동할 오브젝트 설정 메서드.
@@ -275,7 +280,7 @@ private void ReleaseMovementBehaviour()
 - [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
 
 ## 사용 예시
-### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 이동 편집 모드 전환
+#### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 이동 편집 모드 전환
 ```csharp
 private void OnChangedEditMode(PropEditMode mode)
 {

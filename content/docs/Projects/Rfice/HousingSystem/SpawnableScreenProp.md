@@ -23,9 +23,13 @@ weight = 417
 - [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 상호작용 기능
 - [`IScreenProp`](/docs/projects/rfice/housingsystem/iscreenprop/): 스크린 특수 기능
 
-## 주요 컴포넌트
+## 선언
+```csharp
+public class SpawnableScreenProp : SpawnablePropBase, IMoveableProp, IScreenProp
+```
 
-### 필드
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 스크린 표면 트랜스폼: 파일 공유 UI 표시 위치
@@ -40,7 +44,7 @@ public Transform ScreenHandlerTr => screenPropTr;
 private PropEditingState _propEditingState;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 오브젝트 삭제 메서드.

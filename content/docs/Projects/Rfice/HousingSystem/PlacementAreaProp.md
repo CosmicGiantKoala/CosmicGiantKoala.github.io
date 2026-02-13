@@ -17,6 +17,11 @@ weight = 427
 - 프로퍼티 배치 정보 저장/로드
 - 편집 가능 인터페이스 구현 (제한적)
 
+## 선언
+```csharp
+public class PlacementAreaProp : MonoBehaviour, IPlaceableArea, IColorEditableProp
+```
+
 ## 멤버
 ### 속성
 ```csharp
@@ -64,7 +69,7 @@ public bool IsPlacementAreaInProp(out SpawnablePropBase baseProp)
 - [`PlacementType`](/docs/projects/rfice/HousingSystem/PlacementType) 열거형 사용.
 
 ## 사용 예시
-### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
+#### 오브젝트 영역 검증 단계에서 회전 값 및 타입/슬롯영역인지 확인
 ```csharp
 public bool IsPlaceableArea(Vector3 hitPosition, IPlaceableArea area)
 {

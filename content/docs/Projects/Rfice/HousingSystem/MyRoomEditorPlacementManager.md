@@ -21,6 +21,11 @@ weight = 403
 - 배치 상태와 UI 상태 간 동기화
 - 배치된 프로퍼티의 영구 저장 및 부모-자식 관계 설정
 
+## 선언
+```csharp
+public class MyRoomEditorPlacementManager : MyRoomEditorState
+```
+
 ## 멤버
 ### 속성
 ```csharp
@@ -270,7 +275,7 @@ private IEnumerator CoRotationHandle()
 - [`IMoveableProp`](/docs/projects/rfice/HousingSystem/IMoveableProp), [`IPlaceableArea`](/docs/projects/rfice/HousingSystem/IPlaceableArea), [`SpawnablePropBase`](/docs/projects/rfice/HousingSystem/SpawnablePropBase), [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
 
 ## 사용 예시
-### 오브젝트 생성 UI에서 오브젝트 선택시
+#### 오브젝트 생성 UI에서 오브젝트 선택시
 ```csharp
 private void OnSpawnProp(string downloadKey)
 {

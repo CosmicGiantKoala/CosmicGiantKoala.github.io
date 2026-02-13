@@ -17,6 +17,10 @@ weight = 421
 - MyRoomEditor에서 오브젝트의 이동 기능 제공
 - 배치 가능 영역 내에서의 위치 검증
 
+## 선언
+```csharp
+public interface IMoveableProp : IMyRoomEditorEditableObject
+```
 
 ## 멤버
 ### 속성
@@ -79,7 +83,7 @@ bool IsPlaceableArea(Vector3 targetPos, IPlaceableArea placeableArea)
 
 ## 사용 예시
 
-### 이동 가능 여부 확인
+#### 이동 가능 여부 확인
 ```csharp
 if (editableObject.IsMovableProp(out IMoveableProp movableProp))
 {
@@ -88,12 +92,12 @@ if (editableObject.IsMovableProp(out IMoveableProp movableProp))
 }
 ```
 
-### 위치 이동
+#### 위치 이동
 ```csharp
 movableProp.Move(targetPosition);
 ```
 
-### 배치 영역 검사
+#### 배치 영역 검사
 ```csharp
 if (movableProp.IsPlaceableArea(newPosition, placeableArea))
 {

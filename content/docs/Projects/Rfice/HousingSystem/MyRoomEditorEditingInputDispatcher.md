@@ -17,6 +17,11 @@ weight = 412
 - 이벤트 구독 패턴을 통한 느슨한 결합 구현
 - 포인터, 키보드 입력 상태 관리 및 이벤트 중계
 
+## 선언
+```csharp
+public class MyRoomEditorEditingInputDispatcher
+```
+
 ## 멤버
 ### 이벤트
 ```csharp
@@ -46,7 +51,7 @@ public event Action OnRightClickEvent;
 public event Action OnDeletePressEvent;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 마우스 버튼이 눌렸음을 이벤트로 전달.

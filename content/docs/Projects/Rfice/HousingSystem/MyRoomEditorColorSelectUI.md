@@ -18,6 +18,11 @@ weight = 430
 - 선택된 색상 이벤트 발생
 - UI 초기화 및 상태 동기화
 
+## 선언
+```csharp
+public class MyRoomEditorColorSelectUI : MonoBehaviour
+```
+## 멤버
 ### 이벤트
 ```csharp
 /// <summary>
@@ -26,7 +31,7 @@ weight = 430
 public event Action<int> OnSelectedColor;
 ```
 
-### 필드
+### 속성
 ```csharp
 /// <summary>
 /// 색상 편집 항목 리스트: 개별 색상을 표시하는 UI 항목들
@@ -35,7 +40,7 @@ public event Action<int> OnSelectedColor;
 private List<MyRoomEditorColorEditItem> colorEditItems;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 색상 리스트를 받아 UI에 표시하는 메서드.

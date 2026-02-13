@@ -25,6 +25,11 @@ weight = 416
 - [`IPhotoFrameProp`](/docs/projects/rfice/housingsystem/iphotoframeprop/): 사진 프레임 특수 기능
 - [`IInteractableProp`](/docs/projects/rfice/housingsystem/iinteractableprop/): 상호작용 기능
 
+## 선언
+```csharp
+public class SpawnablePhotoFrame : SpawnablePropBase, IMoveableProp, IPhotoFrameProp
+```
+
 ## 멤버
 ### 이벤트
 - `OnCompleteAppliedImageCallback`: 이미지 적용 완료 시 호출되는 이벤트

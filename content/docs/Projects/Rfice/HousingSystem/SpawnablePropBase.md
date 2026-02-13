@@ -18,6 +18,11 @@ weight = 414
 - 하이라이트 상태 표현
 - 배치 정보 관리
 
+## 선언
+```csharp
+public abstract class SpawnablePropBase : MonoBehaviour
+```
+
 ## 멤버
 ### 속성
 ```csharp

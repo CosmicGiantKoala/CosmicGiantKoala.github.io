@@ -19,6 +19,10 @@ weight = 410
 - 편집 입력 이벤트(포인터 클릭, 취소, 삭제, 우클릭)의 구독 및 디스패처 전달
 - 화면 안전 영역 내 포인터 입력 검증 및 필터링
 
+## 선언
+```csharp
+public class MyRoomEditorInputController : MonoBehaviour
+```
 
 ## 멤버
 ### 속성

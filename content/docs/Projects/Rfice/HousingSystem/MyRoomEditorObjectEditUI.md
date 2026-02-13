@@ -22,6 +22,11 @@ weight = 429
 - 오브젝트 삭제 기능 제공
 - 툴팁 표시 및 위치 조정
 
+## 선언
+```csharp
+public class MyRoomEditorObjectEditUI : MonoBehaviour
+```
+
 ## 멤버
 ### 열거형
 ```csharp
@@ -93,7 +98,7 @@ private RectTransform hoverTooltip, activeTooltip;
 
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 선택된 오브젝트의 편집 메뉴를 표시하는 메서드.
@@ -309,7 +314,7 @@ private void OnPointerExitEvent(Button targetBtn)
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/HousingSystem/IMyRoomEditorEditableObject), [`MyRoomEditorColorSelectUI`](/docs/projects/rfice/HousingSystem/MyRoomEditorColorSelectUI)에 의존.
 
 ## 사용 예시
-###  [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 오브젝트가 선택 될 때, 오브젝트 편집 UI표시
+####  [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 오브젝트가 선택 될 때, 오브젝트 편집 UI표시
 ```csharp
 private void OnObjectSelected(IMyRoomEditorEditableObject selectedObject)
 {

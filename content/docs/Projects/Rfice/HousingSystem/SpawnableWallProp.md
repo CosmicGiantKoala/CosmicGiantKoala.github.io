@@ -23,8 +23,13 @@ weight = 415
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 
-## 주요 멤버
-### 필드
+## 선언
+```csharp
+public class SpawnableWallProp : SpawnablePropBase, IMoveableProp, IColorEditableProp
+```
+
+## 멤버
+### 속성
 ```csharp
 /// <summary>
 /// 편집 상태 컴포넌트: 하이라이트 상태 관리
@@ -37,7 +42,7 @@ private PropEditingState _propEditingState;
 private MyRoomMaterialChangeHelper _materialChangeHelper;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 오브젝트 삭제 메서드.

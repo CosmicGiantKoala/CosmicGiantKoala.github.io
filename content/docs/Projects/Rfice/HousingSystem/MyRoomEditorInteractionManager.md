@@ -18,6 +18,11 @@ weight = 409
 - 업로드 완료 콜백 관리
 - MyRoomEditor와 도메인 계층 간 상호작용 중재
 
+## 선언
+```csharp
+public class MyRoomEditorInteractionManager : MonoBehaviour
+```
+
 ## 멤버
 ### 속성
 ```csharp
@@ -94,8 +99,7 @@ private void OnCompleteUploadImage(string path)
 - `IMyRoomInteractionInteractor` 인터페이스에 의존.
 
 ## 사용 예시
-
-### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)에서 사진 업로드 호출시
+#### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/)에서 사진 업로드 호출시
 ```csharp
 // MyRoomEditorPropEditingManager에서 호출
 private void OnUploadPhoto()

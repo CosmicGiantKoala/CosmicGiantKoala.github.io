@@ -17,6 +17,11 @@ weight = 425
 - 스크린 관련 오브젝트 공통 인터페이스 제공
 - 상호작용 가능한 스크린 객체들의 표준화
 
+## 선언
+```csharp
+public interface IScreenProp : IInteractableProp
+```
+
 ## 멤버
 (상속받은 [`IInteractableProp`](/docs/projects/rfice/HousingSystem/IInteractableProp)의 메서드 사용)
 
@@ -37,7 +42,7 @@ weight = 425
 - [`SpawnableScreenProp`](/docs/projects/rfice/housingsystem/spawnablescreenprop/): 실시간 파일 공유가 가능한 스크린 오브젝트들에서 구현
 
 ## 사용 예시
-### 스크린 프로퍼티 타입 확인
+#### 스크린 프로퍼티 타입 확인
 ```csharp
 if (editableObject is IScreenProp screenProp)
 {

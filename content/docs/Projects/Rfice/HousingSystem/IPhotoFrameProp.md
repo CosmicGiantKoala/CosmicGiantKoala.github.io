@@ -18,6 +18,10 @@ weight = 424
 - 업로드 완료 후 이미지 적용 콜백 관리
 - 사용자 상호작용을 통한 사진 변경 기능 제공
 
+## 선언
+```csharp
+public interface IPhotoFrameProp : IInteractableProp
+```
 
 ## 멤버
 ### 메서드

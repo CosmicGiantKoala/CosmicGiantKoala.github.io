@@ -18,6 +18,11 @@ weight = 406
 - 우선순위 레이어를 통한 정확한 타겟팅
 - 선택 해제 및 상태 정리 기능 제공
 
+## 선언
+```csharp
+public class MyRoomEditorPropSelector : MyRoomEditorPropEditor
+```
+
 ## 멤버
 ### 이벤트
 ```csharp
@@ -197,7 +202,7 @@ private void ReleaseSelect()
 - [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
 
 ## 사용 예시
-### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 선택모드 전환
+#### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 선택모드 전환
 ```csharp
 private void OnChangedEditMode(PropEditMode mode)
 {

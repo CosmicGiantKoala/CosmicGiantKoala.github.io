@@ -19,6 +19,11 @@ weight = 431
 - 색상 값 설정 및 표시
 - 색상 선택 이벤트 발생
 
+## 선언
+```csharp
+public class MyRoomEditorColorEditItem : MonoBehaviour
+```
+
 ## 멤버
 ### 이벤트
 ```csharp
@@ -49,7 +54,7 @@ private GameObject selectedObject;
 private Image colorPanel;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 색상 항목을 초기화하는 메서드.

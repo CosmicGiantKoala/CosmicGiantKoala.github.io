@@ -17,6 +17,11 @@ weight = 499
 - 배치 가능 영역의 분류 기준 제공
 - 레이어 및 배치 검증 로직에 활용
 
+## 선언
+```csharp
+public enum PlacementType
+```
+
 ## 열거형 값
 ```csharp
 public enum PlacementType

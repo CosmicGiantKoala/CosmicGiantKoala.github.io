@@ -18,6 +18,11 @@ weight = 402
 - 상태 변화 시 입력 활성화/비활성화 관리
 - 상태 핸들러를 통한 상태 전환 관리
 
+## 선언
+```csharp
+public abstract class MyRoomEditorState : MonoBehaviour
+```
+
 ## 멤버
 ### 열거형
 ```csharp
@@ -154,7 +159,7 @@ private void OnChangedState(MyRoomEditorStateEnum state)
   - [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/housingsystem/myroomeditorpropeditingmanager/): 오브젝트 편집 상태 관리
 
 ## 사용 예시
-### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 상속받아 편집 상태 구현
+#### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 상속받아 편집 상태 구현
 ```csharp
 public class MyRoomEditorPropEditingManager : MyRoomEditorState
 {

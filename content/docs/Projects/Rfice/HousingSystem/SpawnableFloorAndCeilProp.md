@@ -24,6 +24,11 @@ weight = 415
 - [`IRotatableProp`](/docs/projects/rfice/housingsystem/irotateableprop/): 회전 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트
 
+## 선언
+```csharp
+public class SpawnableFloorAndCeilProp : SpawnablePropBase, IColorEditableProp, IMoveableProp, IRotatableProp
+```
+
 ## 멤버
 ### 속성
 ```csharp

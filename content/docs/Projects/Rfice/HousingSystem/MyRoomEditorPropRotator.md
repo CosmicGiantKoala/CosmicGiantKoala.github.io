@@ -20,6 +20,11 @@ weight = 408
 - 회전 각도에 따른 머티리얼 파라미터 업데이트(커스텀 쉐이더 효과)
 - ESC 키로 회전 취소 및 원래 각도 복원
 
+## 선언
+```csharp
+public class MyRoomEditorPropRotator : MyRoomEditorPropEditor
+```
+
 ## 멤버
 ### 이벤트
 ```csharp
@@ -202,7 +207,7 @@ private void ReleaseRotateBehaviour()
 - [`MyRoomEditorInputUtils`](/docs/projects/rfice/HousingSystem/MyRoomEditorInputUtils)에 의존.
 
 ## 사용 예시
-### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 회전 편집 모드 전환
+#### [`MyRoomEditorPropEditingManager`](/docs/projects/rfice/HousingSystem/MyRoomEditorPropEditingManager)에서 회전 편집 모드 전환
 ```csharp
 private void OnChangedEditMode(PropEditMode mode)
 {

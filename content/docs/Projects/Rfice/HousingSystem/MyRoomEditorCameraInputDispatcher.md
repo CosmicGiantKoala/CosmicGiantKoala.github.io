@@ -18,6 +18,11 @@ weight = 411
 - 이벤트 구독 패턴을 통한 느슨한 결합 구현
 - 입력 상태 관리 및 이벤트 라우팅
 
+## 선언
+```csharp
+public class MyRoomEditorCameraInputDispatcher
+```
+
 ## 멤버
 ### 이벤트
 ```csharp

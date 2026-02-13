@@ -19,7 +19,7 @@ weight = 420
 
 ## 선언
 ```csharp
-
+public interface IColorEditableProp : IMyRoomEditorEditableObject
 ```
 
 ## 멤버
@@ -55,7 +55,7 @@ void SetColor(Material mat, int colorIndex)
 
 ## 사용 예시
 
-### 색상 편집 가능 여부 확인
+#### 색상 편집 가능 여부 확인
 ```csharp
 if (prop.TryGetComponent(out IMyRoomEditorEditableObject editableObject))
 {
@@ -67,7 +67,7 @@ if (prop.TryGetComponent(out IMyRoomEditorEditableObject editableObject))
 }
 ```
 
-### 색상 적용
+#### 색상 적용
 ```csharp
 colorProp.SetColor(renderer.material, selectedColorIndex);
 ```

@@ -22,8 +22,12 @@ weight = 404
 - 편집 작업의 취소 및 상태 정리
 - 삭제 시 자식 프로퍼티의 연쇄 삭제 처리
 
-## 멤버
+## 선언
+```csharp
+public class MyRoomEditorPropEditingManager : MyRoomEditorState
+```
 
+## 멤버
 ### 속성
 ```csharp
 /// <summary>
@@ -113,7 +117,7 @@ public enum PropEditMode { Disable, Select, Move, Rotate }
 private PropEditMode editingMode;
 ```
 
-### 주요 메서드
+### 메서드
 ```csharp
 /// <summary>
 /// 배치된 오브젝트를 등록하여 편집 관리 대상으로 추가.
