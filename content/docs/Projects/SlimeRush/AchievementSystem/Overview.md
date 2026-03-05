@@ -1,5 +1,5 @@
 +++
-title = "AchievementSystem 소개"
+title = "업적 시스템(Achievement System) 소개"
 description = "SlimeRush 게임의 업적 시스템"
 icon = "military_tech"
 date = "2026-01-16T00:00:00+09:00"

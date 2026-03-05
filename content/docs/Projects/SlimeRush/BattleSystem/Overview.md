@@ -1,5 +1,5 @@
 +++
-title = "BattleSystem 소개"
+title = "전투 시스템(Battle System) 소개"
 description = "SlimeRush 게임의 전투 시스템"
 icon = "swords"
 date = "2026-01-28T00:00:00+09:00"

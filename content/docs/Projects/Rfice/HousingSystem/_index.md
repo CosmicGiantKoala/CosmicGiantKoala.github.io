@@ -1,5 +1,5 @@
 ﻿+++
-title = "마이룸 에디터(하우징시스템)"
+title = "하우징 시스템(MyRoomEditor System)"
 icon = "home_and_garden"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"

@@ -1,9 +1,9 @@
 ﻿+++
-title = "알피스 : 보이는 커뮤니케이션 도구"
-icon = "article"
+title = "영웅 스킬 시스템(🛠️ 작업예정️)"
+icon = "construction"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
 draft = false
 toc = true
-weight = 200
+weight = 299
 +++

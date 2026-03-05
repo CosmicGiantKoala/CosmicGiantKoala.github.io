@@ -1,6 +1,6 @@
 ﻿+++
 title = "프로젝트 개요"
-description = "올인원 커뮤니케이션 솔루션, 3D 메신저 기반 협업 플랫폼 (채팅, 보이스/화상 회의 통합)"
+description = "올인원 커뮤니케이션 솔루션, 3D 메신저 기반 협업 플랫폼"
 icon = "overview"
 date = "2023-05-22T00:27:57+01:00"
 lastmod = "2023-05-22T00:27:57+01:00"
@@ -31,6 +31,7 @@ weight = 301
 ### 프로젝트 참여 기간 : 2022.10 - 2025.12
 ### 플랫폼 : WebGL, iOS, Android
 ### 엔진 및 도구 : Unity3D, C#, Git
+### 네트워킹 라이브러리 : [Fusion2-Shared](https://doc.photonengine.com/ko-kr/fusion/2-shared/fusion-shared-intro)
 
 <br>
 
