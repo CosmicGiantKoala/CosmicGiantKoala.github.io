@@ -1,6 +1,6 @@
 baseURL = 'https://CosmicGiantKoala.github.io/'
 languageCode = 'ko-KR'
-title = 'CosmicGiantKoala'
+title = 'CGK DEV ARCHIVE'
 contentDir = "content"
 enableEmoji = true
 enableGitInfo = false
