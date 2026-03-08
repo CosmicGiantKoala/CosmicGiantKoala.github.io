@@ -482,7 +482,6 @@ private void UpdateStiffness(IHitEvent.HitInfo hitInfo)
 - `RPC_SetFocusState`: 포커스 모드 동기화
 
 ## 의존성/상속 관계
-### 상속/구현
 - [`NetworkBehaviour`](https://doc.photonengine.com/fusion/current/manual/network-behaviour)를 상속받음
 - [`IHeroStatus`](/docs/projects/rfist/HeroNetworkSystem/IHeroStatus) 인터페이스 구현
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController) 클래스로 피격 정보 및 자세 변경 호출
