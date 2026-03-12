@@ -18,6 +18,10 @@ weight = 414
 - 하이라이트 상태 표현
 - 배치 정보 관리
 
+## 배치 정보 관리
+![image](/images/propbase.gif)
+
+
 ## 선언
 ```csharp
 public abstract class SpawnablePropBase : MonoBehaviour

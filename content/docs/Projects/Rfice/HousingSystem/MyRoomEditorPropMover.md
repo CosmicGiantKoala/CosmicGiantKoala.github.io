@@ -19,6 +19,9 @@ weight = 407
 - 부모 프로퍼티 관계 관리
 - ESC 키로 이동 취소 및 원래 위치 복원
 
+## 오브젝트 이동 기능 제공
+![image](/images/propmover.gif)
+
 ## 선언
 ```csharp
 public class MyRoomEditorPropMover : MyRoomEditorPropEditor

@@ -48,8 +48,17 @@ weight = 401
 {{< /table >}}
 <br>
 
-### 커스터마이징 데모 영상
-{{<video src="videos/MyRoomEditor.mp4" width="70%" class="responsive-video">}}
+### 제작 기능 영상
+#### 1. 마이룸 편집화면 진입, 카메라 조작, 오브젝트 배치모드
+{{<video src="videos/myroomeditor_1.mp4" width="50%" class="responsive-video">}}
+<br><br>
+
+#### 2. 마이룸 오브젝트 편집모드 - 선택, 이동, 회전, 색변경
+{{<video src="videos/myroomeditor_2.mp4" width="50%" class="responsive-video">}}
+<br><br>
+
+#### 3. 마이룸 오브젝트 그룹화, 이미지 변경, 적용
+{{<video src="videos/myroomeditor_3.mp4" width="50%" class="responsive-video">}}
 <br><br>
 
 ## 2. 사용된 기술 요소

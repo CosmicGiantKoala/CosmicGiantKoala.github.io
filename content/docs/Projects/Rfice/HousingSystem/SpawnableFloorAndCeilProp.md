@@ -18,6 +18,9 @@ weight = 415
 - 배치 검증 및 부모 관계 설정
 - 오브젝트 기즈모 위치 반환
 
+## 구현 인터페이스에 따른 편집 기능 표시
+![image](/images/ceilprop.png)
+
 ## 구현 인터페이스
 - [`IColorEditableProp`](/docs/projects/rfice/housingsystem/icoloreditableprop/): 색상 편집 기능
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능

@@ -16,6 +16,9 @@ weight = 418
 - 셰이더 키워드를 통한 시각적 피드백 제공
 - 편집 중 상태 표시 (선택됨, 유효함, 무효함 등)
 
+## 편집 상태 표시
+![image](/images/propstate.gif)
+
 ## 선언
 ```csharp
 public class PropEditingState : MonoBehaviour

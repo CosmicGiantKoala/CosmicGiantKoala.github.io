@@ -19,6 +19,10 @@ weight = 405
 - Zenject를 통한 의존성 주입 지원
 - 편집도구의 라이프 사이클 관리
 
+## 편집 도구 전환 및 관리
+![image](/images/propeditor.gif)
+
+
 ## 선언
 ```csharp
 public abstract class MyRoomEditorPropEditor : MonoBehaviour

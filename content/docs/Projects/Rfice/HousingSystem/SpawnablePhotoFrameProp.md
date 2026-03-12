@@ -19,6 +19,9 @@ weight = 416
 - 이미지 URL 데이터 관리
 - 벽에 배치 할 수 있는 오브젝트
 
+## 구현 인터페이스에 따른 편집 기능 표시
+![image](/images/photoprop.png)
+
 ## 구현 인터페이스
 - [`IMoveableProp`](/docs/projects/rfice/housingsystem/imoveableprop/): 이동 기능
 - [`IMyRoomEditorEditableObject`](/docs/projects/rfice/housingsystem/imyroomeditoreditableobject/): 편집 가능한 오브젝트

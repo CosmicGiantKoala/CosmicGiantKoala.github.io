@@ -20,6 +20,9 @@ weight = 412
 - 입력 이벤트에 따른 카메라 제어
 - 카메라 이동 경계 제한 적용
 
+## 카메라 조작 기능 제공
+![image](/images/myroomcamera.gif)
+
 ## 선언
 ```csharp
 public class MyRoomCameraController : MonoBehaviour

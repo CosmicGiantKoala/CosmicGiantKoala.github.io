@@ -18,6 +18,9 @@ weight = 406
 - 우선순위 레이어를 통한 정확한 타겟팅
 - 선택 해제 및 상태 정리 기능 제공
 
+## 오브젝트 선택 기능 제공
+![image](/images/propselector.gif)
+
 ## 선언
 ```csharp
 public class MyRoomEditorPropSelector : MyRoomEditorPropEditor

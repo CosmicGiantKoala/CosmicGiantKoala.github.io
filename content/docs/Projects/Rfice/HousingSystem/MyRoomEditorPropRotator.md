@@ -20,6 +20,9 @@ weight = 408
 - 회전 각도에 따른 머티리얼 파라미터 업데이트(커스텀 쉐이더 효과)
 - ESC 키로 회전 취소 및 원래 각도 복원
 
+## 오브젝트 회전 기능 제공
+![image](/images/proprotater.gif)
+
 ## 선언
 ```csharp
 public class MyRoomEditorPropRotator : MyRoomEditorPropEditor

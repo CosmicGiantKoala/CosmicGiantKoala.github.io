@@ -18,6 +18,9 @@ weight = 402
 - 상태 변화 시 입력 활성화/비활성화 관리
 - 상태 핸들러를 통한 상태 전환 관리
 
+## 편집상태 전환 관리
+![image](/images/editorstate.gif)
+
 ## 선언
 ```csharp
 public abstract class MyRoomEditorState : MonoBehaviour
