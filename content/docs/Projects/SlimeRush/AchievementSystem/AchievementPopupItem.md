@@ -20,6 +20,12 @@ weight = 217
 - 아이템 정렬 기능을 위한 비교 로직 제공
 - 완료 상태에 따른 시각적 효과 적용
 
+### 업적 미완료, 완료 상태 표시
+![image](/images/achievementpopupitem_0.png)
+
+### 개별 업적 아이템 구성
+![image](/images/achievementpopupitem_1.png)
+
 ## 선언
 ```csharp
 public class AchievementPopupItem : MonoBehaviour, IComparable<AchievementPopupItem>

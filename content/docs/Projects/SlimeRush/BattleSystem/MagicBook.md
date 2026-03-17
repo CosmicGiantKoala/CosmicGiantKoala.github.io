@@ -17,6 +17,12 @@ weight = 204
 - 타겟 검색([`TargetSystem`](/docs/projects/SlimeRush/BattleSystem/TargetSystem)) 및 마법 시전
 - 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData)) 업데이트
 
+### 마법 쿨타임 및 타겟팅 코루틴 관리, 정보 업데이트
+![image](/images/battle_magic_cool.gif)
+
+### 타겟팅 옵션 변경시 타겟팅 코루틴 업데이트
+![image](/images/battle_magic_target.gif)
+
 ## 선언
 ```csharp
 public class MagicBook : MonoBehaviour

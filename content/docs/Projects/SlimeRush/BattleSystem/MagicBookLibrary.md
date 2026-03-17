@@ -17,6 +17,9 @@ weight = 202
 - 플레이어 정보([`플레이어시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExamplePlayerSheetData)
   ) 및 마법 정보([`마법시트데이터(예시)`](/docs/projects/SlimeRush/BattleSystem/ExampleMagicSheetData))업데이트
 
+### [`MagicBook`](/docs/projects/SlimeRush/BattleSystem/MagicBook) 객체 생성 호출([`MagicBookCreator`](/docs/projects/SlimeRush/BattleSystem/MagicBookCreator)를 통해서) 및 관리
+![image](/images/battle_magiclibrary.png)
+
 ## 선언
 ```csharp
 public class MagicBookLibrary : MonoBehaviour

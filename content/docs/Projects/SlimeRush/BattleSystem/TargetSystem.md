@@ -17,6 +17,9 @@ weight = 217
 - 적 타겟 추가 및 제거
 - 타겟 찾기
 
+### 타겟 오브젝트 관리 및 타겟 스캐너([`TargetScanner`](/docs/projects/SlimeRush/BattleSystem/TargetScanner)) 호출
+![image](/images/battle_target_system.gif)
+
 ## 멤버
 ### 속성
 ```csharp

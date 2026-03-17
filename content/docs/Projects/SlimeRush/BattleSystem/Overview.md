@@ -48,6 +48,16 @@ weight = 201
 | **실시간 타겟 추적** | 플레이어와 적 사이의 거리 실시간 감시 및 추적 |
 {{< /table >}}<br>
 
+### 제작기능 영상
+#### 1. 마법 관리(생성 및 업데이트, 쿨타임 및 타겟팅 옵션 관리)
+{{<video src="videos/battlesystem_magic.mp4" width="70%" class="responsive-video">}}
+
+#### 2. 몬스터 공격 핸들링(사거리 및 쿨타임 체크, 공격 어빌리티 등록 및 호출)
+{{<video src="videos/battlesystem_monster.mp4" width="70%" class="responsive-video">}}
+
+#### 3. 타겟 관리 및 타겟 서칭
+{{<video src="videos/battlesystem_target.mp4" width="70%" class="responsive-video">}}
+
 ## 2. 사용된 기술 요소
 ### 핵심 기술 요소 및 API 활용
 {{< table "table-striped">}}

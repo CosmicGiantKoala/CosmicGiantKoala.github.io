@@ -36,6 +36,10 @@ weight = 201
 | **업적 팝업 UI** | 업적 목록 표시 및 상태별 정렬 |
 {{< /table >}}<br>
 
+### 제작기능 영상
+#### 1. 플레이어 진행상황 추적, 업적 UI 표시
+{{<video src="videos/achievementsystem.mp4" width="70%" class="responsive-video">}}
+
 ## 2. 사용된 기술 요소
 ### 핵심 기술 요소 및 API 활용
 {{< table "table-striped">}}

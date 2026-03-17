@@ -17,6 +17,9 @@ weight = 216
 - 랜덤한 타겟([`ITarget`](/docs/projects/SlimeRush/BattleSystem/ITarget)) 찾기
 - 랜덤한 위치(`Vector3`) 찾기
 
+### 조건에 맞는 타겟 서칭 및 리턴
+![image](/images/battle_target_scanner.gif)
+
 ## 멤버
 ### 메서드
 ```csharp

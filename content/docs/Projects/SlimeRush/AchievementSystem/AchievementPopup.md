@@ -19,6 +19,9 @@ weight = 216
 - 업적 상태 변경 감지 및 UI 업데이트
 - 업적 아이템([`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem)) 동적 정렬
 
+### [`AchievementPopupItem`](/docs/projects/SlimeRush/AchievementSystem/AchievementPopupItem) 동적 생성 및 관리
+![image](/images/achievementpopup.png)
+
 ## 선언
 ```csharp
 public class AchievementPopup : MonoBehaviour

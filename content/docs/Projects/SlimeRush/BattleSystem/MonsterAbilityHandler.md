@@ -16,6 +16,9 @@ weight = 209
 - 쿨타임을 관리하고, 쿨타임이 완료되면 공격을 수행
 - 공격 범위 내에 쿨타임이 완료되지 않거나 플레이어가 없는 경우 쿨타임을 감소
 
+### 거리 체크 및 쿨타임 관리([`MonsterAbilityHandler`](/docs/projects/SlimeRush/BattleSystem/MonsterAbilityHandler)), 공격 핸들링
+![image](/images/battle_monster_cool.gif)
+
 ## 선언
 ```csharp
 public class CommonMonsterCombat : MonsterCombatBehaviour

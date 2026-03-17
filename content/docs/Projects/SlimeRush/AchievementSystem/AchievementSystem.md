@@ -22,6 +22,9 @@ weight = 202
 - 선행 조건 업적 검사
 - 업적 상태 변경 알림
 
+### [`Achievement`](/docs/projects/SlimeRush/AchievementSystem/Achievement) 객체(MonoBehaviour 아님) 생성 및 관리
+![image](/images/achievementsystem_0.png)
+
 ## 선언
 ```csharp
 public class AchievementSystem : MonoBehaviour
