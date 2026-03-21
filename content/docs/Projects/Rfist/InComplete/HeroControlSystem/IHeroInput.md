@@ -16,25 +16,17 @@ weight = 265
 [`BaseHeroInput`](/docs/projects/rfist/HeroControlSystem/BaseHeroInput) 추상 클래스가 이 인터페이스를 구현합니다.
 
 ## 역할
-
 - 영웅 캐릭터의 입력 메서드 계약 정의
 - 이동/전투/포커스 입력값 제공
 - 입력 시스템의 표준 인터페이스
 
 ## 선언
-
 ```csharp
-/// <summary>
-/// 영웅 입력 인터페이스
-/// 이동, 전투, 포커스 등의 입력 메서드를 정의합니다.
-/// </summary>
 public interface IHeroInput
 ```
 
 ## 멤버
-
-### Movement Input
-
+### 메서드
 ```csharp
 /// <summary>
 /// 수평 입력값 가져오기 (좌/우)
@@ -47,11 +39,7 @@ public float GetHorizontal();
 /// </summary>
 /// <returns>수직 입력값 (-1 ~ 1)</returns>
 public float GetVertical();
-```
 
-### Combat Input
-
-```csharp
 /// <summary>
 /// 공격 입력 여부
 /// </summary>
@@ -81,27 +69,7 @@ public bool IsDash();
 /// </summary>
 /// <returns>궁극기 입력 여부</returns>
 public bool IsUltimateAttack();
-```
 
-### Focus Input
-
-```csharp
-/// <summary>
-/// 포커스 모드 입력 여부
-/// </summary>
-/// <returns>포커스 모드 입력 여부</returns>
-public bool IsFocusMode();
-
-/// <summary>
-/// 포커스 변경 입력 여부
-/// </summary>
-/// <returns>포커스 변경 입력 여부</returns>
-public bool IsFocusChange();
-```
-
-### Special Input
-
-```csharp
 /// <summary>
 /// 공격+가드 동시 입력 여부
 /// </summary>
@@ -109,154 +77,119 @@ public bool IsFocusChange();
 public bool IsAttackGuardDualInput();
 ```
 
-### Events
-
-```csharp
-/// <summary>
-/// 입력 종료 이벤트
-/// </summary>
-public event Action OnExitEvent;
-```
-
 ## 기능 설명
-
 ### 입력 카테고리
-
-`IHeroInput`은 4가지 입력 카테고리를 정의합니다:
-
 | 카테고리 | 메서드 | 설명 |
 |----------|--------|------|
 | **이동** | `GetHorizontal`, `GetVertical` | 좌/우, 앞/뒤 입력값 (-1 ~ 1) |
 | **전투** | `IsAttack`, `IsGuard`, `IsDash`, `IsUltimateAttack` | 공격/가드/대시/궁극기 입력 여부 |
-| **포커스** | `IsFocusMode`, `IsFocusChange` | 포커스 모드/변경 입력 여부 |
 | **특수** | `IsAttackGuardDualInput` | 공격+가드 동시 입력 여부 |
 
 ### 입력값 반환 타입
-
 - **float (-1 ~ 1)**: `GetHorizontal`, `GetVertical` - 축 입력값
 - **bool**: `IsAttack`, `IsGuard` 등 - 버튼 입력 여부
-- **event Action**: `OnExitEvent` - 이벤트 구독
 
 ## 의존성/상속 관계
-
 ### 구현 클래스
-- [`BaseHeroInput`](/docs/projects/rfist/HeroControlSystem/BaseHeroInput): IHeroInput의 주요 구현체 (추상 클래스)
-- `HeroKeyInput`: 키보드 입력 구현
-- `NetworkHeroInput`: 네트워크 입력 구현 (예상)
-
-### 사용 위치
-- [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController): 입력값을 받아 이동/전투 처리
-- [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController): 네트워크 환경에서 입력 처리
+- [`BaseHeroInput`](/docs/projects/rfist/HeroControlSystem/BaseHeroInput) 추상 클래스에서 구현
+- [`HeroKeyInput`](/docs/projects/rfist/incomplete/herocontrolsystem/herokeyinput/)에서 키보드 입력 구현
+- [`NetworkHeroInput`](/docs/projects/rfist/heronetworksystem/networkheroinput/)에서 입력소스 수집
 
 ## 사용 예시
-
-### BaseHeroInput에서 IHeroInput 구현
-
+#### [`NetworkHeroInput`](/docs/projects/rfist/heronetworksystem/networkheroinput/)에서 입력 소스 수집시 사용
 ```csharp
-/// <summary>
-/// IHeroInput을 구현하는 BaseHeroInput 추상 클래스 예시
-/// </summary>
-public abstract class BaseHeroInput : MonoBehaviour, IHeroInput, IHeroEvent
-{
-    // 이동 입력
-    public abstract float GetHorizontal();
-    public abstract float GetVertical();
-    
-    // 전투 입력
-    public abstract bool IsAttack();
-    public abstract bool IsGuard();
-    public abstract bool IsDash();
-    
-    // 포커스 입력
-    public abstract bool IsFocusMode();
-    
-    // 이벤트
-    public abstract event Action OnExitEvent;
-}
-```
+// BaseHeroInput.cs
+public static IReadOnlyList<IHeroInput> HeroInputList => HeroInputs;
 
-### HeroController에서 IHeroInput 사용
-
-```csharp
-/// <summary>
-/// HeroController에서 IHeroInput을 사용하는 예시
-/// </summary>
-public class HeroController : MonoBehaviour, IHeroController
+// NetworkHeroInput.cs
+public override void OnInput(NetworkRunner runner, NetworkInput input)
 {
-    private IHeroInput _heroInput;
+    // 입력 권한이 없으면 처리하지 않음
+    if (!Object.HasInputAuthority) return;
     
-    /// <summary>
-    /// 입력 컴포넌트 설정
-    /// </summary>
-    public void SetupInput(IHeroInput heroInput)
-    {
-        _heroInput = heroInput;
-    }
+    // 새로운 입력 데이터 생성
+    var heroInputData = new HeroInputData();
     
-    /// <summary>
-    /// 입력 처리
-    /// </summary>
-    private void Update()
+    // 등록된 모든 입력 소스에서 입력 수집
+    foreach (var heroInput in BaseHeroInput.HeroInputList)
     {
-        // 이동 입력
-        float horizontal = _heroInput.GetHorizontal();
-        float vertical = _heroInput.GetVertical();
-        
-        if (horizontal != 0 || vertical != 0)
+        // 수평 이동 입력 수집 (이미 값이 있으면 건드리지 않음)
+        if (heroInputData.Horizontal == 0)
         {
-            Move(horizontal, vertical, Time.deltaTime);
+            heroInputData.Horizontal = heroInput.GetHorizontal();    
+        }
+
+        // 수직 이동 입력 수집 (이미 값이 있으면 건드리지 않음)
+        if (heroInputData.Vertical == 0)
+        {
+            heroInputData.Vertical = heroInput.GetVertical();    
+        }
+
+        // 대시 입력 수집
+        if (heroInput.IsDash())
+        {
+            heroInputData.Buttons |= HeroInputData.Dash;
         }
         
-        // 공격 입력
-        if (_heroInput.IsAttack())
+        // 공격 입력 수집 및 타임스탬프 기록
+        if (heroInput.IsAttack())
         {
-            Attack();
+            heroInputData.Buttons |= HeroInputData.Attack;
+            heroInputData.AttackTimeStamp = runner.SimulationTime;
         }
-        
-        // 가드 입력
-        if (_heroInput.IsGuard())
+
+        // 공격 홀드(차지) 입력 수집 및 타임스탬프 기록
+        if (heroInput.IsAttackHold())
         {
-            Guard();
+            heroInputData.Buttons |= HeroInputData.AttackHold;
+            heroInputData.AttackTimeStamp = runner.SimulationTime;
+        }
+        else
+        {
+            // 홀드 해제 시에도 타임스탬프 갱신
+            heroInputData.AttackTimeStamp = runner.SimulationTime;
+        }
+
+        // 가드 입력 수집 및 타임스탬프 기록
+        if (heroInput.IsGuard())
+        {
+            heroInputData.Buttons |= HeroInputData.Guard;  
+            heroInputData.AttackTimeStamp = runner.SimulationTime;   
+        }
+
+        // 포커스 모드 입력 수집
+        if (heroInput.IsFocusMode())
+        {
+            heroInputData.Buttons |= HeroInputData.FocusMode;
+        }
+
+        // 포커스 변경 입력 수집
+        if (heroInput.IsFocusChange())
+        {
+            heroInputData.Buttons |= HeroInputData.FocusChange;
+        }
+
+        // 궁극기 입력 수집 및 타임스탬프 기록
+        if (heroInput.IsUltimateAttack())
+        {
+            heroInputData.Buttons |= HeroInputData.UltimateAttack;
+            heroInputData.AttackTimeStamp = runner.SimulationTime;
+        }
+
+        // 공격+가드 동시 입력 수집 및 타임스탬프 기록
+        if (heroInput.IsAttackGuardDualInput())
+        {
+            heroInputData.Buttons |= HeroInputData.AttackGuardDualInput;
+            heroInputData.AttackTimeStamp = runner.SimulationTime;   
         }
     }
-}
-```
-
-### NetworkHeroController에서 IHeroInput 사용
-
-```csharp
-/// <summary>
-/// NetworkHeroController에서 IHeroInput을 사용하는 예시
-/// </summary>
-public class NetworkHeroController : NetworkBehaviourCallback
-{
-    [SerializeField] private IHeroInput _heroInput;
-    [SerializeField] private HeroController _heroController;
     
-    public override void FixedUpdateNetwork()
-    {
-        if (GetInput(out HeroInputSyncData input))
-        {
-            // 입력값 수집
-            float horizontal = _heroInput.GetHorizontal();
-            float vertical = _heroInput.GetVertical();
-            
-            // 이동 처리
-            _heroController.Move(horizontal, vertical, Time.deltaTime);
-            
-            // 공격 입력
-            if (_heroInput.IsAttack())
-            {
-                _heroController.Attack(input);
-            }
-        }
-    }
+    // 수집된 입력 데이터를 네트워크 입력으로 설정
+    input.Set(heroInputData);
 }
 ```
 
 ## 관련 클래스
-
 - [`BaseHeroInput`](/docs/projects/rfist/HeroControlSystem/BaseHeroInput)
-- [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController)
+- [`HeroKeyInput`](/docs/projects/rfist/incomplete/herocontrolsystem/herokeyinput/)
 - [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController)
-- [`IHeroEvent`](/docs/projects/rfist/HeroControlSystem/IHeroEvent)
