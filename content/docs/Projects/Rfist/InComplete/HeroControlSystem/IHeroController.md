@@ -16,28 +16,19 @@ DoTween 기반의 물리법칙 없는 이동, 넉백, 대시, 타겟팅 등의 �
 [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController) 클래스가 이 인터페이스를 구현합니다.
 
 ## 역할
-
 - 영웅 캐릭터의 이동 기능 계약 정의
 - DoTween 기반 절대/상대 이동 인터페이스 제공
 - 넉백 및 대시 기능 표준화
 - 자동 타겟팅 및 방향 전환 기능 정의
+- 동작 중인 Tween 기반 동작 취소 기능 정의
 
 ## 선언
-
 ```csharp
-/// <summary>
-/// 영웅 캐릭터의 이동 및 제어 기능을 정의하는 인터페이스
-/// DoTween 기반 이동, 넉백, 대시, 타겟팅 등의 기능을 제공합니다.
-/// </summary>
 public interface IHeroController
 ```
 
 ## 멤버
-
 ### 메서드
-
-#### 이동
-
 ```csharp
 /// <summary>
 /// DoTween을 이용해 캐릭터를 물리법칙 없이 지정된 방향으로 절대 이동
@@ -54,13 +45,9 @@ public void MoveToAbsoluteDirection(float distance, float time, Vector3 directio
 /// <param name="time">이동 시간(초)</param>
 /// <param name="direction">상대 방향 벡터</param>
 public void MoveToRelativeDirection(float distance, float time, Vector3 direction);
-```
 
-#### 넉백 및 대시
-
-```csharp
 /// <summary>
-/// RigidBody.AddForce를 통해 Hero를 넉백시킴
+/// DoTween을 사용하여 넉백 처리
 /// </summary>
 /// <param name="attackerPos">공격자 위치. 넉백은 플레이어 기준 공격자의 반대 방향으로 발생</param>
 /// <param name="force">적용할 넉백 힘</param>
@@ -73,11 +60,7 @@ public void KnockBack(Vector3 attackerPos, float force);
 /// <param name="time">대시 시간(초)</param>
 /// <param name="direction">대시 방향</param>
 public void Dash(float distance, float time, Vector3 direction);
-```
 
-#### 제어
-
-```csharp
 /// <summary>
 /// 현재 진행 중인 이동 동작 취소
 /// </summary>
@@ -88,11 +71,7 @@ public void OnCancel();
 /// </summary>
 /// <returns>현재 회전값(Quaternion)</returns>
 public Quaternion GetRigidbodyRotation();
-```
 
-#### 타겟팅
-
-```csharp
 /// <summary>
 /// 주변에서 가장 가까운 타겟을 찾아 바라보기
 /// </summary>
@@ -123,194 +102,153 @@ public void LookAt(Vector3 targetDirection);
 ```
 
 ## 기능 설명
-
-### 이동 시스템
-
-`IHeroController`는 두 가지 이동 방식을 제공합니다:
-
+### 이동 기능 정의
 - **절대 이동 (`MoveToAbsoluteDirection`)**: 월드 좌표계 기준으로 지정된 방향으로 이동
 - **상대 이동 (`MoveToRelativeDirection`)**: 캐릭터의 현재 방향 기준으로 상대적인 방향으로 이동
+- **넉백(`KnockBack`)**: 공격자 기준 반대 방향으로 이동
 
-두 이동 방식 모두 DoTween을 사용하여 물리 엔진의 영향 없이 부드러운 이동을 구현합니다.
-
-### 넉백 시스템
-
-`KnockBack` 메서드는 RigidBody의 AddForce를 사용하여 물리 기반 넉백을 구현합니다:
-- 공격자 위치를 기준으로 반대 방향으로 넉백 발생
-- 지정된 힘(force)만큼 impulse 타입으로 힘 적용
-
-### 타겟팅 시스템
-
-자동 타겟팅 기능을 통해 전투 중 적을 자동으로 감지하고 바라볼 수 있습니다:
-- `FindTarget`: 조건(거리, 각도)에 맞는 타겟을 찾아 반환
-- `FindAndLookTarget`: 타겟을 찾아 즉시 바라보기
-- `LookAt`: 특정 위치나 방향을 바라볼 수 있도록 회전
+### 회전 기능 정의
+- **타겟 서칭(`FindTarget`)**: 조건(거리, 각도)에 맞는 타겟을 찾아 반환
+- **타겟 방향으로 회전(`FindAndLookTarget`)**: 타겟을 찾아 즉시 바라보기
+- **특정 방향으로 회전(`LookAt`)**: 특정 위치나 방향을 바라볼 수 있도록 회전
 
 ## 의존성/상속 관계
-
-### 구현 클래스
-- [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController): IHeroController의 주요 구현체로, 모든 메서드를 구현
-
-### 사용 위치
-- [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController): HeroController를 통해 간접적으로 사용
-- [`BaseHeroMoveController`](/docs/projects/rfist/HeroControlSystem/BaseHeroMoveController): 실제 이동 로직을 처리하고 HeroController에서 호출
-- [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility): 스킬 실행 중 이동 제어가 필요할 때 사용
+- 구현 클래스
+  - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController) IHeroController의 구현체로, 모든 메서드를 구현
+- [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController)에서 HeroController를 통해 간접적으로 사용
+- [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility)를 상속받는 클래스들이 피격, 넉백과 관련된 제어가 필요할 때 사용
+- `BaseHeroSkill`를 상속받는 클래스들이 스킬과 관련된 제어가 필요할 때 사용
 
 ## 사용 예시
-
-### HeroController에서 IHeroController 구현
-
+#### `BaseHeroAbility`를 상속한 캐릭터 어빌리티 클래스에서 넉백 이동에 사용
 ```csharp
-/// <summary>
-/// IHeroController를 구현하는 HeroController 클래스 예시
-/// </summary>
-public class HeroController : MonoBehaviour, IHeroController
+// MaiAbility.cs
+private IHeroController _heroController;
+
+protected override void OnHit(IHitEvent.HitInfo hitInfo)
 {
-    [SerializeField] private BaseHeroMoveController heroMoveController;
-    [SerializeField] private AutoTargeting autoTargetingComponent;
-
-    /// <summary>
-    /// DoTween을 이용한 절대 방향 이동 구현
-    /// </summary>
-    public void MoveToAbsoluteDirection(float distance, float time, Vector3 direction)
+    if (hitInfo.HitterInfo.InvincibleState)
     {
-        heroMoveController.MoveToAbsoluteDirection(distance, time, direction);
+        PlayTrailEffect();
+        return;
     }
-
-    /// <summary>
-    /// DoTween을 이용한 상대 방향 이동 구현
-    /// </summary>
-    public void MoveToRelativeDirection(float distance, float time, Vector3 direction)
+    
+    if (hitInfo.HitterInfo.GuardState)
     {
-        heroMoveController.MoveToRelativeDirection(distance, time, direction);
+        OnGuard(hitInfo);
+        SetupStiffnessRoutine();
     }
-
-    /// <summary>
-    /// RigidBody.AddForce를 통한 넉백 구현
-    /// </summary>
-    public void KnockBack(Vector3 attackerPos, float force)
+    else
     {
-        heroMoveController.KnockBack(attackerPos, force);
-    }
-
-    /// <summary>
-    /// 대시 이동 구현 (포커스 모드 여부에 따라 분기)
-    /// </summary>
-    public void Dash(float distance, float time, Vector3 direction)
-    {
-        if (_isFocusMode)
+        var hitEffect = GetHitEffectType(hitInfo);
+        var effect = FindEffect(hitEffect);
+        if (effect is not null)
         {
-            MoveToRelativeDirection(distance, time, direction);
+            PlayEffect(effect, hitInfo);
+            PlaySoundEffect(effect);
         }
-        else
-        {
-            if (direction == Vector3.zero)
-            {
-                MoveToRelativeDirection(distance, time, Vector3.forward);
-            }
-            else
-            {
-                heroMoveController.LookAt(direction);
-                MoveToRelativeDirection(distance, time, Vector3.forward);
-            }
-        }
-    }
 
-    /// <summary>
-    /// 타겟 찾기 및 바라보기
-    /// </summary>
-    public void FindAndLookTarget(float autoTargetingDistance = 0, int autoTargetingAngle = 0)
-    {
-        if (_isLocalPlayer == false) return;
-        if (FindTarget(autoTargetingDistance, autoTargetingAngle, out var target))
-        {
-            LookAt(target);
-        }
+        var spPoint = _heroStatus.GetSp().Current;
+        _heroStatus.ChangeSpecialPoint(spPoint + hitInfo.Damage);
+        _heroStatus.ApplyDamage(hitInfo.Damage);
+        SetupStiffnessRoutine();
+        _skillManager.Hit(hitInfo);
     }
-
-    /// <summary>
-    /// 타겟 찾기 구현
-    /// </summary>
-    public bool FindTarget(float targetDistanceRange, int targetAngleRange, out Transform target)
-    {
-        return autoTargetingComponent.FindTarget(targetAngleRange, targetAngleRange, out target);
-    }
-
-    /// <summary>
-    /// 특정 방향 바라보기
-    /// </summary>
-    public void LookAt(Vector3 direction)
-    {
-        heroMoveController.LookAt(direction);
-    }
-
-    /// <summary>
-    /// 특정 타겟 바라보기
-    /// </summary>
-    public void LookAt(Transform target)
-    {
-        heroMoveController.LookAt(target);
-    }
-
-    /// <summary>
-    /// Rigidbody 회전값 가져오기
-    /// </summary>
-    public Quaternion GetRigidbodyRotation()
-    {
-        return heroMoveController.GetRigidbodyRotation();
-    }
-
-    /// <summary>
-    /// 이동 취소
-    /// </summary>
-    public void OnCancel()
-    {
-        heroMoveController.Cancel();
-    }
+    
+    if (_heroObjectInfo.IsRemote()) return;
+    _heroController.KnockBack(hitInfo.AttackerPos, hitInfo.KnockBackPower);
 }
 ```
 
-### BaseHeroAbility에서 IHeroController 사용
-
+#### `BaseSkillManager`를 상속한 캐릭터 스킬매니저 클래스에서 공격 대상 타겟팅시 사용
 ```csharp
-/// <summary>
-/// BaseHeroAbility에서 HeroController의 이동 기능을 사용하는 예시
-/// </summary>
-public abstract class BaseHeroAbility : MonoBehaviour
+//MaiSkillManager.cs
+protected IHeroController HeroController;
+
+private void OnAttackStart(BaseHeroSkill.SkillStartResult skillStartResult)
 {
-    protected IHeroController _heroController;
-
-    /// <summary>
-    /// 스킬 실행 중 대시 이동
-    /// </summary>
-    protected void SkillDash(float distance, float time, Vector3 direction)
+    if (MoveInputDir == Vector2.zero)
     {
-        _heroController.Dash(distance, time, direction);
+        if (_currentSkill != null && _currentSkill.AutoTargeting && HeroObjectInfo.IsRemote() == false)
+        {
+            HeroController.FindAndLookTarget(_currentSkill.AutoTargetingDistance, _currentSkill.AutoTargetingAngle);
+        }
     }
-
-    /// <summary>
-    /// 공격 시 타겟 방향으로 회전
-    /// </summary>
-    protected void FaceTarget(Transform target)
+    else
     {
-        _heroController.LookAt(target);
+        HeroController.LookAt(new Vector3(MoveInputDir.x, 0, MoveInputDir.y));
     }
+    SkillEventInvoker.NotifySkillEvents(skillEvent => skillEvent?.OnSkill(skillStartResult));
+    HeroStatus.SetAttackState(true);
+}
+```
 
-    /// <summary>
-    /// 피격 시 넉백 처리
-    /// </summary>
-    public void ApplyKnockBack(Vector3 attackerPos, float force)
+#### 'BaseHeroSkill'를 상속한 캐릭터 스킬 클래스에서 다양한 용도로 사용
+```csharp
+1. 공격스킬 사용 시 스킬의 이동 동작 수행
+// BaseHeroAttackSkill.cs
+protected IHeroController HeroController;
+/// <summary>
+/// 스킬 이동을 수행합니다.
+/// </summary>
+private void OnSkillMovement()
+{
+    _canMove = false;
+    if (_characterMovement.direction == CharacterMovement.Direction.Forward)
     {
-        _heroController.KnockBack(attackerPos, force);
+        HeroController.MoveToRelativeDirection(
+            _characterMovement.moveDistance, 
+            _characterMovement.moveToDistanceTime, 
+            Vector3.forward);
     }
+}
+
+2. 피격, 캔슬등 스킬 취소시 이동 동작 취소
+// BaseHeroAttackSkill.cs
+protected IHeroController HeroController;
+
+/// <summary>
+/// 피격, 혹은 외부적 요인으로 스킬 캔슬시 호출
+/// </summary>
+protected override void SkillCancellationByExternal()
+{
+    HeroController.OnCancel();
+    var result = new SkillFinishResult(this, SkillFinishResult.Fail.CancellationByExternal);
+    OnFinishSkill?.Invoke(result);
+}
+
+/// <summary>
+/// 스킬캔슬 등을 통한 스킬 캔슬시 호출
+/// </summary>
+protected override void SkillCancellationBySelf()
+{
+    HeroController.OnCancel();
+    var result = new SkillFinishResult(this, SkillFinishResult.Fail.SelfCancellation);
+    OnFinishSkill?.Invoke(result);
+}
+
+3. 대시(혹은 다른 이동기) 스킬 사용시 이동 동작 호출시 사용
+// DashSkill.cs
+protected IHeroController HeroController;
+
+private void ExecuteDash(Vector3 direction)
+{
+    var data = skillData.FirstOrDefault(data => data.SkillId == GetSkillId());
+    if (data == null) return;
+    var movement = data.GetCharacterMovement();
+
+    HeroController.Dash(movement.moveDistance, movement.moveToDistanceTime, direction);
+
+    PlayDashEffect(data);
 }
 ```
 
 ## 관련 클래스
-
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController)
 - [`BaseHeroMoveController`](/docs/projects/rfist/HeroControlSystem/BaseHeroMoveController)
 - [`HeroRigidbodyController`](/docs/projects/rfist/HeroControlSystem/HeroRigidbodyController)
 - [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController)
 - [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility)
-- [`AutoTargeting`](/docs/projects/rfist/HeroControlSystem/AutoTargeting)
+- `BaseHeroSkill`
+- `BaseSkillManager`
+- `BaseHeroAttackSkill`

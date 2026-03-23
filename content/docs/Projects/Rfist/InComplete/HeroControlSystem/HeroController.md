@@ -599,7 +599,7 @@ public void Dash(float vertical, float horizontal)
   - `IHeroDetector` 인터페이스 구현
   - [`ISkillEventInvoker`](/docs/projects/rfist/HeroSkillSystem/ISkillEventInvoker) 인터페이스 구현
   - [`ICutSceneEventInvoker`](/docs/projects/rfist/HeroControlSystem/ICutSceneEventInvoker) 인터페이스 구현
-- 이벤트 인터페이스
+- 관리되는 이벤트
     - `IMoveControlEvent`
     - `IHitEvent`
     - `ISkillEvent`
