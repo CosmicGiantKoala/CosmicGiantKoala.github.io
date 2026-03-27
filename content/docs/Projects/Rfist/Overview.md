@@ -24,7 +24,7 @@ weight = 100
 ### 기여 요약
 #### 클라이언트 개발 항목
 1. [`HeroNetworkSystem`](/docs/projects/rfist/heronetworksystem/) : 영웅 동기화 시스템
-2. HeroControlSystem : 영웅 조작 시스템
+2. [`HeroControlSystem`](/docs/projects/rfist/herocontrolsystem/) : 영웅 조작 시스템
 3. HeroAbilitySystem : 영웅 능력 시스템
 4. HeroSkillSystem : 영웅 스킬 시스템
 5. HeroVisualSystem : 영웅 외관시스템

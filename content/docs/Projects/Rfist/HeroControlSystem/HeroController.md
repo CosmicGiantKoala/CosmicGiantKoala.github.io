@@ -82,11 +82,6 @@ private readonly HashSet<ICutSceneEvent> _cutSceneEvents = new HashSet<ICutScene
 /// 컨트롤러 상태 핸들러
 /// </summary>
 private IControllerState _controllerState;
-
-/// <summary>
-/// 영웅 상태 인터페이스
-/// </summary>
-private IHeroStatus _heroStatus;
 ```
 
 ### 메서드
@@ -227,7 +222,6 @@ public void UnRegister(ICutSceneEvent cutSceneEvent)
 public void Setup(BaseHeroAbility heroAbility, IHeroStatus heroStatus, IHeroObjectInfo heroObjectInfo)
 {
     _baseHeroAbility = heroAbility;
-    _heroStatus = heroStatus;
     
     // 이벤트 리스너 등록
     Register(_baseHeroAbility.HitEvent);
@@ -266,7 +260,6 @@ public void SetupControllerStateHandler(IControllerState controllerState)
 /// </summary>
 public void Move(float horizontal, float vertical, float deltaTime)
 {
-    if (_heroStatus.IsNull()) return;
     _moveDirection = new Vector2(horizontal, vertical);
 
     // 이동 제어 이벤트 통지

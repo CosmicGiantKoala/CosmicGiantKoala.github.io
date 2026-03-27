@@ -18,7 +18,6 @@ Rigidbody 기반([`HeroRigidbodyController`](/docs/projects/rfist/HeroControlSys
 - 다양한 이동 구현체([`HeroRigidbodyController`](/docs/projects/rfist/HeroControlSystem/HeroRigidbodyController), `HeroSimpleKccController` 등)의 공통 인터페이스 제공
 - 이동, 회전, 순간 이동, 넉백 등의 기본 동작 정의
 - 템플릿 메서드 패턴을 통한 구현체 확장 지원
-- 이동 관련 이벤트 발행 및 상태 관리
 
 ## 선언
 ```csharp

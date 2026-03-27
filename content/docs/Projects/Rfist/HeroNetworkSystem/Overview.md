@@ -453,6 +453,7 @@ classDiagram
 |-----|-----|
 |[**NetworkHeroInput**](/docs/projects/rfist/heronetworksystem/networkheroinput/)<br> *: NetworkBehaviourCallback*| 💡 로컬 플레이어 입력 수집 및 네트워크 전송<br> 💡 `NetworkInput` 시스템을 통한 입력 데이터 동기화<br> 💡 이동, 공격, 가드, 대시, 궁극기 등 다양한 입력 처리 |
 |[**NetworkHeroController**](/docs/projects/rfist/heronetworksystem/networkherocontroller/)<br> *: NetworkBehaviour*| 💡 네트워크로부터 입력 수신 및 실제 게임 로직 실행<br> 💡 RPC를 통한 입력 데이터 브로드캐스트<br> 💡 네트워크 지연(Latency) 측정을 위한 타임스탬프 동기화 |
+|[**HeroInputData**](/docs/projects/rfist/heronetworksystem/heroinputdata/)<br> *: INetworkInput*| 💡 **Fusion 네트워크 전송용 입력 데이터 컨테이너**<br> 💡 비트 마스크를 활용한 효율적인 버튼 상태 표현<br> 💡 `INetworkInput` 구현체로 자동 직렬화 지원 |
 {{< /table >}}
 
 ```mermaid
