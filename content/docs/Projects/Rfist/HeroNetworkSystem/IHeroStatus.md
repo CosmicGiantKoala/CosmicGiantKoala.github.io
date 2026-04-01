@@ -280,7 +280,7 @@ public void AttachHitResult(HitBoxHandler.HitResult hitResult);
 ## 의존성/상속 관계
 - 구현 클래스
   - [`NetworkHeroStatus`](/docs/projects/rfist/heronetworksystem/networkherostatus) 클래스에서 네트워크 환경에서의 상태 관리 구현
-- [`HitBoxHandler`](/docs/projects/rfist/herohitsystem/hitboxhandler) 클래스의 [`IHitEvent`](/docs/projects/rfist/herohitsystem/ihitevent)를 통해 피해 이벤트 정보 전달
+- `HitBoxHandler` 클래스의 `IHitEvent`를 통해 피해 이벤트 정보 전달
 - `HealthPoint`, `SpecialPoint`, `StiffnessPoint`, `StatusBoost` 중첩 구조체 및 `Stance`, `BoostType` 중첩 열거형 정의
 
 ## 사용 예시

@@ -58,6 +58,10 @@ weight = 201
 #### 3. 타겟 관리 및 타겟 서칭
 {{<video src="videos/battlesystem_target.mp4" width="70%" class="responsive-video">}}
 
+<br>
+
+---
+
 ## 2. 사용된 기술 요소
 ### 핵심 기술 요소 및 API 활용
 {{< table "table-striped">}}
@@ -79,6 +83,10 @@ weight = 201
 | **Observer Pattern** | 데미지 이벤트, 전투 상태 변경 시 관련 모듈에 실시간 알림 |
 | **Dependency Injection** | 의존성 주입을 통한 테스트 용이성 및 유연한 아키텍처 구현 |
 {{< /table >}}<br>
+
+<br>
+
+---
 
 ## 3. 전체 시스템 구조도(간략)
 {{< alert context="info" text="작업 범위 위주" />}}
@@ -134,6 +142,10 @@ classDiagram
   TargetSystem "1" --> "n" ITarget : manages
 ```
 <br><br>
+
+<br>
+
+---
 
 ## 4. 주요 클래스별 역할 및 관계
 ### 플레이어 마법 관리 시스템
@@ -430,6 +442,10 @@ classDiagram
 ```
 <br><br>
 
+<br>
+
+---
+
 ## 5. 주요 특징
 ### 기능의 특징
 - **플레이어 데미지 정보**: 기본 데미지 + 속성 보너스 + 크기 보너스 + 크리티컬 + 룬 효과 적용
@@ -438,6 +454,10 @@ classDiagram
 - **몬스터 공격 행동 제어**: 거리 기반 전투 행동 결정, 다중 공격 능력 동시 관리, 게임 상태에 따라 행동 결정
 - **의존성 주입 아키텍처**: Zenject 기반 DI, 객체 생성과 의존성 관리 자동화
 - **확장 가능한 설계**: 플러그인 가능한 마법 시스템, 새로운 마법 타입 쉽게 추가 가능
+
+<br>
+
+---
 
 ## 6. UseCase
 ### 마법 시전 시나리오

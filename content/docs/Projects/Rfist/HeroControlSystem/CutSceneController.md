@@ -6,7 +6,7 @@ date = "2025-03-06T23:05:00+09:00"
 lastmod = "2025-03-06T23:05:00+09:00"
 draft = false
 toc = true
-weight = 250
+weight = 222
 +++
 
 ## 개요
@@ -17,6 +17,10 @@ weight = 250
 - `TimelineManager`에서 발생하는 컷씬 이벤트 처리 (시작/종료)
 - 컷씬 중 피격자에게 데미지 적용
 - 로컬/원격 플레이어 구분에 따른 공격 이벤트 발생
+
+#### `Timeline` 패널에서 `CutSceneController` 호출   
+![image](/images/rfist_cutscene.png)
+
 
 ## 선언
 ```csharp

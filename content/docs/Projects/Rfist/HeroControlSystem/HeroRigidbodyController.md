@@ -6,7 +6,7 @@ date = "2025-03-06T20:49:00+09:00"
 lastmod = "2025-03-06T20:49:00+09:00"
 draft = false
 toc = true
-weight = 230
+weight = 208
 +++
 
 ## 개요
@@ -19,6 +19,9 @@ weight = 230
 - [`DoTween`](https://dotween.demigiant.com/documentation.php) 기반 트윈 이동 (대시, 넉백 등) 구현
 - 카메라 기준 상대 이동 및 회전 처리
 - 벽/아바타 충돌 감지 및 처리
+
+#### `Tween` 데이터 생성 및 처리
+![image](/images/rfist_tweendata.gif)
 
 ## 선언
 ```csharp

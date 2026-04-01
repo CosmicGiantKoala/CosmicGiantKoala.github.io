@@ -31,6 +31,9 @@ weight = 202
     - `Register()`/`UnRegister()` 메서드를 통한 이벤트 등록/해제
     - `heroController`에 이벤트 리스너 연결 및 관리
 
+### 네트워크 캐릭터 셋업
+![image](/images/rfist_networkobject.gif)
+
 ## 선언
 ```csharp
 public class NetworkHeroObject : NetworkBehaviourCallback, IHeroObjectInfo , IAttackEvent , INetworkChat
@@ -434,9 +437,9 @@ private void RPC_ResetHero(int round)
    - 셋업 코루틴 중지
 
 ### 게임 라운드 시작/종료시 초기화
-- `NetworkHeroStatus` 항목을 `HeroBaseStat`을 통해 초기화
+- [`NetworkHeroStatus`](/docs/projects/rfist/heronetworksystem/networkherostatus) 항목을 `HeroBaseStat`을 통해 초기화
   - 라운드 조건에 따라 SP초기화
-- `HeroControllerStateHandle` 컨트롤러 상태 초기화
+- [`HeroControllerStateHandler`](/docs/projects/rfist/herocontrolsystem/herocontrollerstatehandler) 컨트롤러 상태 초기화
 - Focus모드 초기화
 - `HeroAnimationController` 애니메이션 컨트롤러 초기화
 
@@ -457,7 +460,7 @@ private void RPC_ResetHero(int round)
   - 공격 성공 정보 브로드 캐스팅
 - `IMatchEvent`: 매치 관련 이벤트
   - 매치 시작/종료 상태 및 승패정보 브로드 캐스팅
-- `ICutSceneEvent`: 컷씬 관련 이벤트
+- [`ICutSceneEvent`](/docs/projects/rfist/herocontrolsystem/icutsceneevent): 컷씬 관련 이벤트
   - 컷씬 시작/종료 상태 브로드 캐스팅
 
 ### 컴포넌트 초기화 흐름
@@ -466,7 +469,7 @@ private void RPC_ResetHero(int round)
 2. **Ability 생성** - `HeroAbilityManager`에서 새 능력 인스턴스 생성
 3. **모델 업데이트** - `HeroModelController`에 모델/텍스처 적용
 4. **애니메이터 설정** - `BaseHeroAnimator` 연결 및 초기화
-5. **컨트롤러 설정** - `HeroController`에 능력과 상태 주입
+5. **컨트롤러 설정** - [`HeroController`](/docs/projects/rfist/herocontrolsystem/herocontroller)에 능력과 상태 주입
 6. **이펙트 설정** - 사운드/이펙트 컨트롤러 연결
 7. **이벤트 등록** - `IMatchEvent` 등록 및 능력 변경 알림 브로드캐스트
 
@@ -487,12 +490,12 @@ private void RPC_ResetHero(int round)
   - 셋업 및 이벤트 리스닝 제어
   - 주입 및 참조 관리
   - 외부 호출에 따라 활성화 제어
-- [`HeroModelController`](/docs/projects/rfist/HeroAnimationSystem/HeroModelController) 
+- `HeroModelController`
   - 능력 변경시 모델 업데이트 및 셋업
   - 주입 및 참조 관리
-- [`HeroAnimationController`](/docs/projects/rfist/HeroAnimationSystem/HeroAnimationController)
+- `HeroAnimationController`
   - 셋업 및 이벤트 리스닝 제어
-- [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility)
+- `BaseHeroAbility`
   - `BaseAbilityType` 네트워크 동기화
   - 능력 변경시 초기화
   - 셋업 및 이벤트 리스닝 제어
@@ -511,9 +514,9 @@ private void RPC_ResetHero(int round)
 - [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController)
 - [`NetworkHeroInput`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroInput)
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController)
-- [`HeroModelController`](/docs/projects/rfist/HeroAnimationSystem/HeroModelController)
-- [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility)
-- [`HeroAnimationController`](/docs/projects/rfist/HeroAnimationSystem/HeroAnimationController)
+- `HeroModelController`
+- `BaseHeroAbility`
+- `HeroAnimationController`
 - `BaseHeroAnimator`
 - `IHeroEffect`
 - `IEffectController`

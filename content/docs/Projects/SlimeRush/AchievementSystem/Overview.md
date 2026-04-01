@@ -40,6 +40,10 @@ weight = 201
 #### 1. 플레이어 진행상황 추적, 업적 UI 표시
 {{<video src="videos/achievementsystem.mp4" width="70%" class="responsive-video">}}
 
+<br>
+
+---
+
 ## 2. 사용된 기술 요소
 ### 핵심 기술 요소 및 API 활용
 {{< table "table-striped">}}
@@ -63,6 +67,10 @@ weight = 201
 | **Observer Pattern** | 업적 상태 변경 시 관련 모듈에 실시간 알림 |
 | **Strategy Pattern** | 다양한 업적 조건 타입을 유연하게 확장 가능 |
 {{< /table >}}<br>
+
+<br>
+
+---
 
 ## 3. 전체 시스템 구조도(간략)
 
@@ -110,6 +118,10 @@ classDiagram
     AchievementPopupItem --> Achievement : uses
 ```
 <br><br>
+
+<br>
+
+---
 
 ## 4. 주요 클래스별 역할 및 관계
 ### 업적 시스템 관리
@@ -338,6 +350,10 @@ classDiagram
 ```
 <br><br>
 
+<br>
+
+---
+
 ## 5. 주요 특징
 ### 기능의 특징
 - **업적 조건 시스템**: 다양한 조건 타입을 지원하고 확장 가능
@@ -347,6 +363,10 @@ classDiagram
 - **로컬라이제이션 지원**: 다국어 지원을 위한 통합 시스템
 - **의존성 주입**: 테스트 용이성 및 유지보수성 향상
 - **클라우드 동기화**: Steam 클라우드를 통한 여러 기기 간 데이터 공유
+
+<br>
+
+---
 
 ## 6. UseCase
 ### 업적 달성 시나리오

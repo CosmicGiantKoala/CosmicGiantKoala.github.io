@@ -28,6 +28,9 @@ HP(생명력), SP(특수 포인트), 경직 포인트(Stiffness), 자세(Stance)
 - 히트 처리 및 데미지 계산
 - 사망/처치 이벤트 발생
 
+### 네트워크 캐릭터 상태 동기화(HP,경직포인트 및 자세)
+![image](/images/rfist_networkstatus.gif)
+
 ## 선언
 ```csharp
 [RequireComponent(typeof(NetworkObject))]
@@ -485,8 +488,8 @@ private void UpdateStiffness(IHitEvent.HitInfo hitInfo)
 - [`NetworkBehaviour`](https://doc.photonengine.com/fusion/current/manual/network-behaviour)를 상속받음
 - [`IHeroStatus`](/docs/projects/rfist/HeroNetworkSystem/IHeroStatus) 인터페이스 구현
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController) 클래스로 피격 정보 및 자세 변경 호출
-- [`HeroBaseStat`](/docs/projects/rfist/HeroAbilitySystem/HeroBaseStat) 스크립터블 오브젝트를 통해 플레이어 스탯 설정 및 변경
-- [`HitBoxHandler`](/docs/projects/rfist/HeroHitSystem/HitBoxHandler) 클래스에서 `OnHit` 메서드를 `OnHitHandle` 델리게이트를 통해 호출
+- `HeroBaseStat` 스크립터블 오브젝트를 통해 플레이어 스탯 설정 및 변경
+- `HitBoxHandler` 클래스에서 `OnHit` 메서드를 `OnHitHandle` 델리게이트를 통해 호출
 
 ## 사용 예시
 #### [`NetworkHeroObject`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroObject)에서 상태 초기화 및 셋업
@@ -581,5 +584,5 @@ public HitResult OnHit(IHitEvent.HitInfo hitInfo)
 - [`NetworkHeroObject`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroObject)
 - [`NetworkHeroController`](/docs/projects/rfist/HeroNetworkSystem/NetworkHeroController)
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController)
-- [`HeroBaseStat`](/docs/projects/rfist/HeroAbilitySystem/HeroBaseStat)
-- [`HitBoxHandler`](/docs/projects/rfist/HeroHitSystem/HitBoxHandler)
+- `HeroBaseStat`
+- `HitBoxHandler`

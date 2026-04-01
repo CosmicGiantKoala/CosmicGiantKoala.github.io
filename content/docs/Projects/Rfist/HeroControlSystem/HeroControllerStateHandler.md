@@ -6,7 +6,7 @@ date = "2025-03-06T21:01:00+09:00"
 lastmod = "2025-03-06T21:01:00+09:00"
 draft = false
 toc = true
-weight = 240
+weight = 211
 +++
 
 ## 개요
@@ -20,6 +20,9 @@ weight = 240
 - 대시 횟수 및 쿨다운 관리
 - 자세 변경(일어나기/다운/스턴)에 따른 상태 전환
 - 컷씬 재생 중 컨트롤 제한
+
+#### 컨트롤러 상태 관리
+![image](/images/rfist_controlstate.gif)
 
 ## 선언
 ```csharp

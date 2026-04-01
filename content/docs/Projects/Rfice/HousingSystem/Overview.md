@@ -61,6 +61,10 @@ weight = 401
 {{<video src="videos/myroomeditor_3.mp4" width="50%" class="responsive-video">}}
 <br><br>
 
+<br>
+
+---
+
 ## 2. 사용된 기술 요소
 
 {{< alert context="info" text="직접구현한 요소 및 협업 요소 기술, 🤝:협업요소" />}}
@@ -87,6 +91,10 @@ weight = 401
 |**옵저버 패턴 (Observer Pattern)**|오브젝트 상태 및 사용자 조작에 따른 변화를 관련 모듈에 실시간으로 전달하는 이벤트 시스템 구현.|
 {{< /table >}}
 <br>
+
+<br>
+
+---
 
 ## 3. 전체 시스템 구조도(간략)
 ```mermaid
@@ -223,6 +231,10 @@ classDiagram
 ```
 
 <br><br>
+
+<br>
+
+---
 
 ## 4. 주요 클래스별 역할 및 관계
 
@@ -797,6 +809,10 @@ classDiagram
 
 <br><br>
 
+<br>
+
+---
+
 ## 5. 주요 특징
 
 ### 기능의 특징
@@ -806,6 +822,10 @@ classDiagram
 - **상태 관리**: 작업 이력을 통한 실행 취소/다시 실행 기능
 - **플렛폼 확장성 고려**: 모바일 환경 확장성을 고려한 입력 및 편집 환경 구성
 - **오브젝트 배치 검증 최적화**: Physics.RaycastNonAlloc를 사용하여 가비지 생성을 방지하고, 결과 수를 제한하여 성능을 최적화.
+
+<br>
+
+---
 
 ## 6. UseCase
 

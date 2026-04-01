@@ -29,6 +29,10 @@ weight = 201
 |**이벤트 기반 통신**| 영웅/스킬/공격/매치/컷씬 이벤트의 중앙 관리 및 브로드캐스트 |
 {{< /table >}}
 
+### 제작기능 영상
+#### 1. 캐릭터셋업, 입력 브로드캐스팅, 상태동기화
+{{<video src="videos/rfist_network.mp4" width="70%" class="responsive-video">}}
+
 <br>
 
 ---
@@ -64,47 +68,43 @@ weight = 201
 ## 3. 전체 시스템 구조도(간략)
 ```mermaid
 classDiagram
-    direction TD
-    namespace FusionNetworkComponents {
-        class NetworkBehaviour
-        class INetworkRunnerCallbacks
-        class NetworkInput
-        class NetworkRunner
-        class INetworkInput
-    }
-    class INetworkInput {
-        <<interface>>
+    direction LR
+    
+    namespace 영웅동기화시스템 {
+        class 오브젝트수명관리클래스
+        class 영웅상태관리클래스
+        class 영웅입력처리클래스
     }
     
-    class INetworkRunnerCallbacks {
-        <<interface>>
+    class PhotonFusion엔진코드{
+        NetworkBehaviour
+        INetworkRunnerCallbacks
+        NetworkInput
+        NetworkRunner
+        INetworkInput
+    } 
+    
+    PhotonFusion엔진랩핑클래스 --|> PhotonFusion엔진코드 : extend NetworkBehaviour
+    PhotonFusion엔진랩핑클래스 ..|> PhotonFusion엔진코드 : implements INetworkRunnerCallbacks
+    
+    class 영웅전투시스템 {
+        IAttackEvent
+        IHitEvent
     }
     
-    class NetworkBehaviour {
-        <<abstract>>
+    class 오브젝트수명관리클래스 {
+        NetworkHeroObject
     }
-    
-    class NetworkBehaviourCallBack{
-        <<abstract>>
+
+    class PhotonFusion엔진랩핑클래스{
+        NetworkBehaviourCallBack
     }
-    NetworkBehaviourCallBack --|> NetworkBehaviour : inheritance
-    NetworkBehaviourCallBack ..|> INetworkRunnerCallbacks : implements
-    
-    class IHeroStatus {
-        <<interface>>
-    }
-    
-    class IAttackEvent {
-        <<interface>>
-    }
-    
-    NetworkHeroObject --|> NetworkBehaviourCallBack
-    NetworkHeroObject --> NetworkHeroStatus : manages
-    NetworkHeroObject ..|> IAttackEvent: implements
-    
-    NetworkHeroObject *--> LocalHeroComponents : manages, uses
-    class LocalHeroComponents{
-        <<groups>>
+    오브젝트수명관리클래스 --|> PhotonFusion엔진랩핑클래스 : extend
+    오브젝트수명관리클래스 --> 영웅상태관리클래스 : manage NetworkHeroStatus
+    오브젝트수명관리클래스 ..|> 영웅전투시스템: implement
+
+    오브젝트수명관리클래스 *--> 영웅컨트롤시스템 : manages, uses
+    class 영웅컨트롤시스템{
         HeroController
         HeroModelManager
         HeroAnimationController
@@ -113,39 +113,45 @@ classDiagram
         BaseHeroAbility
         BaseHeroAnimator
     }
-    
 
-    NetworkHeroObject "1" --> "n" EventListeners : manages
-    class EventListeners {
-        <<groups>>
+
+    오브젝트수명관리클래스 "1" --> "n" 이벤트인터페이스 : manages
+    class 이벤트인터페이스 {
         IHeroEvent
         IMatceEvent
     }
-    
-    NetworkHeroObject o--> EffectControllers : uses
-    class EffectControllers {
-        <<groups>>
+
+    오브젝트수명관리클래스 o--> 영웅VFX시스템 : uses
+    class 영웅VFX시스템 {
         ISoundController
         IEffectController
         IHeroEffect
     }
     
-    NetworkHeroStatus ..|> IHeroStatus : implements
-    NetworkHeroStatus o--> LocalHeroComponents : uses HeroController
-    NetworkHeroStatus o--> HeroBaseStat : uses
-    NetworkHeroStatus --> IHitEvent : uses
-    NetworkHeroStatus --|> NetworkBehaviourCallBack
+    class 영웅상태관리클래스{
+        NetworkHeroStatus : IHeroStatus
+        IHeroStatus
+ }
+    영웅상태관리클래스 o--> 영웅컨트롤시스템 : uses HeroController
+    영웅상태관리클래스 o--> 영웅어빌리티시스템 : use
+    영웅상태관리클래스 --> 영웅전투시스템 : use IHitEvent
+    영웅상태관리클래스 --|> PhotonFusion엔진랩핑클래스 : extend
+    class 영웅어빌리티시스템{
+        HeroBaseStat
+ }
     
-    NetworkHeroController o--> LocalHeroComponents : uses HeroController
-    NetworkHeroController --> HeroInputData : dispatch
-    NetworkHeroController ..|> NetworkBehaviourCallBack 
-    
-    NetworkHeroInput --|> NetworkBehaviourCallBack
-    NetworkHeroInput ..> NetworkRunner : uses
-    NetworkHeroInput ..> NetworkInput : writes
-    NetworkHeroInput ..> HeroInputData : collects
-    
-    HeroInputData ..|> INetworkInput
+    class 영웅입력처리클래스{
+        NetworkHeroController
+        NetworkHeroInput
+        HeroInputData
+    }
+
+    영웅입력처리클래스 o--> 영웅컨트롤시스템 : uses HeroController
+    영웅입력처리클래스 ..|> PhotonFusion엔진랩핑클래스  : implement NetworkHeroController, NetworkHeroInput
+
+    영웅입력처리클래스 ..> PhotonFusion엔진코드 : use NetworkRunner
+    영웅입력처리클래스 ..> PhotonFusion엔진코드 : write to NetworkInput
+    영웅입력처리클래스 ..|> PhotonFusion엔진코드 : implement INetworkInput
     
 ``` 
 
@@ -218,7 +224,7 @@ classDiagram
         + OnStrikeAnotherPlayer(~IHitEvent.HitInfo~)
         - RPC_OnStrikeAnotherPlayer(~IHitEvent.HitInfo~)
     }
-    NetworkHeroObject --|> NetworkBehaviourCallBack : inheritances
+    NetworkHeroObject --|> NetworkBehaviourCallBack : extends
     NetworkHeroObject ..|> IAttackEvent : implements
     NetworkHeroObject o--> NetworkHeroStatus : manages
 
@@ -422,7 +428,7 @@ classDiagram
         - RPC_AttachHitResult(~int~, ~int~)
     }
     NetworkHeroStatus ..|> IHeroStatus : implements
-    NetworkHeroStatus --|> NetworkBehaviourCallback : inheritance
+    NetworkHeroStatus --|> NetworkBehaviourCallback : extends
     class NetworkBehaviourCallback{
         <<abstract>>
     }
@@ -462,7 +468,7 @@ classDiagram
     class NetworkBehaviourCallback{
         <<abstract>>
     }
-    NetworkHeroInput --|> NetworkBehaviourCallback : inheritance
+    NetworkHeroInput --|> NetworkBehaviourCallback : extends
     
     class NetworkHeroInput {
         + OnInput(~NetworkRunner~, ~NetworkInput~)

@@ -20,6 +20,9 @@ weight = 210
 - 네트워크 지연(Latency) 측정을 위한 타임스탬프 동기화
 - [`HeroController`](/docs/projects/rfist/HeroControlSystem/HeroController)의 메서드를 호출하여 실제 게임 동작 실행
 
+### `HeroInputData` 수신 및 브로드캐스팅
+![image](/images/rfist_networkinput.gif)
+
 ## 선언
 ```csharp
 public class NetworkHeroController : NetworkBehaviourCallback

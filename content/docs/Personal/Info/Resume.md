@@ -104,7 +104,7 @@ weight = 102
 | 상세 페이지             | 기능명       | 분류   | 역할
 |-------------------|-----------|------|---
 | [🔗 **링크**](/docs/projects/rfist/heronetworksystem/overview/) | **영웅 동기화 시스템** | 시스템  | 설계 및 개발
-| ⌛ 추가예정      | 영웅 컨트롤 시스템 | 시스템   | 설계 및 개발
+| [🔗 **링크**](/docs/projects/rfist/herocontrolsystem/overview/)      | **영웅 컨트롤 시스템** | 시스템   | 설계 및 개발
 | ⌛ 추가예정      | 영웅 어빌리티 시스템 | 시스템   | 설계 및 개발
 | ⌛ 추가예정      | 영웅 스킬 시스템 | 시스템   | 설계 및 개발
 | ⌛ 추가예정      | 영웅 피격판정 시스템 | 시스템   | 설계 및 개발
@@ -116,11 +116,12 @@ weight = 102
 
 - 🛠️ **사용 기술**
     - 🪚️ **Language & Engine** : Unity3D, C#, Git
-    - 🪜 **Architecture** : Clean Architecture, MVP 패턴
+    - 🪜 **Architecture** : Clean Architecture
     - 📦 **Package & Library** (직접 사용한 패키지 & 라이브러리 서술)
-        - 🧩 **Core & Logic** : [Zenject(DI)](https://github.com/modesttree/Zenject)
-        - 🪄 **Utility** : [Newton Json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@3.2/manual/index.html), [Localization](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/index.html)
-    - 🖥️ **Platform** : PC/Mac(Steam)
+      - 🧩 **Core & Logic** : [InputSystem](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.14/manual/index.html), [Addressable](https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/index.html)
+      - 🌐 **Network & Sync** : [Photon Fusion2](https://doc-api.photonengine.com/en/fusion/current/index.html)
+      - 🎥 **Visual** : [DOTween](https://dotween.demigiant.com/documentation.php)
+    - 🖥️ **Platform** : 미정(프로토타입은 WebGL)
 
 <br>
 

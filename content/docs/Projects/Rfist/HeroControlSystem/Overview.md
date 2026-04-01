@@ -31,6 +31,14 @@ weight = 201
 |**컷씬 유틸리티**| Timeline 기반 궁극기 컷씬 중 이벤트 처리 및 데미지 적용 |
 {{< /table >}}
 
+<br>
+
+### 제작기능 영상
+#### 1. 이동제어, 입력 상태관리, 컷씬 제어
+{{<video src="videos/rfist_control.mp4" width="70%" class="responsive-video">}}
+
+---
+
 ## 2. 사용된 기술 요소
 ### 핵심 기술 요소 및 API 활용
 
@@ -48,112 +56,74 @@ weight = 201
 {{< table "table-striped">}}
 | 요소 | 설명 |
 |-----|-----|
-|**옵저버 패턴 (Observer Pattern)**| HeroController에서 6가지 이벤트 타입을 관리하고, 관련 시스템(애니메이션, 스킬 등)에 이벤트 통지 |
-|**템플릿 메서드 패턴 (Template Method Pattern)**| BaseHeroInput, BaseHeroMoveController에서 공통 인터페이스 정의 및 하위 클래스에서 구체적 구현 |
-|**전략 패턴 (Strategy Pattern)**| IHeroInput 인터페이스를 통해 다양한 입력 구현체를 런타임에 교체 가능 |
+|**옵저버 패턴 (Observer Pattern)**| [`HeroController`](/docs/projects/rfist/herocontrolsystem/herocontroller)에서 6가지 이벤트 타입을 관리하고, 관련 시스템(애니메이션, 스킬 등)에 이벤트 통지 |
+|**템플릿 메서드 패턴 (Template Method Pattern)**|[`BaseHeroInput`](/docs/projects/rfist/herocontrolsystem/baseheroinput), [`BaseHeroMoveController`](/docs/projects/rfist/herocontrolsystem/baseheromovecontroller)에서 공통 인터페이스 정의 및 하위 클래스에서 구체적 구현 |
+|**전략 패턴 (Strategy Pattern)**| [`IHeroInput`](/docs/projects/rfist/herocontrolsystem/iheroinput) 인터페이스를 통해 다양한 입력 구현체를 런타임에 교체 가능 |
 {{< /table >}}
+
+<br>
+
+---
 
 ## 3. 전체 시스템 구조도(간략)
 ```mermaid
 classDiagram
     direction TD
-    namespace HeroNetworkSystem {
-        class NetworkHeroObject
-        class NetworkHeroController
-        class NetworkHeroStatus
-        class HeroInputSyncData
-        class NetworkHeroInput
+
+    class 영웅동기화시스템{
+        NetworkHeroObject
+        NetworkHeroController
+        NetworkHeroStatus
+        NetworkHeroInput
     }
     
-    NetworkHeroObject --> HeroController
-    NetworkHeroController --> HeroController
-    NetworkHeroStatus --> HeroController
-    NetworkHeroInput --> BaseHeroInput : uses
-    
-    namespace Events{
-        class HeroEvents
-        class ICutSceneEvent
+    class 영웅구성컴포넌트{
+        BaseHeroAbility
+        BaseHeroSkillManager
+        BaseHeroSkill
     }
-    
-    class HeroController
-    HeroController --> BaseHeroMoveController : uses
-    HeroController ..|> IHeroController : implements
-    HeroController "1" o--> "*" HeroEvents : manages
-    HeroController "1" o--> "*" ICutSceneEvent : manages
-    HeroController ..|> ICutSceneEventInvoker : implements
-    HeroController ..|> ISkillEventInvoker : implements
-    HeroController --> IControllerState : uses
-    HeroController --> BaseHeroAbility : uses
-    
-    namespace EventInvokers{
-        class ICutSceneEventInvoker
-        class ISkillEventInvoker
- }
-    
-    class IHeroInput {
-        <<interface>>
+    class 핵심컨트롤러{
+        HeroController
     }
-    
-    class BaseHeroInput {
-        <<abstract>>
+    class 입력처리클래스{
+        IHeroInput
+        BaseHeroInput
+        HeroKeyInput
     }
-    BaseHeroInput ..|> IHeroInput : implements
-    
-    class HeroKeyInput
-    HeroKeyInput --|> BaseHeroInput : implements
-    HeroKeyInput --> RFistInput : subscribe
-    
-    namespace BaseHeroComponents{
-        class BaseHeroAbility
-        class BaseSkillManager
-        class BaseHeroSkill
-        class BaseHeroMoveController
- }
-    
-    BaseHeroAbility --> IHeroController
-    BaseSkillManager --> IHeroController
-    BaseHeroSkill --> IHeroController
-    class IHeroController {
-        <<interface>>
+    class 동작제어클래스{
+        IHeroController
+        BaseHeroMoveController
+        HeroRigidbodyController
+        IMoveControlEvent
+    }
+    class 상태관리클래스{
+        IControllerState
+        HeroControllerStateHandler
+    }
+    class 컷씬관리클래스{
+        ICutSceneEvent
+        ICutSceneEventInvoker
+        CutSceneController
     }
 
-    class BaseHeroMoveController {
-        <<abstract>>
-    }
-    BaseHeroMoveController --> IHeroController
-    BaseHeroMoveController --> IControllerState
+
+    영웅동기화시스템 --> 핵심컨트롤러 : use
+    영웅동기화시스템 --> 입력처리클래스 : uses
+
+    핵심컨트롤러 --> 동작제어클래스 : use BaseHeroMoveController<br> manages IMoveControlEvent
+    핵심컨트롤러 ..|> 동작제어클래스 : implement IHeroController
+    핵심컨트롤러 "1" o--> "*" 이벤트인터페이스 : manages
+    핵심컨트롤러 "1" o--> "*" 컷씬관리클래스 : manages ICutSceneEvent
+    핵심컨트롤러 ..|> 컷씬관리클래스 : implement ICutSceneEventInvoker
+    핵심컨트롤러 --> 상태관리클래스 : use IControllerState
+    핵심컨트롤러 --> 영웅구성컴포넌트 : uses
+    영웅구성컴포넌트 --> 동작제어클래스
+    동작제어클래스 --> 상태관리클래스
+    상태관리클래스 ..|> 컷씬관리클래스 : implement ICutSceneEvent
+    컷씬관리클래스 --> 영웅동기화시스템 : use NetworkHeroObject
+
     
-    class HeroRigidbodyController
-    HeroRigidbodyController ..|> BaseHeroMoveController : implements
-    
-    
-    class IControllerState {
-        <<interface>>
-    }
-    
-    class HeroControllerStateHandler
-    HeroControllerStateHandler ..|> IControllerState : implements
-    HeroControllerStateHandler ..|> ICutSceneEvent : implements
-    
-    class ICutSceneEvent {
-        <<interface>>
-    }
-    HitPanel ..|> ICutSceneEvent : implements
-    
-    class CutSceneClass {
-        <<groups>>
-        TimelineManager
-        SuperAttackEventBehaviour
-        SuperAttackEventClip
-        SuperAttackEventTrack
-    }
-    CutSceneClass --> CutSceneController : uses
-    class CutSceneController 
-    CutSceneController --> NetworkHeroObject : uses
-    CutSceneController "1" --> "n" ICutSceneEventInvoker : manages
-    
-    class HeroEvents {
-        <<interface groups>>
+    class 이벤트인터페이스 {
         IHitEvent
         IMoveControlEvent
         ISkillEvent
@@ -163,13 +133,18 @@ classDiagram
     
 ```
 
+
+<br>
+
+---
+
 ## 4. 주요 클래스별 역할 및 관계
 ### 핵심 컨트롤러
 
 {{< table "table-striped">}}
 | 클래스 | 역할 |
 |-----|-----|
-|[**HeroController**](/docs/projects/rfist/HeroControlSystem/herocontroller/)<br> *: IHeroController, IHeroDetector,*<br> *ISkillEventInvoker, ICutSceneEventInvoker*| 💡 영웅 캐릭터의 **중앙 제어 관리자**<br> 💡 6가지 이벤트 타입의 등록 및 통지 시스템 관리<br> 💡 입력 수신 → 상태 확인 → 이동/스킬 실행 흐름 제어<br> 💡 컨트롤러 상태(IControllerState) 기반 행동 제어<br> 💡 자동 타겟팅 및 방향 전환 처리 |
+|[**HeroController**](/docs/projects/rfist/HeroControlSystem/herocontroller/)<br> *: IHeroController, IHeroDetector,*<br> *ISkillEventInvoker, ICutSceneEventInvoker*| 💡 영웅 캐릭터의 **중앙 제어 관리자**<br> 💡 6가지 이벤트 타입의 등록 및 통지 시스템 관리<br> 💡 입력 수신 → 상태 확인 → 이동/스킬 실행 흐름 제어<br> 💡 컨트롤러 상태([`IControllerState`](/docs/projects/rfist/herocontrolsystem/icontrollerstate)) 기반 행동 제어<br> 💡 자동 타겟팅 및 방향 전환 처리 |
 {{< /table >}}
 ```mermaid
 classDiagram
@@ -362,7 +337,7 @@ classDiagram
         - OnAttackGuardDualInput(~InputAction.CallbackContext~)
     }
     HeroKeyInput --> RFistActions : input event subscribes
-    HeroKeyInput ..|> BaseHeroInput : implements
+    HeroKeyInput --|> BaseHeroInput : extends
     class RFistActions {
         <<InputActionAsset>>
     }
@@ -454,7 +429,7 @@ classDiagram
         - IsMoveableDirection(~Vector3~, ~float~, ~int~) : ~bool~
         - CreateMoveDirectionTween(~HeroTweenMoveData) : ~Tween~
     }
-    HeroRigidbodyController ..|> BaseHeroMoveController : implements
+    HeroRigidbodyController --|> BaseHeroMoveController : extends
     HeroRigidbodyController *-- HeroTweenMoveData : nested
     class HeroTweenMoveData{
         <<struct>>
@@ -598,39 +573,47 @@ classDiagram
     
 ```
 
+<br>
+
+---
+
 ## 5. 주요 특징
 
 ### 기능의 특징
 
-- **입력 추상화 계층**: `IHeroInput` 인터페이스와 `BaseHeroInput` 추상 클래스를 통해 키보드, 게임패드, 모바일 등 다양한 입력 방식을 추상화하고, `HeroInputData` 비트 마스크로 네트워크 효율성 극대화
+- **입력 추상화 계층**: [`IHeroInput`](/docs/projects/rfist/herocontrolsystem/iheroinput) 인터페이스와 [`BaseHeroInput`](/docs/projects/rfist/herocontrolsystem/baseheroinput) 추상 클래스를 통해 키보드, 게임패드, 모바일 등 다양한 입력 방식을 추상화하고, [`HeroInputData`](/docs/projects/rfist/heronetworksystem/heroinputdata) 비트 마스크로 네트워크 효율성 극대화
 - **이중 이동 시스템**: Rigidbody 기반 물리 이동(자유로운 이동)과 DoTween 기반 트윈 이동(정밀한 스킬 동작)을 상황에 맞게 선택 가능
-- **상태 기반 행동 제어**: `IControllerState` 인터페이스를 통해 스킬 사용, 피격, 다운, 스턴, 컷씬 등의 상태에 따라 이동/공격/가드/대시 가능 여부를 정밀하게 제어
+- **상태 기반 행동 제어**: [`IControllerState`](/docs/projects/rfist/herocontrolsystem/icontrollerstate) 인터페이스를 통해 스킬 사용, 피격, 다운, 스턴, 컷씬 등의 상태에 따라 이동/공격/가드/대시 가능 여부를 정밀하게 제어
 - **6중 이벤트 옵저버 패턴**: MoveControl, Hit, Skill, Attack, Stance, CutScene 6가지 이벤트 타입을 독립적으로 관리하여 애니메이션, 스킬, 피격 시스템과 느슨한 결합 유지
 - **컷씬 제어 통합**: Timeline 기반 궁극기 컷씬 실행 중에도 캐릭터 상태 관리 및 데미지 처리가 가능한 통합 컨트롤 시스템
+
+<br>
+
+---
 
 ## 6. UseCase
 
 ### 전투 입력 처리 시나리오
 
-1. **입력 수집**: `HeroKeyInput`이 Input System으로부터 키 입력을 감지
-2. **네트워크 동기화**: `NetworkHeroInput`이 `BaseHeroInput.HeroInputList`에서 모든 입력 소스의 데이터를 수집하여 `HeroInputData`로 변환
+1. **입력 수집**: [`HeroKeyInput`](/docs/projects/rfist/herocontrolsystem/herokeyinput)이 Input System으로부터 키 입력을 감지
+2. **네트워크 동기화**: [`NetworkHeroInput`](/docs/projects/rfist/heronetworksystem/networkheroinput)이 `BaseHeroInput.HeroInputList`에서 모든 입력 소스의 데이터를 수집하여 [`HeroInputData`](/docs/projects/rfist/heronetworksystem/heroinputdata)로 변환
 3. **입력 전송**: Fusion `NetworkRunner`를 통해 모든 클라이언트에 입력 데이터 동기화
-4. **입력 처리**: `HeroController`가 동기화된 입력을 수신하여 상태 확인 (`IControllerState.CanAttack` 등)
+4. **입력 처리**: [`HeroController`](/docs/projects/rfist/herocontrolsystem/herocontroller)가 동기화된 입력을 수신하여 상태 확인 (`IControllerState.CanAttack` 등)
 5. **동작 실행**: 상태가 허용하면 `BaseHeroAbility`를 통해 공격/가드/대시 등의 스킬 실행
 6. **이벤트 통지**: 스킬 시작/종료 시 `HeroController.NotifySkillEvents()`로 관련 시스템에 이벤트 발신
 
 ### 피격 및 넉백 시나리오
 
-1. **피격 수신**: `HeroController.OnHitReceive()`로 피격 정보 수신
-2. **상태 전환**: `HeroControllerStateHandler.OnHitReceive()`에서 피격 회복 상태로 전환 및 `CanMove/CanAttack` 비활성화
-3. **넉백 실행**: `HeroController.KnockBack()` → `HeroRigidbodyController.OnKnockBack()`으로 DoTween 기반 넉백 동작 실행
+1. **피격 수신**: [`HeroController.OnHitReceive()`](/docs/projects/rfist/herocontrolsystem/herocontroller)로 피격 정보 수신
+2. **상태 전환**: [`HeroControllerStateHandler.OnHitReceive()`](/docs/projects/rfist/herocontrolsystem/herocontrollerstatehandler)에서 피격 회복 상태로 전환 및 `CanMove/CanAttack` 비활성화
+3. **넉백 실행**: `HeroController.KnockBack()` → [`HeroRigidbodyController.OnKnockBack()`](/docs/projects/rfist/herocontrolsystem/herorigidbodycontroller)으로 DoTween 기반 넉백 동작 실행
 4. **상태 복원**: 회복 시간 경과 후 `UpdateState()`로 행동 가능 상태 복원
 
 ### 궁극기(컷씬) 실행 시나리오
 
-1. **컷씬 시작**: `CutSceneController.StartCutScene()` 호출
-2. **이벤트 발신**: `ICutSceneEventInvoker.NotifyCutSceneEvents()`로 모든 구독자에게 컷씬 시작 통지
-3. **상태 제한**: `HeroControllerStateHandler.OnSpecialMoveSequenceStart()`에서 `_playingCutScene = true` 설정으로 모든 행동 제한
+1. **컷씬 시작**: [`CutSceneController.StartCutScene()`](/docs/projects/rfist/herocontrolsystem/cutscenecontroller) 호출
+2. **이벤트 발신**: [`ICutSceneEventInvoker.NotifyCutSceneEvents()`](/docs/projects/rfist/herocontrolsystem/icutsceneeventinvoker)로 모든 구독자에게 컷씬 시작 통지
+3. **상태 제한**: [`HeroControllerStateHandler.OnSpecialMoveSequenceStart()`]()(/docs/projects/rfist/herocontrolsystem/herocontrollerstatehandler)에서 `_playingCutScene = true` 설정으로 모든 행동 제한
 4. **데미지 처리**: Timeline 프레임 이벤트에서 `CutSceneController.ApplyDamageToHitter()`로 피격자 데미지 적용
 5. **컷씬 종료**: `OnEndCutScene()`에서 `_playingCutScene = false` 설정으로 행동 가능 상태 복원
 

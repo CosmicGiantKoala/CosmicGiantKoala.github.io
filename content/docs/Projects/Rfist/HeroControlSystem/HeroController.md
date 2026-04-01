@@ -6,7 +6,7 @@ date = "2025-03-06T20:23:00+09:00"
 lastmod = "2025-03-06T20:23:00+09:00"
 draft = false
 toc = true
-weight = 200
+weight = 202
 +++
 
 ## 개요
@@ -19,6 +19,9 @@ weight = 200
 - 6가지 이벤트 타입(MoveControl, Hit, Skill, Attack, Stance, CutScene)의 등록 및 통지
 - 컨트롤러 상태(IControllerState) 기반 행동 제어
 - 자동 타겟팅 및 방향 전환 처리
+
+#### `HeroController` 오브젝트 구성 및 Hierarchy 구조
+![image](/images/rfist_control.png)
 
 ## 선언
 ```csharp
@@ -557,10 +560,8 @@ public void Dash(float vertical, float horizontal)
 
 ## 기능 설명
 ### 이동 시스템
-- HeroController는 두 가지 이동 모드를 지원
-- **일반 이동 모드**: 입력 방향으로 자유롭게 이동하며, 방향 변경 시에만 이벤트를 발생시켜 성능을 최적화합니다.
-- **포커스 모드 이동**: 지정된 타겟을 향해 방향을 유지하면서 이동합니다. 측면/후방 이동 시에도 타겟을 계속 바라봅니다.(비개발 항목)
-- 이동 처리는 [`BaseHeroMoveController`](/docs/projects/rfist/HeroControlSystem/BaseHeroMoveController)에 위임되며, 대시/넉백 등의 특수 이동은 DoTween을 활용한 트윈 기반 이동을 사용
+- 이동 가능상태를 체크하고 입력 방향으로 이동하며, 상황에 따라 이벤트를 발생
+- 이동 처리는 [`BaseHeroMoveController`](/docs/projects/rfist/HeroControlSystem/BaseHeroMoveController)에 위임
 
 ### 이벤트 시스템
 - HeroController는 6가지 이벤트 타입을 관리하는 옵서버 패턴을 구현
@@ -593,12 +594,12 @@ public void Dash(float vertical, float horizontal)
   - [`ISkillEventInvoker`](/docs/projects/rfist/HeroSkillSystem/ISkillEventInvoker) 인터페이스 구현
   - [`ICutSceneEventInvoker`](/docs/projects/rfist/HeroControlSystem/ICutSceneEventInvoker) 인터페이스 구현
 - 관리되는 이벤트
-    - `IMoveControlEvent`
+    - [`IMoveControlEvent`](/docs/projects/rfist/herocontrolsystem/imovecontrolevent)
     - `IHitEvent`
     - `ISkillEvent`
     - `IAttackEvent`
     - `IStanceEvent`
-    - `ICutSceneEvent`
+    - [`ICutSceneEvent`](/docs/projects/rfist/herocontrolsystem/icutsceneevent)
 - [`BaseHeroMoveController`](/docs/projects/rfist/HeroControlSystem/BaseHeroMoveController) 베이스 이동 클래스를 통해 이동 및 트윈이동 제어
 - `AutoTargeting` 클래스를 통해 타겟팅
 - [`BaseHeroAbility`](/docs/projects/rfist/HeroAbilitySystem/BaseHeroAbility) 베이스 어빌리티 클래스를 통해 공격/가드/대시 등의 스킬 동작 처리
