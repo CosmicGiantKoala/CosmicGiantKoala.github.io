@@ -42,7 +42,7 @@ featureGrid:
         text: Link
         url: /docs/projects/rfice/overview/
 
-    - title: RFist(미출시)
+    - title: RFist
       icon: videogame_asset
       description: 3D 멀티플레이 격투 액션 게임
       ctaLink:
