@@ -1,0 +1,4 @@
+<section class="page">
+  {{ .Inner | .Page.RenderString }}
+  {{ with .Get "number" }}<div class="footer">{{ . }}</div>{{ end }}
+</section>

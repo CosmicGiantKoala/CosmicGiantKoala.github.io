@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>김철규 코드 샘플 - Network Input Sync</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    :root {
+      --ink:#172033; --muted:#63708a; --line:#d8e0ec; --paper:#fff;
+      --navy:#0f172a; --blue:#2563eb; --cyan:#0891b2; --green:#16a34a;
+      --soft:#f8fafc; --soft-blue:#eef5ff; --soft-green:#ecfdf3; --soft-amber:#fff7e6;
+      --code-bg:#101827; --code-ink:#e5edf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; background:#eef2f8; color:var(--ink);
+      font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+      font-size:12px; line-height:1.48;
+    }
+    .page {
+      position:relative; width:210mm; height:297mm; margin:0 auto 18px;
+      padding:17mm 16mm 14mm; overflow:hidden; background:var(--paper);
+      box-shadow:0 12px 30px rgba(15,23,42,.14); page-break-after:always;
+    }
+    .page:last-child { page-break-after:auto; }
+    .page::before {
+      content:""; position:absolute; inset:0 0 auto; height:7mm;
+      background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+    }
+    h1,h2,h3,p { margin:0; }
+    h1 { color:var(--navy); font-size:29px; line-height:1.15; letter-spacing:-.04em; }
+    h2 { margin-bottom:12px; color:var(--navy); font-size:22px; line-height:1.2; letter-spacing:-.035em; }
+    h3 { margin-bottom:7px; color:var(--navy); font-size:14px; letter-spacing:-.02em; }
+    .eyebrow { margin-bottom:7px; color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .subtitle { margin-top:9px; color:var(--muted); font-size:14px; font-weight:700; }
+    .lead { margin-top:15px; color:#334155; font-size:13px; }
+    .section { margin-top:18px; }
+    .grid { display:grid; gap:11px; }
+    .grid.two { grid-template-columns:1fr 1fr; }
+    .grid.three { grid-template-columns:repeat(3, 1fr); }
+    .card { border:1px solid var(--line); border-radius:15px; padding:12px 13px; background:#fff; }
+    .card.blue { border-color:#bfdbfe; background:var(--soft-blue); }
+    .card.green { border-color:#bbf7d0; background:var(--soft-green); }
+    .card.amber { border-color:#fed7aa; background:var(--soft-amber); }
+    .pill-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
+    .pill { padding:5px 9px; border-radius:999px; background:#eef5ff; color:#1d4ed8; font-size:10px; font-weight:800; }
+    ul { margin:0; padding-left:16px; }
+    li { margin:3px 0; }
+    strong { color:#0f172a; font-weight:900; }
+    pre {
+      margin:0; padding:12px 13px; overflow:hidden; border-radius:14px;
+      background:var(--code-bg); color:var(--code-ink);
+      font-family:"Cascadia Mono","Consolas","Fira Code",monospace;
+      font-size:8.45px; line-height:1.32; white-space:pre-wrap;
+    }
+    code { font-family:"Cascadia Mono","Consolas","Fira Code",monospace; }
+    .footer { position:absolute; right:16mm; bottom:8mm; color:#94a3b8; font-size:10px; }
+    .table { width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .table th,.table td { padding:8px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .table th { width:28%; background:var(--soft); color:#475569; font-size:10px; font-weight:900; }
+    .table tr:last-child th,.table tr:last-child td { border-bottom:0; }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+    .flow div { border:1px solid #cfe0ff; border-radius:12px; background:#f8fbff; padding:9px; font-size:10px; font-weight:800; text-align:center; color:#1e3a8a; }
+    @media print { body { background:#fff; } .page { margin:0; box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Code Sample</div>
+    <h1>Network Input Sync<br>for Multiplayer Action</h1>
+    <p class="subtitle">RFist 기반 네트워크 입력 처리부터 실제 캐릭터 동작까지 | 김철규</p>
+    <p class="lead">
+      이 문서는 RFist의 멀티플레이 액션 게임 개발 경험을 기반으로 정리한 공개용 코드 샘플입니다.
+      입력 데이터 정의, 로컬 입력 수집, 네트워크 전송, 수신 입력 처리, 실제 캐릭터 동작 실행, 지연 측정 흐름까지 하나의 파이프라인으로 보여주는 것이 목적입니다.
+    </p>
+    <div class="pill-row">
+      <span class="pill">Multiplayer</span><span class="pill">Input Authority</span><span class="pill">NetworkInput</span>
+      <span class="pill">Hero Controller</span><span class="pill">Latency</span><span class="pill">C#</span>
+    </div>
+    <div class="flow">
+      <div>Input Source</div><div>Input Collector</div><div>Network Input</div><div>Input Processor</div><div>Hero Action</div>
+    </div>
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>샘플 목표</h3>
+        <ul>
+          <li>로컬 입력 수집과 게임 로직 실행 책임 분리</li>
+          <li>입력 권한이 있는 클라이언트만 입력을 생성</li>
+          <li>버튼 입력을 비트 플래그로 압축해 네트워크 전송</li>
+          <li>수신 입력을 이동/대시/가드/공격/궁극기 동작으로 변환</li>
+          <li>타임스탬프 기반 지연 측정값을 실제 스킬 실행에 전달</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>설계 기준</h3>
+        <ul>
+          <li><strong>HeroInputData</strong>: 네트워크 전송용 입력 데이터</li>
+          <li><strong>HeroInputCollector</strong>: 로컬 입력 소스 수집</li>
+          <li><strong>NetworkHeroInput</strong>: 권한 검증 후 입력 전송</li>
+          <li><strong>NetworkHeroController</strong>: 입력 수신 및 실행 분기</li>
+          <li><strong>HeroController</strong>: 실제 캐릭터 이동/전투 동작</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section">
+      <table class="table">
+        <tr><th>원 프로젝트</th><td>RFist</td></tr>
+        <tr><th>담당 영역</th><td>HeroNetworkSystem, HeroControlSystem</td></tr>
+        <tr><th>샘플 범위</th><td>네트워크 입력 데이터, 입력 수집, 권한 검증, 컨트롤러 실행, 지연 측정, 동작 호출</td></tr>
+        <tr><th>공개 방식</th><td>내부 클래스명/데이터명을 일반화한 채용 검토용 샘플</td></tr>
+      </table>
+    </div>
+    <div class="footer">1 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Network Data</div>
+    <h2>네트워크 전송용 입력 데이터</h2>
+    <div class="section">
+      <pre><code>[Flags]
+public enum HeroInputButtons
+{
+    None = 0,
+    Attack = 1 &lt;&lt; 0,
+    AttackHold = 1 &lt;&lt; 1,
+    Guard = 1 &lt;&lt; 2,
+    Dash = 1 &lt;&lt; 3,
+    FocusMode = 1 &lt;&lt; 4,
+    FocusChange = 1 &lt;&lt; 5,
+    Ultimate = 1 &lt;&lt; 6,
+    AttackGuard = 1 &lt;&lt; 7
+}
+
+public struct HeroInputData : INetworkInput
+{
+    public float Horizontal;
+    public float Vertical;
+    public HeroInputButtons Buttons;
+    public float ClientTimeStamp;
+    public float SimulationTimeStamp;
+
+    public Vector2 Move =&gt; new(Horizontal, Vertical);
+
+    public bool Has(HeroInputButtons button)
+        =&gt; (Buttons &amp; button) == button;
+
+    public void Set(HeroInputButtons button, bool pressed)
+    {
+        if (pressed) Buttons |= button;
+        else Buttons &amp;= ~button;
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>포인트</h3>
+        <ul>
+          <li>버튼 상태를 enum flag로 압축</li>
+          <li>이동축과 버튼 입력을 하나의 구조체로 통합</li>
+          <li>타임스탬프를 포함해 네트워크 지연 분석 가능</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>실무 의도</h3>
+        <p>액션 게임 입력은 매 tick 전송될 수 있으므로 데이터 구조가 단순해야 합니다. 버튼 플래그를 사용하면 전송량과 분기 복잡도를 줄일 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="footer">2 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Input Source</div>
+    <h2>입력 장치 추상화</h2>
+    <div class="section">
+      <pre><code>public interface IHeroInputSource
+{
+    float Horizontal { get; }
+    float Vertical { get; }
+    bool AttackPressed { get; }
+    bool AttackHeld { get; }
+    bool GuardPressed { get; }
+    bool DashPressed { get; }
+    bool FocusModePressed { get; }
+    bool FocusChangePressed { get; }
+    bool UltimatePressed { get; }
+}
+
+public sealed class KeyboardHeroInputSource : MonoBehaviour, IHeroInputSource
+{
+    [SerializeField] private InputActionReference move;
+    [SerializeField] private InputActionReference attack;
+    [SerializeField] private InputActionReference guard;
+    [SerializeField] private InputActionReference dash;
+    [SerializeField] private InputActionReference ultimate;
+
+    public float Horizontal =&gt; move.action.ReadValue&lt;Vector2&gt;().x;
+    public float Vertical =&gt; move.action.ReadValue&lt;Vector2&gt;().y;
+    public bool AttackPressed =&gt; attack.action.WasPressedThisFrame();
+    public bool AttackHeld =&gt; attack.action.IsPressed();
+    public bool GuardPressed =&gt; guard.action.IsPressed();
+    public bool DashPressed =&gt; dash.action.WasPressedThisFrame();
+    public bool FocusModePressed =&gt; false;
+    public bool FocusChangePressed =&gt; false;
+    public bool UltimatePressed =&gt; ultimate.action.WasPressedThisFrame();
+}</code></pre>
+    </div>
+    <div class="section card blue">
+      <h3>리뷰 포인트</h3>
+      <p>입력 장치를 인터페이스로 분리하면 키보드, 패드, 모바일 터치 입력을 같은 수집 흐름으로 처리할 수 있습니다. 네트워크 시스템은 실제 입력 장치 구현을 알 필요가 없습니다.</p>
+    </div>
+    <div class="footer">3 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Input Collector</div>
+    <h2>로컬 입력 수집과 동시 입력 규칙</h2>
+    <div class="section">
+      <pre><code>public sealed class HeroInputCollector
+{
+    private readonly IReadOnlyList&lt;IHeroInputSource&gt; _sources;
+
+    public HeroInputCollector(IReadOnlyList&lt;IHeroInputSource&gt; sources)
+    {
+        _sources = sources;
+    }
+
+    public HeroInputData Collect(float simulationTime)
+    {
+        var data = new HeroInputData
+        {
+            ClientTimeStamp = Time.time,
+            SimulationTimeStamp = simulationTime
+        };
+
+        foreach (var source in _sources)
+        {
+            data.Horizontal = source.Horizontal;
+            data.Vertical = source.Vertical;
+            data.Set(HeroInputButtons.Attack, source.AttackPressed);
+            data.Set(HeroInputButtons.AttackHold, source.AttackHeld);
+            data.Set(HeroInputButtons.Guard, source.GuardPressed);
+            data.Set(HeroInputButtons.Dash, source.DashPressed);
+            data.Set(HeroInputButtons.FocusMode, source.FocusModePressed);
+            data.Set(HeroInputButtons.FocusChange, source.FocusChangePressed);
+            data.Set(HeroInputButtons.Ultimate, source.UltimatePressed);
+            data.Set(HeroInputButtons.AttackGuard,
+                source.AttackPressed &amp;&amp; source.GuardPressed);
+        }
+
+        return data;
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>동시 입력 처리</h3>
+        <p>공격+가드처럼 별도 액션으로 해석해야 하는 조합 입력은 수집 단계에서 명확한 플래그로 변환합니다.</p>
+      </div>
+      <div class="card">
+        <h3>확장성</h3>
+        <p>입력 소스가 여러 개여도 Collector가 동일한 네트워크 입력 데이터로 정규화합니다.</p>
+      </div>
+    </div>
+    <div class="footer">4 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Network Bridge</div>
+    <h2>입력 권한 검증과 네트워크 전송</h2>
+    <div class="section">
+      <pre><code>public sealed class NetworkHeroInput : NetworkBehaviour
+{
+    private HeroInputCollector _collector;
+
+    public override void Spawned()
+    {
+        var sources = GetComponents&lt;IHeroInputSource&gt;();
+        _collector = new HeroInputCollector(sources);
+    }
+
+    public override void OnInput(NetworkRunner runner, NetworkInput input)
+    {
+        if (!Object.HasInputAuthority)
+            return;
+
+        var data = _collector.Collect(runner.SimulationTime);
+        input.Set(data);
+    }
+}
+
+public readonly struct HeroInputSyncContext
+{
+    public float ClientTimeStamp { get; }
+    public float SimulationTimeStamp { get; }
+    public float LocalReceiveTime { get; }
+
+    public HeroInputSyncContext(HeroInputData data, float receiveTime)
+    {
+        ClientTimeStamp = data.ClientTimeStamp;
+        SimulationTimeStamp = data.SimulationTimeStamp;
+        LocalReceiveTime = receiveTime;
+    }
+
+    public float EstimatedLatency =&gt; LocalReceiveTime - ClientTimeStamp;
+}</code></pre>
+    </div>
+    <div class="section card green">
+      <h3>포인트</h3>
+      <p><code>HasInputAuthority</code>를 확인해 로컬 플레이어만 입력을 생성합니다. 네트워크 수신 측에서는 입력에 포함된 타임스탬프로 지연 추정값을 만들고, 스킬/애니메이션 보정에 전달할 수 있습니다.</p>
+    </div>
+    <div class="footer">5 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Input Processor</div>
+    <h2>수신 입력을 캐릭터 명령으로 변환</h2>
+    <div class="section">
+      <pre><code>public sealed class NetworkHeroController : NetworkBehaviour
+{
+    [SerializeField] private HeroController heroController;
+    [SerializeField] private HeroActionRouter actionRouter;
+
+    public override void FixedUpdateNetwork()
+    {
+        if (!GetInput(out HeroInputData input))
+            return;
+
+        var context = new HeroInputSyncContext(input, Time.time);
+
+        heroController.Move(input.Move);
+
+        if (input.Has(HeroInputButtons.Dash))
+            actionRouter.ExecuteDash(context);
+
+        if (input.Has(HeroInputButtons.Guard))
+            actionRouter.SetGuard(true, context);
+        else
+            actionRouter.SetGuard(false, context);
+
+        if (input.Has(HeroInputButtons.AttackGuard))
+            actionRouter.ExecuteCounter(context);
+        else if (input.Has(HeroInputButtons.Attack))
+            actionRouter.ExecuteAttack(context);
+
+        if (input.Has(HeroInputButtons.AttackHold))
+            actionRouter.ChargeAttack(context);
+
+        if (input.Has(HeroInputButtons.Ultimate))
+            actionRouter.ExecuteUltimate(context);
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>분기 우선순위</h3>
+        <p>공격+가드처럼 더 구체적인 조합 입력을 일반 공격보다 먼저 처리해 의도하지 않은 중복 실행을 막습니다.</p>
+      </div>
+      <div class="card">
+        <h3>책임 분리</h3>
+        <p>NetworkHeroController는 입력을 해석하고, 실제 전투 동작 실행은 HeroActionRouter로 위임합니다.</p>
+      </div>
+    </div>
+    <div class="footer">6 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Hero Action Router</div>
+    <h2>실제 액션 실행 계층</h2>
+    <div class="section">
+      <pre><code>public sealed class HeroActionRouter : MonoBehaviour
+{
+    [SerializeField] private HeroMovement movement;
+    [SerializeField] private HeroGuard guard;
+    [SerializeField] private HeroAttack attack;
+    [SerializeField] private HeroSkill ultimate;
+
+    public void ExecuteDash(HeroInputSyncContext context)
+    {
+        if (!movement.CanDash)
+            return;
+
+        movement.Dash(context.EstimatedLatency);
+    }
+
+    public void SetGuard(bool active, HeroInputSyncContext context)
+    {
+        if (active) guard.Enter(context.EstimatedLatency);
+        else guard.Exit();
+    }
+
+    public void ExecuteAttack(HeroInputSyncContext context)
+    {
+        if (!attack.CanAttack)
+            return;
+
+        attack.Execute(new AttackCommand
+        {
+            Latency = context.EstimatedLatency,
+            IsCharged = false
+        });
+    }
+
+    public void ChargeAttack(HeroInputSyncContext context)
+    {
+        attack.Charge(context.EstimatedLatency);
+    }
+
+    public void ExecuteUltimate(HeroInputSyncContext context)
+    {
+        if (ultimate.IsReady)
+            ultimate.Execute(context.EstimatedLatency);
+    }
+}</code></pre>
+    </div>
+    <div class="section card blue">
+      <h3>실제 동작까지 보여주는 이유</h3>
+      <p>입력 전송 코드만 있으면 네트워크 API 사용 예제로 끝납니다. 액션 실행 계층까지 보여주면 입력이 실제 캐릭터 행동으로 변환되는 구조와 전투 시스템 연결 방식을 설명할 수 있습니다.</p>
+    </div>
+    <div class="footer">7 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Movement Example</div>
+    <h2>이동/대시 실제 처리 예시</h2>
+    <div class="section">
+      <pre><code>public sealed class HeroMovement : MonoBehaviour
+{
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private float moveSpeed = 6f;
+    [SerializeField] private float dashPower = 12f;
+    [SerializeField] private float dashCooldown = 0.35f;
+
+    private Vector3 _lastMoveDirection;
+    private float _nextDashTime;
+
+    public bool CanDash =&gt; Time.time &gt;= _nextDashTime;
+
+    public void Move(Vector2 input)
+    {
+        var direction = new Vector3(input.x, 0f, input.y);
+        if (direction.sqrMagnitude &gt; 1f)
+            direction.Normalize();
+
+        if (direction.sqrMagnitude &gt; 0.001f)
+            _lastMoveDirection = direction;
+
+        controller.Move(direction * moveSpeed * Time.deltaTime);
+    }
+
+    public void Dash(float latency)
+    {
+        _nextDashTime = Time.time + dashCooldown;
+
+        var compensation = Mathf.Clamp(latency, 0f, 0.12f);
+        var distance = dashPower * (Time.deltaTime + compensation);
+        controller.Move(_lastMoveDirection * distance);
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>포인트</h3>
+        <ul>
+          <li>입력 벡터 정규화</li>
+          <li>마지막 이동 방향을 대시 방향으로 재사용</li>
+          <li>지연값을 제한적으로 보정에 사용</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>주의점</h3>
+        <p>실제 상용 코드에서는 예측/보정 정책, 서버 권한, 충돌 처리 기준에 맞춰 대시 보정 범위를 더 엄격하게 관리해야 합니다.</p>
+      </div>
+    </div>
+    <div class="footer">8 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Attack Example</div>
+    <h2>공격 실행과 명령 객체</h2>
+    <div class="section">
+      <pre><code>public readonly struct AttackCommand
+{
+    public float Latency { get; init; }
+    public bool IsCharged { get; init; }
+}
+
+public sealed class HeroAttack : MonoBehaviour
+{
+    [SerializeField] private Animator animator;
+    [SerializeField] private HitBoxController hitBox;
+    [SerializeField] private float attackCooldown = 0.25f;
+
+    private float _nextAttackTime;
+    private bool _charging;
+
+    public bool CanAttack =&gt; Time.time &gt;= _nextAttackTime;
+
+    public void Execute(AttackCommand command)
+    {
+        _nextAttackTime = Time.time + attackCooldown;
+        _charging = false;
+
+        animator.SetTrigger(command.IsCharged ? "ChargedAttack" : "Attack");
+        hitBox.Open(new HitBoxOpenContext
+        {
+            StartOffset = Mathf.Clamp(command.Latency, 0f, 0.1f),
+            IsCharged = command.IsCharged
+        });
+    }
+
+    public void Charge(float latency)
+    {
+        if (_charging)
+            return;
+
+        _charging = true;
+        animator.SetBool("Charging", true);
+    }
+}</code></pre>
+    </div>
+    <div class="section card amber">
+      <h3>면접 설명 포인트</h3>
+      <p>입력 처리 계층이 직접 애니메이터와 히트박스를 제어하지 않고, 공격 실행 계층에 명령을 전달합니다. 이렇게 하면 입력 소스가 네트워크인지 AI인지와 무관하게 공격 시스템을 재사용할 수 있습니다.</p>
+    </div>
+    <div class="footer">9 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Review Points</div>
+    <h2>테스트 가능성과 면접 어필 포인트</h2>
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>테스트 가능한 항목</h3>
+        <ul>
+          <li>버튼 플래그 조합이 올바르게 생성되는지</li>
+          <li>권한이 없는 클라이언트가 입력을 만들지 않는지</li>
+          <li>입력 데이터가 컨트롤러 명령으로 올바르게 변환되는지</li>
+          <li>공격+가드 조합 입력이 일반 공격보다 먼저 처리되는지</li>
+          <li>지연값이 제한 범위 안에서만 보정에 쓰이는지</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>면접에서 설명할 내용</h3>
+        <ul>
+          <li>Input Authority와 State Authority 구분</li>
+          <li>네트워크 입력과 RPC를 어떤 기준으로 나눌지</li>
+          <li>액션 게임에서 입력 지연을 측정하는 방식</li>
+          <li>캐릭터 컨트롤러를 네트워크와 분리하는 이유</li>
+          <li>입력 처리부터 실제 동작까지의 호출 흐름</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section card">
+      <h3>포트폴리오 연결 문구</h3>
+      <p>이 샘플은 RFist의 HeroNetworkSystem 개발 경험을 기반으로 구성했습니다. 실제 프로젝트에서는 영웅 캐릭터의 입력, 상태, 능력, 수명주기 동기화 구조를 담당했습니다.</p>
+    </div>
+    <div class="section card">
+      <h3>연락처</h3>
+      <p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p>
+    </div>
+    <div class="footer">10 / 10</div>
+  </section>
+</body>
+</html>

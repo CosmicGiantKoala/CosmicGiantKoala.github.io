@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><title>김철규 코드 샘플 - Hit Detection System</title>
+  <style>
+    @page{size:A4;margin:0}:root{--ink:#172033;--muted:#63708a;--line:#d8e0ec;--navy:#0f172a;--blue:#2563eb;--cyan:#0891b2;--green:#16a34a;--soft:#f8fafc;--soft-blue:#eef5ff;--soft-green:#ecfdf3;--soft-amber:#fff7e6;--code:#101827;--code-ink:#e5edf8}*{box-sizing:border-box}body{margin:0;background:#eef2f8;color:var(--ink);font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:12px;line-height:1.48}.page{position:relative;width:210mm;height:297mm;margin:0 auto 18px;padding:17mm 16mm 14mm;overflow:hidden;background:white;box-shadow:0 12px 30px rgba(15,23,42,.14);page-break-after:always}.page:last-child{page-break-after:auto}.page::before{content:"";position:absolute;inset:0 0 auto;height:7mm;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green))}h1,h2,h3,p{margin:0}h1{color:var(--navy);font-size:29px;line-height:1.15;letter-spacing:-.04em}h2{margin-bottom:12px;color:var(--navy);font-size:22px;letter-spacing:-.035em}h3{margin-bottom:7px;color:var(--navy);font-size:14px}.eyebrow{margin-bottom:7px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.subtitle{margin-top:9px;color:var(--muted);font-size:14px;font-weight:700}.lead{margin-top:15px;color:#334155;font-size:13px}.section{margin-top:18px}.grid{display:grid;gap:11px}.two{grid-template-columns:1fr 1fr}.card{border:1px solid var(--line);border-radius:15px;padding:12px 13px;background:white}.blue{border-color:#bfdbfe;background:var(--soft-blue)}.green{border-color:#bbf7d0;background:var(--soft-green)}.amber{border-color:#fed7aa;background:var(--soft-amber)}.pill-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.pill{padding:5px 9px;border-radius:999px;background:#eef5ff;color:#1d4ed8;font-size:10px;font-weight:800}ul{margin:0;padding-left:16px}li{margin:3px 0}strong{color:#0f172a;font-weight:900}pre{margin:0;padding:12px 13px;overflow:hidden;border-radius:14px;background:var(--code);color:var(--code-ink);font-family:"Cascadia Mono",Consolas,monospace;font-size:8.45px;line-height:1.32;white-space:pre-wrap}code{font-family:"Cascadia Mono",Consolas,monospace}.footer{position:absolute;right:16mm;bottom:8mm;color:#94a3b8;font-size:10px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.flow div{border:1px solid #cfe0ff;border-radius:12px;background:#f8fbff;padding:9px;font-size:10px;font-weight:800;text-align:center;color:#1e3a8a}@media print{body{background:white}.page{margin:0;box-shadow:none}}
+  </style>
+</head>
+<body>
+<section class="page"><div class="eyebrow">Code Sample</div><h1>Hero Hit Detection System</h1><p class="subtitle">RFist 기반 액션 게임 피격 판정 / 히트박스 / 상태 반영 샘플 | 김철규</p><p class="lead">격투 액션 게임에서 공격 입력 이후 히트박스 활성화, 중복 피격 방지, 가드/무적/경직 판정, 데미지 결과 이벤트까지 이어지는 구조를 공개용 샘플로 정리했습니다.</p><div class="pill-row"><span class="pill">HitBox</span><span class="pill">HurtBox</span><span class="pill">Guard</span><span class="pill">Stiffness</span><span class="pill">Damage Result</span></div><div class="flow"><div>Attack</div><div>HitBox Open</div><div>Overlap</div><div>Resolve</div><div>Status Event</div></div><div class="section grid two"><div class="card blue"><h3>샘플 목표</h3><ul><li>공격 프레임 동안 히트박스 활성화</li><li>한 공격에서 동일 대상 중복 피격 방지</li><li>무적/가드/경직 상태 판정</li><li>데미지 결과를 UI/연출/네트워크에 이벤트로 전달</li></ul></div><div class="card green"><h3>설계 기준</h3><ul><li>HitBoxController: 공격 판정 발생</li><li>IHurtBox: 피격 가능한 부위 계약</li><li>HitResolver: 피격 결과 계산</li><li>HeroStatus: HP/경직/상태 반영</li></ul></div></div><div class="footer">1 / 10</div></section>
+<section class="page"><div class="eyebrow">Contracts</div><h2>히트박스와 피격 대상 계약</h2><div class="section"><pre><code>public interface IHurtBox
+{
+    IHitReceiver Receiver { get; }
+    HurtBoxType Type { get; }
+    Vector3 Center { get; }
+}
+
+public interface IHitReceiver
+{
+    TeamId Team { get; }
+    bool IsAlive { get; }
+    bool IsInvincible { get; }
+    HitResult ReceiveHit(HitInfo hitInfo);
+}
+
+public enum HurtBoxType
+{
+    Body,
+    Head,
+    Guard,
+    Armor
+}</code></pre></div><div class="section card blue"><h3>포인트</h3><p>콜라이더가 어떤 캐릭터의 어떤 부위인지 직접 캐스팅하지 않고, <code>IHurtBox</code>를 통해 피격 가능한 계약만 사용합니다.</p></div><div class="footer">2 / 10</div></section>
+<section class="page"><div class="eyebrow">Hit Info</div><h2>공격 판정 데이터</h2><div class="section"><pre><code>public readonly struct HitInfo
+{
+    public string AttackId { get; init; }
+    public IHitReceiver Attacker { get; init; }
+    public TeamId AttackerTeam { get; init; }
+    public int Damage { get; init; }
+    public float Stiffness { get; init; }
+    public Vector3 Direction { get; init; }
+    public float KnockbackPower { get; init; }
+    public bool CanGuard { get; init; }
+}
+
+public readonly struct HitResult
+{
+    public bool Applied { get; init; }
+    public bool Guarded { get; init; }
+    public bool Killed { get; init; }
+    public int AppliedDamage { get; init; }
+    public float AppliedStiffness { get; init; }
+
+    public static HitResult Ignored() =&gt; new() { Applied = false };
+}</code></pre></div><div class="section grid two"><div class="card"><h3>AttackId</h3><p>같은 공격 프레임에서 중복 피격을 막기 위한 식별자입니다.</p></div><div class="card"><h3>HitResult</h3><p>피격 결과를 UI, 사운드, VFX, 네트워크 이벤트로 전달하기 위한 결과 구조체입니다.</p></div></div><div class="footer">3 / 10</div></section>
+<section class="page"><div class="eyebrow">HitBox</div><h2>공격 프레임 동안 히트박스 활성화</h2><div class="section"><pre><code>public sealed class HitBoxController : MonoBehaviour
+{
+    [SerializeField] private Collider hitCollider;
+    private readonly HashSet&lt;IHitReceiver&gt; _hitTargets = new();
+    private HitInfo _currentHitInfo;
+    private bool _opened;
+
+    public event Action&lt;IHitReceiver, HitResult&gt; HitApplied;
+
+    public void Open(HitInfo hitInfo)
+    {
+        _currentHitInfo = hitInfo;
+        _hitTargets.Clear();
+        _opened = true;
+        hitCollider.enabled = true;
+    }
+
+    public void Close()
+    {
+        _opened = false;
+        hitCollider.enabled = false;
+        _hitTargets.Clear();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!_opened) return;
+        if (!other.TryGetComponent(out IHurtBox hurtBox)) return;
+        TryApplyHit(hurtBox);
+    }
+}</code></pre></div><div class="section card green"><h3>실무 의도</h3><p>애니메이션 이벤트나 스킬 타이밍에서 <code>Open/Close</code>를 호출해 공격 판정 프레임을 명확히 제어합니다.</p></div><div class="footer">4 / 10</div></section>
+<section class="page"><div class="eyebrow">Duplicate Guard</div><h2>동일 공격 중복 피격 방지</h2><div class="section"><pre><code>private void TryApplyHit(IHurtBox hurtBox)
+{
+    var receiver = hurtBox.Receiver;
+
+    if (receiver == null || !receiver.IsAlive)
+        return;
+
+    if (_currentHitInfo.AttackerTeam == receiver.Team)
+        return;
+
+    if (_hitTargets.Contains(receiver))
+        return;
+
+    _hitTargets.Add(receiver);
+
+    var result = receiver.ReceiveHit(_currentHitInfo);
+    if (result.Applied)
+        HitApplied?.Invoke(receiver, result);
+}</code></pre></div><div class="section grid two"><div class="card"><h3>문제</h3><p>한 번의 공격에서 여러 콜라이더가 같은 캐릭터에 닿으면 데미지가 중복 적용될 수 있습니다.</p></div><div class="card"><h3>해결</h3><p>공격 활성화 기간 동안 피격된 <code>IHitReceiver</code>를 HashSet으로 보관합니다.</p></div></div><div class="footer">5 / 10</div></section>
+<section class="page"><div class="eyebrow">Resolver</div><h2>가드/무적/경직 판정</h2><div class="section"><pre><code>public sealed class HitResolver
+{
+    public HitResult Resolve(HitInfo hit, HeroStatus status)
+    {
+        if (status.IsDead || status.IsInvincible)
+            return HitResult.Ignored();
+
+        if (status.IsGuarding &amp;&amp; hit.CanGuard)
+        {
+            status.ApplyGuardStiffness(hit.Stiffness * 0.35f);
+            return new HitResult
+            {
+                Applied = true,
+                Guarded = true,
+                AppliedDamage = 0,
+                AppliedStiffness = hit.Stiffness * 0.35f
+            };
+        }
+
+        status.ApplyDamage(hit.Damage);
+        status.ApplyStiffness(hit.Stiffness);
+        status.ApplyKnockback(hit.Direction, hit.KnockbackPower);
+
+        return new HitResult
+        {
+            Applied = true,
+            Guarded = false,
+            Killed = status.IsDead,
+            AppliedDamage = hit.Damage,
+            AppliedStiffness = hit.Stiffness
+        };
+    }
+}</code></pre></div><div class="footer">6 / 10</div></section>
+<section class="page"><div class="eyebrow">Status</div><h2>피격 결과를 캐릭터 상태에 반영</h2><div class="section"><pre><code>public sealed class HeroStatus : MonoBehaviour, IHitReceiver
+{
+    [SerializeField] private int maxHp = 100;
+    private int _hp;
+    private float _stiffness;
+
+    public event Action&lt;int&gt; HpChanged;
+    public event Action&lt;HitResult&gt; Damaged;
+    public event Action Died;
+
+    public bool IsAlive =&gt; _hp &gt; 0;
+    public bool IsDead =&gt; _hp &lt;= 0;
+    public bool IsInvincible { get; private set; }
+    public bool IsGuarding { get; private set; }
+
+    public HitResult ReceiveHit(HitInfo hitInfo)
+    {
+        var result = _resolver.Resolve(hitInfo, this);
+        if (!result.Applied) return result;
+
+        Damaged?.Invoke(result);
+        if (result.Killed) Died?.Invoke();
+        return result;
+    }
+
+    public void ApplyDamage(int damage)
+    {
+        _hp = Mathf.Max(0, _hp - damage);
+        HpChanged?.Invoke(_hp);
+    }
+}</code></pre></div><div class="section card blue"><h3>리뷰 포인트</h3><p>피격 판정은 HitBox에서 시작되지만, 최종 상태 변화는 캐릭터 상태 객체가 책임집니다.</p></div><div class="footer">7 / 10</div></section>
+<section class="page"><div class="eyebrow">Animation Timing</div><h2>애니메이션 이벤트와 히트박스 타이밍</h2><div class="section"><pre><code>public sealed class AttackAnimationEventBridge : MonoBehaviour
+{
+    [SerializeField] private HitBoxController hitBox;
+    private HitInfo _reservedHitInfo;
+
+    public void Reserve(HitInfo hitInfo)
+    {
+        _reservedHitInfo = hitInfo;
+    }
+
+    // Animation Event
+    public void AnimEvent_OpenHitBox()
+    {
+        hitBox.Open(_reservedHitInfo);
+    }
+
+    // Animation Event
+    public void AnimEvent_CloseHitBox()
+    {
+        hitBox.Close();
+    }
+}</code></pre></div><div class="section grid two"><div class="card"><h3>장점</h3><p>공격 모션의 실제 타격 프레임과 판정 활성화를 맞출 수 있습니다.</p></div><div class="card"><h3>주의점</h3><p>네트워크 게임에서는 애니메이션 이벤트와 시뮬레이션 tick의 기준 차이를 관리해야 합니다.</p></div></div><div class="footer">8 / 10</div></section>
+<section class="page"><div class="eyebrow">Network Event</div><h2>피격 결과 이벤트 전파</h2><div class="section"><pre><code>public sealed class HitEventBroadcaster : NetworkBehaviour
+{
+    [SerializeField] private HitBoxController hitBox;
+
+    private void OnEnable()
+    {
+        hitBox.HitApplied += OnHitApplied;
+    }
+
+    private void OnDisable()
+    {
+        hitBox.HitApplied -= OnHitApplied;
+    }
+
+    private void OnHitApplied(IHitReceiver receiver, HitResult result)
+    {
+        RPC_PlayHitFeedback(receiver.NetworkId, result.Guarded, result.Killed);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_PlayHitFeedback(NetworkId receiverId, bool guarded, bool killed)
+    {
+        // hit stop, VFX, SFX, UI feedback
+    }
+}</code></pre></div><div class="section card green"><h3>면접 포인트</h3><p>데미지 판정과 피드백 재생을 분리합니다. 판정은 권한 있는 쪽에서 처리하고, 연출은 RPC/이벤트로 전달합니다.</p></div><div class="footer">9 / 10</div></section>
+<section class="page"><div class="eyebrow">Review Summary</div><h2>테스트 가능성과 면접 어필 포인트</h2><div class="section grid two"><div class="card blue"><h3>테스트 항목</h3><ul><li>동일 공격 중복 피격 방지</li><li>아군 피격 제외</li><li>무적 상태 무시</li><li>가드 시 데미지 0 처리</li><li>사망 이벤트 1회 발생</li><li>히트박스 Open/Close 타이밍</li></ul></div><div class="card green"><h3>어필 포인트</h3><ul><li>액션 게임 판정 구조 이해</li><li>히트박스/허트박스 분리</li><li>상태 반영과 연출 이벤트 분리</li><li>네트워크 피드백 전파 고려</li><li>격투/액션 게임 시스템 확장 가능</li></ul></div></div><div class="section card"><h3>연락처</h3><p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p></div><div class="footer">10 / 10</div></section>
+</body>
+</html>

@@ -159,6 +159,12 @@ url = "/docs/projects/"
 identifier = "projects"
 weight = 10
 
+[[menu.primary]]
+name = "Job"
+url = "/job/"
+identifier = "job"
+weight = 11
+
 # [[menu.primary]]
 #     name  = "Showcase"
 #     url = "/showcase"

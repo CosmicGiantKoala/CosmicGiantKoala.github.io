@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>김철규 게임 클라이언트 개발 포트폴리오</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    :root {
+      --ink: #172033;
+      --muted: #63708a;
+      --line: #dce3ef;
+      --paper: #ffffff;
+      --blue: #2563eb;
+      --cyan: #0891b2;
+      --green: #16a34a;
+      --amber: #d97706;
+      --navy: #0f172a;
+      --soft-blue: #eef5ff;
+      --soft-cyan: #e9fbff;
+      --soft-green: #ecfdf3;
+      --soft-amber: #fff7e6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #eef2f8;
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 18px;
+      padding: 18mm 17mm 15mm;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+      page-break-after: always;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 7mm;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--green));
+    }
+
+    .footer {
+      position: absolute;
+      right: 17mm;
+      bottom: 8mm;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--navy);
+      font-size: 31px;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin-bottom: 13px;
+      color: var(--navy);
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.035em;
+    }
+
+    h3 {
+      margin-bottom: 7px;
+      color: var(--navy);
+      font-size: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      margin-bottom: 7px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .lead {
+      margin-top: 16px;
+      color: #334155;
+      font-size: 14px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 10px;
+      border: 1px solid #cfe0ff;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      gap: 11px;
+    }
+
+    .grid.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .section {
+      margin-top: 20px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px;
+      background: #fff;
+    }
+
+    .card.blue {
+      border-color: #bfdbfe;
+      background: var(--soft-blue);
+    }
+
+    .card.cyan {
+      border-color: #bae6fd;
+      background: var(--soft-cyan);
+    }
+
+    .card.green {
+      border-color: #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .card.amber {
+      border-color: #fed7aa;
+      background: var(--soft-amber);
+    }
+
+    .metric {
+      color: var(--navy);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 17px;
+    }
+
+    li {
+      margin: 4px 0;
+    }
+
+    strong {
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    .project-head {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .project-title {
+      font-size: 29px;
+    }
+
+    .role-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .role-table th,
+    .role-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .role-table th {
+      width: 28%;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .role-table tr:last-child th,
+    .role-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .problem-solution {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .tag {
+      padding: 4px 7px;
+      border-radius: 7px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .timeline {
+      border-left: 3px solid #cbd5e1;
+      padding-left: 13px;
+    }
+
+    .timeline-item {
+      margin-bottom: 16px;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .link-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 12px;
+    }
+
+    .link-box a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Game Client Portfolio</div>
+    <h1>김철규<br>Unity 게임 클라이언트 개발자</h1>
+    <p class="subtitle">Unity Client Developer | 8년+ | C# / Unity / Photon Fusion2 / Gameplay System</p>
+    <p class="lead">
+      Unity 기반 클라이언트 개발을 8년 이상 수행하며 멀티플레이 액션 게임, Steam 출시 게임, WebGL/모바일/VR/AR 상용 프로젝트를 경험했습니다.
+      게임 클라이언트 영역에서는 캐릭터 조작, 네트워크 동기화, 전투 시스템, 업적 시스템, 런타임 3D 편집 시스템처럼 플레이 경험과 직접 연결되는 핵심 시스템을 설계하고 구현했습니다.
+    </p>
+
+    <div class="meta-row">
+      <span class="pill">Unity3D</span>
+      <span class="pill">C#</span>
+      <span class="pill">Photon Fusion2</span>
+      <span class="pill">Gameplay System</span>
+      <span class="pill">Steam / WebGL / Mobile</span>
+    </div>
+
+    <div class="section grid three">
+      <div class="card blue">
+        <div class="metric">8년+</div>
+        <div class="metric-label">Unity 클라이언트 개발 경력</div>
+      </div>
+      <div class="card cyan">
+        <div class="metric">3개</div>
+        <div class="metric-label">대표 게임/3D 시스템 프로젝트</div>
+      </div>
+      <div class="card green">
+        <div class="metric">5+</div>
+        <div class="metric-label">PC, WebGL, iOS, Android, Quest</div>
+      </div>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>핵심 역량</h3>
+        <ul>
+          <li><strong>Photon Fusion2</strong> 기반 멀티플레이 캐릭터 상태/입력 동기화 시스템 구현</li>
+          <li>3D 액션 게임의 캐릭터 조작, 전투, 타겟팅, 데미지 계산 시스템 구현</li>
+          <li>Steam 출시 게임의 전투 시스템 및 업적 시스템 설계/구현</li>
+          <li>Unity WebGL, PC, iOS, Android, Quest 등 멀티 플랫폼 개발 및 빌드 경험</li>
+          <li>Clean Architecture, MVP, DI, State/Observer/Strategy 패턴 기반 구조 설계</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>대표 프로젝트</h3>
+        <ul>
+          <li><strong>RFist</strong>: Photon Fusion2 기반 멀티플레이 격투 액션 시스템</li>
+          <li><strong>Slime Rush</strong>: Steam 출시 로그라이크 액션 게임 전투/업적 시스템</li>
+          <li><strong>Rfice MyRoomEditor</strong>: 게임 하우징과 유사한 런타임 3D 공간 편집 시스템</li>
+        </ul>
+        <div class="tag-list">
+          <span class="tag">Network Sync</span>
+          <span class="tag">Combat</span>
+          <span class="tag">Targeting</span>
+          <span class="tag">Achievement</span>
+          <span class="tag">Runtime Editor</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section card amber">
+      <h3>채용 포지션 기준 요약</h3>
+      <p>
+        네트워크 액션 게임의 입력/상태 동기화와 출시 게임의 전투/업적 시스템을 직접 구현한 경험이 있습니다.
+        기능 구현에 그치지 않고 시스템이 확장될 때 수정 범위를 줄일 수 있도록 역할 분리, 인터페이스, 이벤트 기반 구조를 적극적으로 사용합니다.
+      </p>
+    </div>
+    <div class="footer">1 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow">Representative Project 01</div>
+        <h2 class="project-title">RFist</h2>
+        <p class="subtitle">3D 멀티플레이 대전 격투 액션 게임</p>
+      </div>
+      <div class="card blue">
+        <h3>핵심 어필</h3>
+        <p>Photon Fusion2 기반으로 캐릭터 입력, 상태, 수명주기, 전투 이벤트를 동기화하는 멀티플레이 액션 게임 클라이언트 시스템을 구현했습니다.</p>
+      </div>
+    </div>
+
+    <table class="role-table">
+      <tr><th>역할</th><td>Unity 클라이언트 개발</td></tr>
+      <tr><th>담당 시스템</th><td>HeroNetworkSystem, HeroControlSystem</td></tr>
+      <tr><th>주요 기술</th><td>Unity, C#, Photon Fusion2, Input System, DOTween</td></tr>
+      <tr><th>개발 범위</th><td>네트워크 입력, 영웅 상태 동기화, 캐릭터 수명주기, 조작 시스템 연결</td></tr>
+    </table>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>담당 업무</h3>
+        <ul>
+          <li>Photon Fusion2 기반 영웅 캐릭터 네트워크 동기화 시스템 설계 및 구현</li>
+          <li>로컬 입력 수집, 네트워크 입력 전송, 원격 클라이언트 동작 반영 구조 구현</li>
+          <li>HP, SP, 경직 포인트, 자세 상태 등 전투 상태의 네트워크 동기화 처리</li>
+          <li>영웅 오브젝트 스폰/디스폰, 능력 변경, 컴포넌트 초기화 흐름 관리</li>
+          <li>캐릭터 조작 시스템과 네트워크 시스템 간 연결 구조 구현</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>주요 구현 포인트</h3>
+        <ul>
+          <li><strong>NetworkHeroObject</strong>: 캐릭터 수명주기 및 하위 시스템 통합 관리</li>
+          <li><strong>NetworkHeroStatus</strong>: HP/SP/경직/자세 상태 동기화</li>
+          <li><strong>NetworkHeroInput</strong>: 로컬 입력 수집 및 네트워크 입력 전송</li>
+          <li><strong>NetworkHeroController</strong>: 네트워크 입력 수신 후 실제 캐릭터 조작 실행</li>
+          <li>이벤트 기반 구조로 UI, 전투, 애니메이션 시스템 간 결합도 감소</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section problem-solution">
+      <div class="card cyan">
+        <h3>기술적 문제</h3>
+        <p>멀티플레이 액션 게임에서는 입력 지연, 상태 불일치, 캐릭터 수명주기 관리가 복잡해질 수 있었습니다.</p>
+      </div>
+      <div class="card green">
+        <h3>해결 방식</h3>
+        <p>NetworkHeroObject를 중심으로 상태, 입력, 능력, 이벤트를 통합 관리하는 Facade 구조를 구성했습니다. 입력은 NetworkInput과 RPC를 통해 전달하고, 상태는 Networked 속성과 ChangeDetector를 활용해 변경 시점에 맞춰 동기화했습니다.</p>
+      </div>
+    </div>
+
+    <div class="section card amber">
+      <h3>게임 클라이언트 역량으로 연결되는 지점</h3>
+      <p>실시간 멀티플레이 액션 게임에서 중요한 입력 처리, 상태 동기화, 캐릭터 수명주기 관리 경험을 갖추고 있습니다. 단순 기능 구현이 아니라 네트워크 환경에서 일관된 플레이 상태를 유지하기 위한 구조 설계에 집중했습니다.</p>
+    </div>
+    <div class="footer">2 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow">Representative Project 02</div>
+        <h2 class="project-title">Slime Rush</h2>
+        <p class="subtitle">Steam 출시 로그라이크 액션 핵앤슬래시 게임</p>
+      </div>
+      <div class="card green">
+        <h3>핵심 어필</h3>
+        <p>출시 게임에서 플레이어 경험에 직접 연결되는 전투 시스템과 업적 시스템을 구현했습니다.</p>
+      </div>
+    </div>
+
+    <table class="role-table">
+      <tr><th>플랫폼</th><td>PC / Mac / Steam</td></tr>
+      <tr><th>역할</th><td>Unity 클라이언트 개발</td></tr>
+      <tr><th>담당 시스템</th><td>BattleSystem, AchievementSystem</td></tr>
+      <tr><th>주요 기술</th><td>Unity, C#, Zenject, Localization, Steam 플랫폼 대응</td></tr>
+    </table>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>BattleSystem 구현</h3>
+        <ul>
+          <li><strong>MagicBookLibrary</strong>: 플레이어가 보유한 마법 객체 생성 및 관리</li>
+          <li><strong>MagicBook</strong>: 마법 쿨타임, 타겟 탐색, 시전 처리</li>
+          <li><strong>TargetSystem / TargetScanner</strong>: 단일/다중/랜덤/위치 기반 타겟팅 처리</li>
+          <li><strong>CommonBattleManager</strong>: 데미지 정보 생성, 치명타, 속성, 부가 효과 계산</li>
+          <li><strong>MonsterAbilityHandler</strong>: 몬스터 공격 능력 쿨타임 및 거리 조건 처리</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>AchievementSystem 구현</h3>
+        <ul>
+          <li>업적 데이터 정의 및 조건 체크 구조 구현</li>
+          <li>업적 달성 시 팝업 UI 표시</li>
+          <li>로컬 저장 및 클라우드 저장 대응</li>
+          <li>게임 진행 상황에 따른 업적 상태 갱신</li>
+          <li>Steam 출시 프로젝트의 게임 시스템 개발 참여</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section problem-solution">
+      <div class="card cyan">
+        <h3>기술적 문제</h3>
+        <p>로그라이크 액션 게임 특성상 마법, 몬스터, 타겟팅, 데미지 계산 규칙이 계속 확장될 수 있었습니다.</p>
+      </div>
+      <div class="card green">
+        <h3>해결 방식</h3>
+        <p>타겟 탐색, 데미지 계산, 마법 시전, 몬스터 공격 처리를 각각 독립된 클래스로 분리했습니다. 새로운 마법 효과나 타겟팅 옵션이 추가되어도 기존 전투 흐름을 크게 수정하지 않도록 구조화했습니다.</p>
+      </div>
+    </div>
+
+    <div class="section card amber">
+      <h3>게임 클라이언트 역량으로 연결되는 지점</h3>
+      <p>출시 게임의 전투 로직, 타겟팅, 보상 피드백 구조를 다루며 실제 플레이 감각과 시스템 확장성을 함께 고려했습니다. 전투 시스템과 업적 시스템은 게임의 반복 플레이 경험과 직접 연결되는 핵심 클라이언트 영역입니다.</p>
+    </div>
+    <div class="footer">3 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="project-head">
+      <div>
+        <div class="eyebrow">Representative Project 03</div>
+        <h2 class="project-title">Rfice MyRoomEditor</h2>
+        <p class="subtitle">런타임 3D 공간 편집 시스템</p>
+      </div>
+      <div class="card cyan">
+        <h3>게임식 해석</h3>
+        <p>게임의 하우징 시스템, 맵 에디터, 런타임 배치 시스템과 유사한 3D 상호작용 구조입니다.</p>
+      </div>
+    </div>
+
+    <table class="role-table">
+      <tr><th>플랫폼</th><td>WebGL, iOS, Android</td></tr>
+      <tr><th>역할</th><td>Unity 클라이언트 개발</td></tr>
+      <tr><th>담당 시스템</th><td>MyRoomEditor</td></tr>
+      <tr><th>주요 기술</th><td>Unity, C#, Input System, Raycast, MVP, Clean Architecture, Zenject</td></tr>
+    </table>
+
+    <div class="section card blue">
+      <h3>게임 클라이언트 관점의 의미</h3>
+      <p>MyRoomEditor는 일반 SaaS 기능이지만, 게임 개발 관점에서는 런타임 레벨 에디터, 하우징 시스템, 배치형 콘텐츠 편집 시스템과 유사합니다. 사용자가 3D 공간에서 오브젝트를 선택, 배치, 이동, 회전, 색상 변경, 이미지 적용할 수 있는 인터랙티브 시스템을 구현했습니다.</p>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>담당 업무</h3>
+        <ul>
+          <li>3D 공간 내 오브젝트 배치, 선택, 이동, 회전 기능 구현</li>
+          <li>Raycast 기반 오브젝트 선택 및 배치 가능 영역 검증</li>
+          <li>상태 기반 편집 모드 구조 구현</li>
+          <li>오브젝트 타입별 편집 가능 기능을 인터페이스로 분리</li>
+          <li>카메라 이동, 줌, 회전 등 에디터 조작 입력 처리</li>
+          <li>오브젝트 색상 변경, 이미지 업로드, 머티리얼 적용 기능 구현</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>주요 구현 포인트</h3>
+        <ul>
+          <li><strong>MyRoomEditorState</strong>: 배치/편집 상태 전환 관리</li>
+          <li><strong>MyRoomEditorPlacementManager</strong>: 오브젝트 생성 및 배치 처리</li>
+          <li><strong>MyRoomEditorPropEditingManager</strong>: 선택, 이동, 회전, 삭제 등 편집 처리</li>
+          <li><strong>MyRoomEditorInputController</strong>: Input System 기반 입력 이벤트 분배</li>
+          <li><strong>IColorEditableProp / IMoveableProp / IRotatableProp</strong>: 기능별 인터페이스 분리</li>
+          <li>RaycastNonAlloc 기반 배치 검증 최적화</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section problem-solution">
+      <div class="card cyan">
+        <h3>기술적 문제</h3>
+        <p>오브젝트마다 가능한 편집 기능이 다르고, 바닥/벽/천장/프레임/스크린 등 배치 규칙도 달랐습니다.</p>
+      </div>
+      <div class="card green">
+        <h3>해결 방식</h3>
+        <p>오브젝트 기능을 인터페이스로 분리하고, 편집 상태를 State 구조로 관리했습니다. 특정 오브젝트가 이동 가능한지, 회전 가능한지, 색상 변경 가능한지 런타임에 판단하고, UI와 편집 로직이 해당 기능만 노출하도록 구성했습니다.</p>
+      </div>
+    </div>
+    <div class="footer">4 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Career Summary</div>
+    <h2>경력 및 기술 요약</h2>
+
+    <div class="section timeline">
+      <div class="timeline-item">
+        <h3>(주)알서포트 | Unity Client Developer</h3>
+        <p class="note">2022.10 - 2025.12</p>
+        <ul>
+          <li>RFist 멀티플레이 액션 게임 시스템 개발</li>
+          <li>Slime Rush Steam 출시 게임 시스템 개발</li>
+          <li>Rfice Unity WebGL/iOS/Android 클라이언트 기능 개발</li>
+          <li>네트워크, 전투, 하우징, 입력, UI, 플랫폼 이슈 대응</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <h3>(주)더그림컴퍼니 | Unity Developer / Lead</h3>
+        <p class="note">2017.03 - 2022.09</p>
+        <ul>
+          <li>AR/VR/WebGL 콘텐츠 다수 개발 및 상용화</li>
+          <li>Oculus Quest2, VivePro 기반 VR 콘텐츠 개발</li>
+          <li>Android/iOS AR 앱 개발 및 배포</li>
+          <li>소규모 개발팀 리딩 및 프로젝트 납품 경험</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>게임 클라이언트 관련 강점</h3>
+        <ul>
+          <li><strong>Gameplay System</strong>: 캐릭터 조작, 전투, 타겟팅, 데미지 계산, 업적</li>
+          <li><strong>Multiplayer</strong>: Photon Fusion2 기반 입력/상태/RPC 동기화</li>
+          <li><strong>Runtime Interaction</strong>: Raycast 기반 3D 선택/배치/편집 시스템</li>
+          <li><strong>Architecture</strong>: 유지보수 가능한 모듈형 Unity 구조 설계</li>
+          <li><strong>Platform</strong>: Steam, WebGL, Mobile, VR 빌드 및 이슈 대응 경험</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>기술 스택</h3>
+        <ul>
+          <li><strong>Engine</strong>: Unity3D</li>
+          <li><strong>Language</strong>: C#, HLSL</li>
+          <li><strong>Network</strong>: Photon Fusion2, Firebase, REST API</li>
+          <li><strong>Architecture</strong>: Clean Architecture, MVP, Dependency Injection</li>
+          <li><strong>Unity Packages</strong>: Input System, Addressables, Cinemachine, DOTween, Zenject</li>
+          <li><strong>Platform</strong>: PC/Steam, WebGL, iOS, Android, Oculus/Meta Quest</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section card amber">
+      <h3>마무리 요약</h3>
+      <p>게임 클라이언트 개발자로서 네트워크 액션, 전투 시스템, 업적 시스템, 런타임 3D 상호작용 시스템을 구현한 경험이 있습니다. 빠르게 기능을 만드는 것뿐 아니라, 이후 기능 확장과 협업을 고려한 구조 설계를 중요하게 생각합니다.</p>
+    </div>
+
+    <div class="link-box">
+      Portfolio: <a href="https://cosmicgiantkoala.github.io">https://cosmicgiantkoala.github.io</a><br>
+      Email: cosmicgiantkoala@gmail.com
+    </div>
+    <div class="footer">5 / 5</div>
+  </section>
+</body>
+</html>

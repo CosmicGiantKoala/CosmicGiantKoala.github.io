@@ -1,0 +1,136 @@
+<!doctype html>
+{{- $source := .Params.sourceHtml -}}
+{{- $html := "" -}}
+{{- $style := "" -}}
+{{- $body := "" -}}
+{{- if $source -}}
+  {{- $html = readFile $source -}}
+  {{- $style = replaceRE `(?s)^.*?<style>(.*?)</style>.*$` "$1" $html -}}
+  {{- $body = replaceRE `(?s)^.*?<body[^>]*>(.*?)</body>.*$` "$1" $html -}}
+{{- end -}}
+<html lang="{{ site.LanguageCode | default "ko-KR" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }}</title>
+  {{- if $source }}
+  <style>{{ $style | safeCSS }}</style>
+  {{- else }}
+  <style>
+    @page { size: A4; margin: 0; }
+    :root {
+      --ink:#172033; --muted:#63708a; --line:#d8e0ec; --paper:#fff;
+      --navy:#0f172a; --blue:#2563eb; --cyan:#0891b2; --green:#16a34a;
+      --soft:#f8fafc; --soft-blue:#eef5ff; --soft-green:#ecfdf3; --soft-amber:#fff7e6;
+      --code-bg:#101827; --code-ink:#e5edf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; background:#eef2f8; color:var(--ink);
+      font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+      font-size:12px; line-height:1.48;
+    }
+    .page {
+      position:relative; width:210mm; height:297mm; margin:0 auto 18px;
+      padding:17mm 16mm 14mm; overflow:hidden; background:var(--paper);
+      box-shadow:0 12px 30px rgba(15,23,42,.14); page-break-after:always;
+    }
+    .page:last-child, .page:last-of-type { page-break-after:auto; }
+    .page::before {
+      content:""; position:absolute; inset:0 0 auto; height:7mm;
+      background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+    }
+    h1,h2,h3,p { margin:0; }
+    h1 { color:var(--navy); font-size:29px; line-height:1.15; letter-spacing:-.04em; }
+    h2 { margin-bottom:12px; color:var(--navy); font-size:22px; line-height:1.2; letter-spacing:-.035em; }
+    h3 { margin-bottom:7px; color:var(--navy); font-size:14px; letter-spacing:-.02em; }
+    .eyebrow { margin-bottom:7px; color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .subtitle { margin-top:9px; color:var(--muted); font-size:14px; font-weight:700; }
+    .lead { margin-top:15px; color:#334155; font-size:13px; }
+    .section { margin-top:18px; }
+    .meta-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+    .grid { display:grid; gap:11px; }
+    .grid.two { grid-template-columns:1fr 1fr; }
+    .grid.three { grid-template-columns:repeat(3, 1fr); }
+    .card { border:1px solid var(--line); border-radius:15px; padding:12px 13px; background:#fff; }
+    .card.blue { border-color:#bfdbfe; background:var(--soft-blue); }
+    .card.green { border-color:#bbf7d0; background:var(--soft-green); }
+    .card.amber { border-color:#fed7aa; background:var(--soft-amber); }
+    .pill-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
+    .pill { padding:5px 9px; border-radius:999px; background:#eef5ff; color:#1d4ed8; font-size:10px; font-weight:800; }
+    ul { margin:0; padding-left:16px; }
+    li { margin:3px 0; }
+    strong { color:#0f172a; font-weight:900; }
+    pre {
+      margin:0; padding:12px 13px; overflow:hidden; border-radius:14px;
+      background:var(--code-bg); color:var(--code-ink);
+      font-family:"Cascadia Mono","Consolas","Fira Code",monospace;
+      font-size:9.25px; line-height:1.36; white-space:pre-wrap;
+    }
+    code { font-family:"Cascadia Mono","Consolas","Fira Code",monospace; }
+    pre code { font-size:inherit; line-height:inherit; background:transparent; padding:0; }
+    .footer { position:absolute; right:16mm; bottom:8mm; color:#94a3b8; font-size:10px; }
+    .table { width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .table th,.table td { padding:8px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .table th { width:28%; background:var(--soft); color:#475569; font-size:10px; font-weight:900; }
+    .table tr:last-child th,.table tr:last-child td { border-bottom:0; }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+    .flow div { border:1px solid #cfe0ff; border-radius:12px; background:#f8fbff; padding:9px; font-size:10px; font-weight:800; text-align:center; color:#1e3a8a; }
+    .mermaid {
+      display:flex; justify-content:center; align-items:center; width:100%;
+      min-height:38mm; padding:8px; border:1px solid #cfe0ff;
+      border-radius:14px; background:#f8fbff;
+    }
+    .mermaid svg { max-width:100%; height:auto; }
+    .metric { color:var(--navy); font-size:22px; font-weight:900; letter-spacing:-.03em; }
+    .metric-label { color:var(--muted); font-size:10px; font-weight:800; }
+    .timeline { display:grid; gap:10px; }
+    .timeline-item { display:grid; grid-template-columns:34mm 1fr; gap:10px; padding:11px 12px; border:1px solid var(--line); border-radius:14px; background:#fff; }
+    .timeline-date { color:#1d4ed8; font-size:10px; font-weight:900; }
+    .timeline-title { color:var(--navy); font-size:13px; font-weight:900; }
+    .timeline-role { margin-top:2px; color:var(--muted); font-size:10px; font-weight:800; }
+    .note { color:#475569; font-size:10.5px; }
+    .tight li { margin:2px 0; }
+    .small { font-size:10px; color:var(--muted); }
+    @media print { body { background:#fff; } .page { margin:0; box-shadow:none; } }
+  </style>
+  {{- end }}
+</head>
+<body>
+  {{- if $source }}
+  {{ $body | safeHTML }}
+  {{- else }}
+  {{ .Content }}
+  {{- end }}
+  {{- if not $source }}
+  {{- $videos := resources.Match "videos/*.mp4" }}
+  {{- if $videos }}
+  <div style="display:none" aria-hidden="true">
+    {{- range $videos }}
+    <span data-video="{{ .RelPermalink }}">{{ .Name }}</span>
+    {{- end }}
+  </div>
+  {{- end }}
+  <script src="../../docs/js/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: 'loose',
+        theme: 'base',
+        themeVariables: {
+          primaryColor: '#eef5ff',
+          primaryBorderColor: '#2563eb',
+          primaryTextColor: '#172033',
+          lineColor: '#64748b',
+          fontFamily: 'Pretendard, Noto Sans KR, Malgun Gothic, Arial'
+        },
+        class: {
+          useMaxWidth: true
+        }
+      });
+    }
+  </script>
+  {{- end }}
+</body>
+</html>

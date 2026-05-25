@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><title>김철규 코드 샘플 - Skill Ability System</title>
+  <style>
+    @page{size:A4;margin:0}:root{--ink:#172033;--muted:#63708a;--line:#d8e0ec;--navy:#0f172a;--blue:#2563eb;--cyan:#0891b2;--green:#16a34a;--soft-blue:#eef5ff;--soft-green:#ecfdf3;--soft-amber:#fff7e6;--code:#101827;--code-ink:#e5edf8}*{box-sizing:border-box}body{margin:0;background:#eef2f8;color:var(--ink);font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:12px;line-height:1.48}.page{position:relative;width:210mm;height:297mm;margin:0 auto 18px;padding:17mm 16mm 14mm;overflow:hidden;background:white;box-shadow:0 12px 30px rgba(15,23,42,.14);page-break-after:always}.page:last-child{page-break-after:auto}.page::before{content:"";position:absolute;inset:0 0 auto;height:7mm;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green))}h1,h2,h3,p{margin:0}h1{color:var(--navy);font-size:29px;line-height:1.15;letter-spacing:-.04em}h2{margin-bottom:12px;color:var(--navy);font-size:22px;letter-spacing:-.035em}h3{margin-bottom:7px;color:var(--navy);font-size:14px}.eyebrow{margin-bottom:7px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.subtitle{margin-top:9px;color:var(--muted);font-size:14px;font-weight:700}.lead{margin-top:15px;color:#334155;font-size:13px}.section{margin-top:18px}.grid{display:grid;gap:11px}.two{grid-template-columns:1fr 1fr}.card{border:1px solid var(--line);border-radius:15px;padding:12px 13px;background:white}.blue{border-color:#bfdbfe;background:var(--soft-blue)}.green{border-color:#bbf7d0;background:var(--soft-green)}.amber{border-color:#fed7aa;background:var(--soft-amber)}.pill-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.pill{padding:5px 9px;border-radius:999px;background:#eef5ff;color:#1d4ed8;font-size:10px;font-weight:800}ul{margin:0;padding-left:16px}li{margin:3px 0}strong{color:#0f172a;font-weight:900}pre{margin:0;padding:12px 13px;overflow:hidden;border-radius:14px;background:var(--code);color:var(--code-ink);font-family:"Cascadia Mono",Consolas,monospace;font-size:8.45px;line-height:1.32;white-space:pre-wrap}code{font-family:"Cascadia Mono",Consolas,monospace}.footer{position:absolute;right:16mm;bottom:8mm;color:#94a3b8;font-size:10px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}.flow div{border:1px solid #cfe0ff;border-radius:12px;background:#f8fbff;padding:9px;font-size:10px;font-weight:800;text-align:center;color:#1e3a8a}@media print{body{background:white}.page{margin:0;box-shadow:none}}
+  </style>
+</head>
+<body>
+<section class="page"><div class="eyebrow">Code Sample</div><h1>Hero Skill & Ability System</h1><p class="subtitle">RFist 기반 스킬 실행 / 쿨타임 / 상태 검증 / 어빌리티 교체 샘플 | 김철규</p><p class="lead">네트워크 입력 이후 실제 스킬 실행까지 연결되는 시스템을 공개용으로 재구성했습니다. 입력, 상태 조건, 쿨타임, 스킬 실행, 애니메이션/히트박스/VFX 이벤트 연결을 보여주는 것이 목적입니다.</p><div class="pill-row"><span class="pill">Skill</span><span class="pill">Ability</span><span class="pill">Cooldown</span><span class="pill">Command</span><span class="pill">State Check</span></div><div class="flow"><div>Input</div><div>Validate</div><div>Cooldown</div><div>Execute</div><div>Events</div></div><div class="section grid two"><div class="card blue"><h3>샘플 목표</h3><ul><li>스킬 실행 가능 조건 검증</li><li>쿨타임과 자원 비용 처리</li><li>영웅 어빌리티별 스킬 세트 교체</li><li>스킬 실행 이벤트를 애니메이션/히트박스/VFX로 전달</li></ul></div><div class="card green"><h3>설계 기준</h3><ul><li>SkillData: 스킬 정의</li><li>HeroSkill: 실행 단위</li><li>SkillContext: 실행 컨텍스트</li><li>AbilityLoadout: 영웅별 스킬 구성</li><li>SkillRunner: 상태 검증과 실행 흐름</li></ul></div></div><div class="footer">1 / 10</div></section>
+<section class="page"><div class="eyebrow">Skill Data</div><h2>스킬 정의 데이터</h2><div class="section"><pre><code>public enum SkillSlot { Basic, Special, Ultimate }
+public enum SkillCostType { None, Stamina, SkillPoint }
+
+public sealed class SkillData
+{
+    public string Id { get; init; }
+    public SkillSlot Slot { get; init; }
+    public float Cooldown { get; init; }
+    public SkillCostType CostType { get; init; }
+    public int CostValue { get; init; }
+    public string AnimationTrigger { get; init; }
+    public string HitBoxProfileId { get; init; }
+    public string EffectId { get; init; }
+}</code></pre></div><div class="section grid two"><div class="card"><h3>정의 데이터</h3><p>스킬의 쿨타임, 비용, 애니메이션 트리거, 히트박스 프로필, 이펙트 ID를 데이터로 분리합니다.</p></div><div class="card"><h3>장점</h3><p>스킬 밸런스나 연출 교체가 코드 수정 없이 데이터 변경으로 가능합니다.</p></div></div><div class="footer">2 / 10</div></section>
+<section class="page"><div class="eyebrow">Context</div><h2>스킬 실행 컨텍스트</h2><div class="section"><pre><code>public readonly struct SkillContext
+{
+    public HeroController Caster { get; init; }
+    public IHeroStatus Status { get; init; }
+    public Vector3 AimDirection { get; init; }
+    public float NetworkLatency { get; init; }
+    public bool IsLocalPlayer { get; init; }
+}
+
+public readonly struct SkillExecuteResult
+{
+    public bool Success { get; init; }
+    public string Reason { get; init; }
+
+    public static SkillExecuteResult Ok() =&gt; new() { Success = true };
+    public static SkillExecuteResult Fail(string reason) =&gt; new() { Success = false, Reason = reason };
+}</code></pre></div><div class="section card blue"><h3>리뷰 포인트</h3><p>스킬 실행 시 필요한 입력을 Context 하나로 묶으면 스킬 클래스가 전역 상태나 싱글톤에 의존하지 않습니다.</p></div><div class="footer">3 / 10</div></section>
+<section class="page"><div class="eyebrow">Skill Unit</div><h2>스킬 실행 단위</h2><div class="section"><pre><code>public abstract class HeroSkill
+{
+    public SkillData Data { get; }
+    private float _nextAvailableTime;
+
+    protected HeroSkill(SkillData data)
+    {
+        Data = data;
+    }
+
+    public SkillExecuteResult TryExecute(SkillContext context)
+    {
+        if (Time.time &lt; _nextAvailableTime)
+            return SkillExecuteResult.Fail("Cooldown");
+
+        if (!CanPayCost(context.Status))
+            return SkillExecuteResult.Fail("NotEnoughResource");
+
+        if (!CanExecuteByState(context.Status))
+            return SkillExecuteResult.Fail("InvalidState");
+
+        PayCost(context.Status);
+        _nextAvailableTime = Time.time + Data.Cooldown;
+        ExecuteCore(context);
+        return SkillExecuteResult.Ok();
+    }
+
+    protected abstract void ExecuteCore(SkillContext context);
+}</code></pre></div><div class="section card green"><h3>실무 의도</h3><p>쿨타임, 비용, 상태 검증은 공통 흐름으로 처리하고, 실제 스킬 효과만 하위 클래스에서 구현합니다.</p></div><div class="footer">4 / 10</div></section>
+<section class="page"><div class="eyebrow">State Validation</div><h2>상태 기반 실행 제한</h2><div class="section"><pre><code>private static bool CanExecuteByState(IHeroStatus status)
+{
+    if (status.IsDead) return false;
+    if (status.IsStunned) return false;
+    if (status.IsDown) return false;
+    if (status.IsCasting) return false;
+    return true;
+}
+
+private static bool CanPayCost(IHeroStatus status, SkillData data)
+{
+    return data.CostType switch
+    {
+        SkillCostType.None =&gt; true,
+        SkillCostType.Stamina =&gt; status.Stamina &gt;= data.CostValue,
+        SkillCostType.SkillPoint =&gt; status.SkillPoint &gt;= data.CostValue,
+        _ =&gt; false
+    };
+}
+
+private static void PayCost(IHeroStatus status, SkillData data)
+{
+    if (data.CostType == SkillCostType.Stamina)
+        status.ConsumeStamina(data.CostValue);
+    else if (data.CostType == SkillCostType.SkillPoint)
+        status.ConsumeSkillPoint(data.CostValue);
+}</code></pre></div><div class="section grid two"><div class="card"><h3>상태 검증</h3><p>사망, 스턴, 다운, 캐스팅 중 등 스킬 실행 불가능 상태를 공통 검증합니다.</p></div><div class="card"><h3>자원 검증</h3><p>SP/스태미나 등 비용 정책을 공통화해 스킬마다 중복 구현하지 않습니다.</p></div></div><div class="footer">5 / 10</div></section>
+<section class="page"><div class="eyebrow">Concrete Skill</div><h2>공격 스킬 구현 예시</h2><div class="section"><pre><code>public sealed class StrikeSkill : HeroSkill
+{
+    private readonly ISkillEventBus _eventBus;
+
+    public StrikeSkill(SkillData data, ISkillEventBus eventBus) : base(data)
+    {
+        _eventBus = eventBus;
+    }
+
+    protected override void ExecuteCore(SkillContext context)
+    {
+        _eventBus.Publish(new SkillStartedEvent
+        {
+            Caster = context.Caster,
+            AnimationTrigger = Data.AnimationTrigger,
+            EffectId = Data.EffectId
+        });
+
+        _eventBus.Publish(new HitBoxRequestedEvent
+        {
+            Caster = context.Caster,
+            ProfileId = Data.HitBoxProfileId,
+            AimDirection = context.AimDirection,
+            Latency = context.NetworkLatency
+        });
+    }
+}</code></pre></div><div class="section card blue"><h3>리뷰 포인트</h3><p>스킬이 애니메이터/히트박스/VFX를 직접 잡지 않고 이벤트를 발행합니다. 연출 시스템과 전투 판정을 느슨하게 연결합니다.</p></div><div class="footer">6 / 10</div></section>
+<section class="page"><div class="eyebrow">Ability Loadout</div><h2>영웅 어빌리티별 스킬 세트</h2><div class="section"><pre><code>public enum HeroAbilityType { Boxer, Ninja, Wizard }
+
+public sealed class AbilityLoadout
+{
+    private readonly Dictionary&lt;SkillSlot, HeroSkill&gt; _skills = new();
+
+    public HeroAbilityType Type { get; }
+
+    public AbilityLoadout(HeroAbilityType type, IEnumerable&lt;HeroSkill&gt; skills)
+    {
+        Type = type;
+        foreach (var skill in skills)
+            _skills[skill.Data.Slot] = skill;
+    }
+
+    public bool TryGetSkill(SkillSlot slot, out HeroSkill skill)
+        =&gt; _skills.TryGetValue(slot, out skill);
+}
+
+public sealed class HeroAbilityManager
+{
+    private AbilityLoadout _current;
+
+    public void ChangeAbility(AbilityLoadout loadout)
+    {
+        _current = loadout;
+        AbilityChanged?.Invoke(loadout.Type);
+    }
+
+    public event Action&lt;HeroAbilityType&gt; AbilityChanged;
+}</code></pre></div><div class="section card green"><h3>실무 의도</h3><p>캐릭터의 어빌리티가 바뀌면 스킬 구성이 통째로 교체됩니다. 네트워크 동기화 대상은 AbilityType만 두고, 각 클라이언트가 같은 Loadout을 구성할 수 있습니다.</p></div><div class="footer">7 / 10</div></section>
+<section class="page"><div class="eyebrow">Skill Runner</div><h2>입력에서 스킬 실행까지 연결</h2><div class="section"><pre><code>public sealed class HeroSkillRunner
+{
+    private readonly HeroAbilityManager _abilityManager;
+    private readonly IHeroStatus _status;
+
+    public SkillExecuteResult TryRun(
+        SkillSlot slot,
+        HeroInputSyncContext syncContext,
+        Vector3 aimDirection)
+    {
+        if (!_abilityManager.Current.TryGetSkill(slot, out var skill))
+            return SkillExecuteResult.Fail("SkillNotFound");
+
+        var context = new SkillContext
+        {
+            Caster = _heroController,
+            Status = _status,
+            AimDirection = aimDirection,
+            NetworkLatency = syncContext.EstimatedLatency,
+            IsLocalPlayer = syncContext.IsLocal
+        };
+
+        return skill.TryExecute(context);
+    }
+}</code></pre></div><div class="section grid two"><div class="card"><h3>NetworkInput과 연결</h3><p>입력 샘플의 <code>HeroActionRouter</code>가 SkillRunner를 호출하면 입력-스킬 흐름이 완성됩니다.</p></div><div class="card"><h3>결과 처리</h3><p>실패 이유를 반환해 UI 피드백이나 디버깅 로그에 사용할 수 있습니다.</p></div></div><div class="footer">8 / 10</div></section>
+<section class="page"><div class="eyebrow">Events</div><h2>애니메이션/히트박스/VFX 이벤트 연결</h2><div class="section"><pre><code>public interface ISkillEventBus
+{
+    void Publish&lt;T&gt;(T skillEvent);
+    void Subscribe&lt;T&gt;(Action&lt;T&gt; handler);
+}
+
+public sealed class SkillAnimationPresenter
+{
+    public void OnSkillStarted(SkillStartedEvent e)
+    {
+        e.Caster.Animator.SetTrigger(e.AnimationTrigger);
+    }
+}
+
+public sealed class SkillHitBoxPresenter
+{
+    public void OnHitBoxRequested(HitBoxRequestedEvent e)
+    {
+        var profile = _profileRepository.Find(e.ProfileId);
+        _hitBox.Open(profile.CreateHitInfo(e.Caster, e.AimDirection, e.Latency));
+    }
+}
+
+public sealed class SkillVfxPresenter
+{
+    public void OnSkillStarted(SkillStartedEvent e)
+    {
+        _effectPool.Spawn(e.EffectId, e.Caster.transform.position);
+    }
+}</code></pre></div><div class="section card blue"><h3>리뷰 포인트</h3><p>스킬 도메인 로직과 표현 계층을 이벤트로 분리하면 스킬 추가 시 연출 교체가 쉬워집니다.</p></div><div class="footer">9 / 10</div></section>
+<section class="page"><div class="eyebrow">Review Summary</div><h2>테스트 가능성과 면접 어필 포인트</h2><div class="section grid two"><div class="card blue"><h3>테스트 항목</h3><ul><li>쿨타임 중 실행 실패</li><li>자원 부족 실패</li><li>스턴/다운 상태 실행 실패</li><li>어빌리티 교체 시 스킬 세트 변경</li><li>스킬 시작 이벤트 발생</li><li>히트박스 요청 이벤트 발생</li></ul></div><div class="card green"><h3>어필 포인트</h3><ul><li>입력-스킬-히트박스 흐름 설계</li><li>공통 검증과 개별 스킬 효과 분리</li><li>어빌리티 기반 로드아웃 교체</li><li>이벤트 기반 연출 연결</li><li>네트워크 지연값을 스킬 컨텍스트에 전달</li></ul></div></div><div class="section card"><h3>연락처</h3><p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p></div><div class="footer">10 / 10</div></section>
+</body>
+</html>

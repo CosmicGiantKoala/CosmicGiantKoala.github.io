@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>김철규 코드 샘플 - Runtime Placement Editor</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    :root {
+      --ink:#172033; --muted:#63708a; --line:#d8e0ec; --paper:#fff;
+      --navy:#0f172a; --blue:#2563eb; --cyan:#0891b2; --green:#16a34a;
+      --soft:#f8fafc; --soft-blue:#eef5ff; --soft-green:#ecfdf3; --soft-amber:#fff7e6;
+      --code-bg:#101827; --code-ink:#e5edf8;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; background:#eef2f8; color:var(--ink);
+      font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+      font-size:12px; line-height:1.48;
+    }
+    .page {
+      position:relative; width:210mm; height:297mm; margin:0 auto 18px;
+      padding:17mm 16mm 14mm; overflow:hidden; background:var(--paper);
+      box-shadow:0 12px 30px rgba(15,23,42,.14); page-break-after:always;
+    }
+    .page:last-child { page-break-after:auto; }
+    .page::before {
+      content:""; position:absolute; inset:0 0 auto; height:7mm;
+      background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+    }
+    h1,h2,h3,p { margin:0; }
+    h1 { color:var(--navy); font-size:29px; line-height:1.15; letter-spacing:-.04em; }
+    h2 { margin-bottom:12px; color:var(--navy); font-size:22px; line-height:1.2; letter-spacing:-.035em; }
+    h3 { margin-bottom:7px; color:var(--navy); font-size:14px; letter-spacing:-.02em; }
+    .eyebrow { margin-bottom:7px; color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .subtitle { margin-top:9px; color:var(--muted); font-size:14px; font-weight:700; }
+    .lead { margin-top:15px; color:#334155; font-size:13px; }
+    .section { margin-top:18px; }
+    .grid { display:grid; gap:11px; }
+    .grid.two { grid-template-columns:1fr 1fr; }
+    .grid.three { grid-template-columns:repeat(3,1fr); }
+    .card { border:1px solid var(--line); border-radius:15px; padding:12px 13px; background:#fff; }
+    .card.blue { border-color:#bfdbfe; background:var(--soft-blue); }
+    .card.green { border-color:#bbf7d0; background:var(--soft-green); }
+    .card.amber { border-color:#fed7aa; background:var(--soft-amber); }
+    .pill-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
+    .pill { padding:5px 9px; border-radius:999px; background:#eef5ff; color:#1d4ed8; font-size:10px; font-weight:800; }
+    ul { margin:0; padding-left:16px; }
+    li { margin:3px 0; }
+    strong { color:#0f172a; font-weight:900; }
+    pre {
+      margin:0; padding:12px 13px; overflow:hidden; border-radius:14px;
+      background:var(--code-bg); color:var(--code-ink);
+      font-family:"Cascadia Mono","Consolas","Fira Code",monospace;
+      font-size:8.45px; line-height:1.32; white-space:pre-wrap;
+    }
+    code { font-family:"Cascadia Mono","Consolas","Fira Code",monospace; }
+    .footer { position:absolute; right:16mm; bottom:8mm; color:#94a3b8; font-size:10px; }
+    .table { width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .table th,.table td { padding:8px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .table th { width:28%; background:var(--soft); color:#475569; font-size:10px; font-weight:900; }
+    .table tr:last-child th,.table tr:last-child td { border-bottom:0; }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+    .flow div { border:1px solid #cfe0ff; border-radius:12px; background:#f8fbff; padding:9px; font-size:10px; font-weight:800; text-align:center; color:#1e3a8a; }
+    @media print { body { background:#fff; } .page { margin:0; box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Code Sample</div>
+    <h1>Runtime 3D Placement Editor</h1>
+    <p class="subtitle">Rfice MyRoomEditor 기반 런타임 배치/편집 시스템 | 김철규</p>
+    <p class="lead">
+      이 문서는 Rfice MyRoomEditor 개발 경험을 기반으로 정리한 공개용 코드 샘플입니다.
+      게임의 하우징 시스템, 맵 에디터, 런타임 오브젝트 배치 시스템과 유사한 3D 상호작용 구조를 보여주기 위해 회사 원본 코드를 일반화했습니다.
+    </p>
+    <div class="pill-row">
+      <span class="pill">Runtime Editor</span><span class="pill">Raycast</span><span class="pill">Placement Validation</span>
+      <span class="pill">State Pattern</span><span class="pill">Unity C#</span>
+    </div>
+    <div class="flow">
+      <div>Pointer Input</div><div>Raycast</div><div>Placement Check</div><div>Edit State</div><div>Apply/Cancel</div>
+    </div>
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>샘플 목표</h3>
+        <ul>
+          <li>포인터 기반 3D 오브젝트 선택/배치/이동</li>
+          <li>UI 위 클릭과 월드 입력 충돌 방지</li>
+          <li>우선순위 레이어와 무시 오브젝트 필터링</li>
+          <li>이동/회전/색상 편집 기능을 인터페이스로 분리</li>
+          <li>편집 취소 시 이전 상태 복원</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>설계 기준</h3>
+        <ul>
+          <li><strong>PlacementInputRaycaster</strong>: RaycastNonAlloc 기반 포인터 감지</li>
+          <li><strong>IPlaceableArea</strong>: 배치 가능한 영역 추상화</li>
+          <li><strong>IEditableProp</strong>: 편집 가능한 오브젝트 계약</li>
+          <li><strong>EditorState</strong>: 배치/선택/이동/회전 상태 분리</li>
+          <li><strong>EditSession</strong>: 적용/취소/복원 정보 관리</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section">
+      <table class="table">
+        <tr><th>원 프로젝트</th><td>Rfice - MyRoomEditor</td></tr>
+        <tr><th>담당 영역</th><td>런타임 3D 공간 배치/선택/편집 시스템</td></tr>
+        <tr><th>샘플 범위</th><td>Raycast 입력, UI 차단, 배치 영역 검증, 편집 인터페이스, 상태 전환, 취소 복원</td></tr>
+        <tr><th>게임 연결성</th><td>하우징 시스템, 맵 에디터, 샌드박스 배치 시스템, 인게임 커스터마이징</td></tr>
+      </table>
+    </div>
+    <div class="footer">1 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Contracts</div>
+    <h2>편집 가능한 오브젝트 계약</h2>
+    <div class="section">
+      <pre><code>public interface IEditableProp
+{
+    string Id { get; }
+    Transform Transform { get; }
+    void Focus();
+    void Unfocus();
+    void Select();
+    void Deselect();
+    PlacementSnapshot Capture();
+    void Restore(PlacementSnapshot snapshot);
+    bool TryGetMoveable(out IMoveableProp moveable);
+    bool TryGetRotatable(out IRotatableProp rotatable);
+    bool TryGetColorEditable(out IColorEditableProp colorEditable);
+}
+
+public readonly struct PlacementSnapshot
+{
+    public Vector3 Position { get; init; }
+    public Quaternion Rotation { get; init; }
+    public Transform Parent { get; init; }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>포인트</h3>
+        <ul>
+          <li>오브젝트 공통 편집 계약 정의</li>
+          <li>선택/포커스 시각 상태를 객체 내부에서 처리</li>
+          <li>편집 전 상태를 스냅샷으로 저장해 취소 복원 가능</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>실무 의도</h3>
+        <p>배치 가능한 오브젝트마다 내부 구조가 달라도 편집 시스템은 <code>IEditableProp</code>만 바라봅니다. 오브젝트 종류가 늘어나도 편집 매니저의 수정 범위를 줄입니다.</p>
+      </div>
+    </div>
+    <div class="footer">2 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Capabilities</div>
+    <h2>이동/회전/색상 기능 분리</h2>
+    <div class="section">
+      <pre><code>public interface IMoveableProp
+{
+    Vector3 Position { get; }
+    void Move(Vector3 position);
+    bool CanPlaceAt(Vector3 position, IPlaceableArea area);
+}
+
+public interface IRotatableProp
+{
+    Quaternion Rotation { get; }
+    void Rotate(Quaternion rotation);
+    void RotateBySnap(float angle);
+}
+
+public interface IColorEditableProp
+{
+    IReadOnlyList&lt;Color&gt; AvailableColors { get; }
+    void ApplyColor(int index);
+}
+
+public interface IPlaceableArea
+{
+    PlacementType Type { get; }
+    Quaternion PlacementRotation { get; }
+    bool IsChildAreaOf(out IEditableProp parent);
+}
+
+public enum PlacementType
+{
+    Floor,
+    Wall,
+    Ceiling,
+    PropSurface
+}</code></pre>
+    </div>
+    <div class="section card blue">
+      <h3>리뷰 포인트</h3>
+      <p>상속으로 모든 오브젝트 기능을 표현하면 클래스 계층이 커집니다. 이 샘플은 기능 인터페이스를 조합해 “움직일 수 있는가”, “회전 가능한가”, “색상 변경 가능한가”를 런타임에 판단합니다.</p>
+    </div>
+    <div class="footer">3 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Raycast Utility</div>
+    <h2>포인터 기반 Raycast와 우선순위 선택</h2>
+    <div class="section">
+      <pre><code>public sealed class PlacementInputRaycaster : MonoBehaviour
+{
+    [SerializeField] private Camera raycastCamera;
+    [SerializeField] private float maxDistance = 50f;
+    [SerializeField] private float minDistance = 0.5f;
+
+    private readonly RaycastHit[] _hits = new RaycastHit[10];
+
+    public bool TryGetHit(
+        Vector2 screenPosition,
+        LayerMask targetMask,
+        int priorityLayer,
+        out RaycastHit result)
+    {
+        var ray = raycastCamera.ScreenPointToRay(screenPosition);
+        var count = Physics.RaycastNonAlloc(ray, _hits, maxDistance, targetMask);
+
+        if (count == 0)
+        {
+            result = default;
+            return false;
+        }
+
+        var validHits = _hits
+            .Take(count)
+            .Where(hit =&gt; hit.collider != null &amp;&amp; hit.distance &gt; minDistance)
+            .OrderBy(hit =&gt; hit.distance)
+            .ToArray();
+
+        if (validHits.Length == 0)
+        {
+            result = default;
+            return false;
+        }
+
+        var priorityHit = validHits.FirstOrDefault(
+            hit =&gt; hit.transform.gameObject.layer == priorityLayer);
+
+        result = priorityHit.collider != null ? priorityHit : validHits[0];
+        return true;
+    }
+}</code></pre>
+    </div>
+    <div class="section card green">
+      <h3>실무 의도</h3>
+      <p><code>RaycastNonAlloc</code>으로 반복 입력 중 GC를 줄이고, 우선순위 레이어로 겹친 오브젝트 중 의도한 편집 대상을 안정적으로 선택합니다.</p>
+    </div>
+    <div class="footer">4 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">UI Guard</div>
+    <h2>UI 입력과 월드 입력 충돌 방지</h2>
+    <div class="section">
+      <pre><code>public sealed class PointerUiGuard
+{
+    private readonly EventSystem _eventSystem;
+    private readonly List&lt;RaycastResult&gt; _results = new();
+
+    public PointerUiGuard(EventSystem eventSystem)
+    {
+        _eventSystem = eventSystem;
+    }
+
+    public bool IsPointerOnUI(Vector2 screenPosition)
+    {
+        if (_eventSystem == null)
+            return false;
+
+        _results.Clear();
+
+        var eventData = new PointerEventData(_eventSystem)
+        {
+            position = screenPosition
+        };
+
+        _eventSystem.RaycastAll(eventData, _results);
+        return _results.Count &gt; 0;
+    }
+}
+
+public sealed class EditorPointerInput
+{
+    public Vector2 Position =&gt; Mouse.current.position.ReadValue();
+    public Vector2 Delta =&gt; Mouse.current.delta.ReadValue();
+    public bool Pressed =&gt; Mouse.current.leftButton.wasPressedThisFrame;
+    public bool Released =&gt; Mouse.current.leftButton.wasReleasedThisFrame;
+    public bool Cancelled =&gt; Keyboard.current.escapeKey.wasPressedThisFrame;
+}</code></pre>
+    </div>
+    <div class="section card blue">
+      <h3>리뷰 포인트</h3>
+      <p>인게임 에디터는 UI 버튼 클릭과 월드 오브젝트 클릭이 동시에 발생하기 쉽습니다. UI 가드를 별도 클래스로 두면 선택/이동/배치 상태에서 같은 정책을 재사용할 수 있습니다.</p>
+    </div>
+    <div class="footer">5 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Placement Validation</div>
+    <h2>배치 영역 검증과 자기 자신 무시</h2>
+    <div class="section">
+      <pre><code>public sealed class PlacementAreaResolver
+{
+    private readonly PlacementInputRaycaster _raycaster;
+    private readonly PointerUiGuard _uiGuard;
+    private readonly LayerMask _areaMask;
+
+    public bool TryGetPlacementArea(
+        Vector2 screenPosition,
+        IEditableProp ignoredProp,
+        out IPlaceableArea area)
+    {
+        area = null;
+
+        if (_uiGuard.IsPointerOnUI(screenPosition))
+            return false;
+
+        if (!_raycaster.TryGetHit(screenPosition, _areaMask, -1, out var hit))
+            return false;
+
+        if (!hit.collider.TryGetComponent(out IPlaceableArea candidate))
+            return false;
+
+        if (candidate.IsChildAreaOf(out var parent) &amp;&amp; parent == ignoredProp)
+            return false;
+
+        area = candidate;
+        return true;
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>문제</h3>
+        <p>이동 중인 오브젝트가 자기 자신의 배치 영역을 다시 감지하면 배치 검증이 흔들릴 수 있습니다.</p>
+      </div>
+      <div class="card">
+        <h3>해결</h3>
+        <p>현재 편집 중인 오브젝트를 필터링하고, UI 위 포인터 입력을 먼저 차단해 월드 조작과 UI 조작이 충돌하지 않게 했습니다.</p>
+      </div>
+    </div>
+    <div class="footer">6 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Edit Session</div>
+    <h2>편집 세션과 취소 복원</h2>
+    <div class="section">
+      <pre><code>public sealed class PropEditSession
+{
+    public IEditableProp Target { get; }
+    public PlacementSnapshot Snapshot { get; }
+    public bool IsActive { get; private set; }
+
+    public PropEditSession(IEditableProp target)
+    {
+        Target = target;
+        Snapshot = target.Capture();
+        IsActive = true;
+        target.Select();
+    }
+
+    public void Apply()
+    {
+        if (!IsActive)
+            return;
+
+        IsActive = false;
+        Target.Deselect();
+    }
+
+    public void Cancel()
+    {
+        if (!IsActive)
+            return;
+
+        Target.Restore(Snapshot);
+        IsActive = false;
+        Target.Deselect();
+    }
+}
+
+public abstract class EditorState
+{
+    public abstract void Enter(PropEditSession session);
+    public abstract void Tick(EditorPointerInput input);
+    public abstract void Exit();
+}</code></pre>
+    </div>
+    <div class="section card amber">
+      <h3>실무 의도</h3>
+      <p>편집 상태가 많아질수록 취소/적용 정책이 흩어지기 쉽습니다. 세션 객체가 편집 시작 시점의 스냅샷과 적용/취소를 관리하면 상태 클래스는 각자의 조작 로직에 집중할 수 있습니다.</p>
+    </div>
+    <div class="footer">7 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Move State</div>
+    <h2>오브젝트 이동 상태</h2>
+    <div class="section">
+      <pre><code>public sealed class MovePropState : EditorState
+{
+    private readonly PlacementAreaResolver _areaResolver;
+    private PropEditSession _session;
+    private IMoveableProp _moveable;
+
+    public override void Enter(PropEditSession session)
+    {
+        _session = session;
+
+        if (!session.Target.TryGetMoveable(out _moveable))
+            session.Cancel();
+    }
+
+    public override void Tick(EditorPointerInput input)
+    {
+        if (input.Cancelled)
+        {
+            _session.Cancel();
+            return;
+        }
+
+        if (!_areaResolver.TryGetPlacementArea(
+                input.Position, _session.Target, out var area))
+            return;
+
+        var nextPosition = CalculatePlacementPosition(area);
+        if (_moveable.CanPlaceAt(nextPosition, area))
+            _moveable.Move(nextPosition);
+
+        if (input.Released)
+            _session.Apply();
+    }
+
+    public override void Exit()
+    {
+        _session = null;
+        _moveable = null;
+    }
+}</code></pre>
+    </div>
+    <div class="section grid two">
+      <div class="card">
+        <h3>포인트</h3>
+        <ul>
+          <li>편집 가능 여부를 상태 진입 시 검증</li>
+          <li>배치 가능할 때만 위치 적용</li>
+          <li>ESC 입력으로 스냅샷 복원</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>게임 연결성</h3>
+        <p>하우징 가구 이동, 타일/프롭 배치, 샌드박스 오브젝트 편집에 그대로 응용 가능한 구조입니다.</p>
+      </div>
+    </div>
+    <div class="footer">8 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Rotate & UI</div>
+    <h2>회전 상태와 편집 UI 이벤트 연결</h2>
+    <div class="section">
+      <pre><code>public sealed class RotatePropState : EditorState
+{
+    private PropEditSession _session;
+    private IRotatableProp _rotatable;
+    private float _accumulatedAngle;
+
+    public override void Enter(PropEditSession session)
+    {
+        _session = session;
+        if (!session.Target.TryGetRotatable(out _rotatable))
+            session.Cancel();
+    }
+
+    public override void Tick(EditorPointerInput input)
+    {
+        if (input.Cancelled)
+        {
+            _session.Cancel();
+            return;
+        }
+
+        _accumulatedAngle += input.Delta.x * 0.35f;
+        _rotatable.Rotate(Quaternion.Euler(0f, _accumulatedAngle, 0f));
+
+        if (input.Released)
+            _session.Apply();
+    }
+
+    public override void Exit()
+    {
+        _session = null;
+        _rotatable = null;
+        _accumulatedAngle = 0f;
+    }
+}
+
+public sealed class ObjectEditMenu : MonoBehaviour
+{
+    public event Action MoveClicked;
+    public event Action RotateClicked;
+    public event Action DeleteClicked;
+    public event Action ColorClicked;
+
+    public void Show(IEditableProp prop)
+    {
+        MoveButton.SetActive(prop.TryGetMoveable(out _));
+        RotateButton.SetActive(prop.TryGetRotatable(out _));
+        ColorButton.SetActive(prop.TryGetColorEditable(out _));
+    }
+}</code></pre>
+    </div>
+    <div class="section card blue">
+      <h3>리뷰 포인트</h3>
+      <p>편집 UI는 선택된 오브젝트의 기능 인터페이스를 확인해 가능한 메뉴만 노출합니다. UI가 모든 오브젝트 타입을 직접 알 필요가 없습니다.</p>
+    </div>
+    <div class="footer">9 / 10</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Review Points</div>
+    <h2>테스트 가능성과 면접 어필 포인트</h2>
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>테스트 가능한 항목</h3>
+        <ul>
+          <li>UI 위 포인터 입력 차단</li>
+          <li>우선순위 레이어 선택</li>
+          <li>자기 자신 배치 영역 무시</li>
+          <li>배치 실패 시 위치 미적용</li>
+          <li>취소 시 이전 위치/회전/부모 복원</li>
+          <li>기능 인터페이스에 따른 UI 메뉴 노출</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>면접에서 설명할 내용</h3>
+        <ul>
+          <li>런타임 3D 에디터 구조 경험</li>
+          <li>Raycast 입력과 UI 입력 충돌 처리</li>
+          <li>State 기반 편집 플로우</li>
+          <li>기능 인터페이스 조합으로 오브젝트 타입 확장</li>
+          <li>하우징/맵에디터/커스터마이징 시스템으로 확장 가능</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section card">
+      <h3>포트폴리오 연결 문구</h3>
+      <p>이 샘플은 Rfice MyRoomEditor의 하우징 시스템 개발 경험을 기반으로 구성했습니다. 실제 프로젝트에서는 3D 공간 배치, 선택, 이동, 회전, 색상 변경, 이미지 적용, 배치 검증 기능을 담당했습니다.</p>
+    </div>
+    <div class="section card">
+      <h3>연락처</h3>
+      <p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p>
+    </div>
+    <div class="footer">10 / 10</div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>김철규 코드 샘플 - Achievement System</title>
+  <style>
+    @page { size:A4; margin:0; }
+    :root { --ink:#172033; --muted:#63708a; --line:#d8e0ec; --navy:#0f172a; --blue:#2563eb; --cyan:#0891b2; --green:#16a34a; --soft:#f8fafc; --soft-blue:#eef5ff; --soft-green:#ecfdf3; --soft-amber:#fff7e6; --code:#101827; --code-ink:#e5edf8; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#eef2f8; color:var(--ink); font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif; font-size:12px; line-height:1.48; }
+    .page { position:relative; width:210mm; height:297mm; margin:0 auto 18px; padding:17mm 16mm 14mm; overflow:hidden; background:white; box-shadow:0 12px 30px rgba(15,23,42,.14); page-break-after:always; }
+    .page:last-child { page-break-after:auto; }
+    .page::before { content:""; position:absolute; inset:0 0 auto; height:7mm; background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green)); }
+    h1,h2,h3,p { margin:0; } h1 { color:var(--navy); font-size:29px; line-height:1.15; letter-spacing:-.04em; } h2 { margin-bottom:12px; color:var(--navy); font-size:22px; letter-spacing:-.035em; } h3 { margin-bottom:7px; color:var(--navy); font-size:14px; }
+    .eyebrow { margin-bottom:7px; color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+    .subtitle { margin-top:9px; color:var(--muted); font-size:14px; font-weight:700; } .lead { margin-top:15px; color:#334155; font-size:13px; }
+    .section { margin-top:18px; } .grid { display:grid; gap:11px; } .two { grid-template-columns:1fr 1fr; } .three { grid-template-columns:repeat(3,1fr); }
+    .card { border:1px solid var(--line); border-radius:15px; padding:12px 13px; background:white; } .blue { border-color:#bfdbfe; background:var(--soft-blue); } .green { border-color:#bbf7d0; background:var(--soft-green); } .amber { border-color:#fed7aa; background:var(--soft-amber); }
+    .pill-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; } .pill { padding:5px 9px; border-radius:999px; background:#eef5ff; color:#1d4ed8; font-size:10px; font-weight:800; }
+    ul { margin:0; padding-left:16px; } li { margin:3px 0; } strong { color:#0f172a; font-weight:900; }
+    pre { margin:0; padding:12px 13px; overflow:hidden; border-radius:14px; background:var(--code); color:var(--code-ink); font-family:"Cascadia Mono",Consolas,monospace; font-size:8.45px; line-height:1.32; white-space:pre-wrap; }
+    code { font-family:"Cascadia Mono",Consolas,monospace; }
+    .footer { position:absolute; right:16mm; bottom:8mm; color:#94a3b8; font-size:10px; }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; } .flow div { border:1px solid #cfe0ff; border-radius:12px; background:#f8fbff; padding:9px; font-size:10px; font-weight:800; text-align:center; color:#1e3a8a; }
+    table { width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:14px; overflow:hidden; } th,td { padding:8px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { width:28%; background:var(--soft); color:#475569; font-size:10px; font-weight:900; } tr:last-child th,tr:last-child td { border-bottom:0; }
+    @media print { body{background:white}.page{margin:0;box-shadow:none} }
+  </style>
+</head>
+<body>
+<section class="page">
+  <div class="eyebrow">Code Sample</div><h1>Achievement System</h1>
+  <p class="subtitle">Slime Rush 기반 업적 조건 판정 / 저장 / UI 피드백 시스템 | 김철규</p>
+  <p class="lead">Steam 출시 게임의 업적 시스템 경험을 기반으로 작성한 공개용 샘플입니다. 조건 판정, 선행 조건, 저장소 분리, 로컬/클라우드 저장, UI 이벤트까지 하나의 흐름으로 정리했습니다.</p>
+  <div class="pill-row"><span class="pill">Achievement</span><span class="pill">Repository</span><span class="pill">Save Data</span><span class="pill">Cloud Sync</span><span class="pill">UI Feedback</span></div>
+  <div class="flow"><div>Sheet Data</div><div>Create</div><div>Report</div><div>Complete</div><div>Save/UI</div></div>
+  <div class="section grid two">
+    <div class="card blue"><h3>샘플 목표</h3><ul><li>업적 정의 데이터와 저장 데이터를 분리</li><li>조건 타입별 진행도 누적과 완료 판정</li><li>선행 업적 완료 후 활성화</li><li>Repository로 저장소 교체 가능</li><li>업적 완료 이벤트로 UI 자동 갱신</li></ul></div>
+    <div class="card green"><h3>원 프로젝트 연결</h3><ul><li>Slime Rush 업적 시스템</li><li>로컬/클라우드 저장 대응</li><li>UGUI 팝업 피드백</li><li>Unity Localization 연동</li><li>Steam 출시 프로젝트 시스템 개발 경험</li></ul></div>
+  </div>
+  <div class="section"><table><tr><th>역할</th><td>업적 시스템 설계 및 구현</td></tr><tr><th>기술</th><td>C#, Unity, Repository Pattern, Observer Pattern, JSON Save</td></tr><tr><th>범위</th><td>데이터 모델, 조건 판정, 상태 전환, 저장/로드, 팝업 UI 이벤트</td></tr></table></div>
+  <div class="footer">1 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Data Model</div><h2>업적 정의 데이터와 저장 데이터 분리</h2>
+  <div class="section"><pre><code>public enum AchievementState { Inactive, Active, Completed }
+public enum AchievementConditionType { None, StageClear, GetMagic, RuneMaxLevel, KillMonster }
+
+public sealed class AchievementSheetData
+{
+    public string Id { get; init; }
+    public string NameKey { get; init; }
+    public string DescriptionKey { get; init; }
+    public AchievementConditionType ConditionType { get; init; }
+    public string ConditionValue { get; init; }
+    public int RequiredCount { get; init; }
+    public string[] Prerequisites { get; init; } = Array.Empty&lt;string&gt;();
+}
+
+public sealed class AchievementSaveData
+{
+    public string Id { get; init; }
+    public int CurrentCount { get; set; }
+    public bool IsCompleted { get; set; }
+}</code></pre></div>
+  <div class="section grid two"><div class="card"><h3>정의 데이터</h3><p>밸런스/기획 데이터입니다. 이름, 설명, 조건 타입, 목표 수치, 선행 조건을 포함합니다.</p></div><div class="card"><h3>저장 데이터</h3><p>플레이어별 진행 상태입니다. 현재 카운트와 완료 여부만 저장해 데이터 크기를 줄입니다.</p></div></div>
+  <div class="footer">2 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Domain Model</div><h2>개별 업적 객체와 상태 전환</h2>
+  <div class="section"><pre><code>public sealed class Achievement
+{
+    public string Id { get; }
+    public AchievementConditionType ConditionType { get; }
+    public string ConditionValue { get; }
+    public int RequiredCount { get; }
+    public IReadOnlyList&lt;string&gt; Prerequisites { get; }
+    public int CurrentCount { get; private set; }
+    public AchievementState State { get; private set; }
+    public event Action&lt;Achievement&gt; Completed;
+
+    public Achievement(AchievementSheetData sheet, AchievementSaveData save)
+    {
+        Id = sheet.Id;
+        ConditionType = sheet.ConditionType;
+        ConditionValue = sheet.ConditionValue;
+        RequiredCount = sheet.RequiredCount;
+        Prerequisites = sheet.Prerequisites;
+        CurrentCount = save?.CurrentCount ?? 0;
+        State = save?.IsCompleted == true ? AchievementState.Completed : AchievementState.Inactive;
+    }
+
+    public void Activate()
+    {
+        if (State == AchievementState.Inactive)
+            State = AchievementState.Active;
+    }
+
+    public bool Report(AchievementReport report)
+    {
+        if (State != AchievementState.Active || !Matches(report)) return false;
+        CurrentCount = Math.Min(RequiredCount, CurrentCount + report.Count);
+        if (CurrentCount &lt; RequiredCount) return false;
+        State = AchievementState.Completed;
+        Completed?.Invoke(this);
+        return true;
+    }
+}</code></pre></div>
+  <div class="section card blue"><h3>리뷰 포인트</h3><p>업적 객체가 자기 상태 전환을 책임집니다. 외부 시스템은 이벤트를 보고 UI/저장을 처리하면 됩니다.</p></div>
+  <div class="footer">3 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Report</div><h2>게임 이벤트를 업적 리포트로 정규화</h2>
+  <div class="section"><pre><code>public readonly struct AchievementReport
+{
+    public AchievementConditionType Type { get; init; }
+    public string Value { get; init; }
+    public int Count { get; init; }
+
+    public static AchievementReport StageClear(string stageId)
+        =&gt; new() { Type = AchievementConditionType.StageClear, Value = stageId, Count = 1 };
+
+    public static AchievementReport GetMagic(string magicId)
+        =&gt; new() { Type = AchievementConditionType.GetMagic, Value = magicId, Count = 1 };
+
+    public static AchievementReport KillMonster(string monsterId, int count)
+        =&gt; new() { Type = AchievementConditionType.KillMonster, Value = monsterId, Count = count };
+}
+
+private bool Matches(AchievementReport report)
+{
+    if (ConditionType != report.Type) return false;
+    if (ConditionValue == "*" || string.IsNullOrEmpty(ConditionValue)) return true;
+    return ConditionValue == report.Value;
+}</code></pre></div>
+  <div class="section grid two"><div class="card"><h3>문제</h3><p>게임 이벤트 종류가 많아질수록 업적 시스템이 각 게임 시스템을 직접 알게 되기 쉽습니다.</p></div><div class="card"><h3>해결</h3><p>스테이지 클리어, 마법 획득, 몬스터 처치 등을 공통 리포트 구조로 정규화합니다.</p></div></div>
+  <div class="footer">4 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">System Manager</div><h2>업적 시스템의 중앙 관리 흐름</h2>
+  <div class="section"><pre><code>public sealed class AchievementSystem
+{
+    private readonly IAchievementRepository _repository;
+    private readonly List&lt;Achievement&gt; _achievements = new();
+    public event Action&lt;Achievement&gt; AchievementCompleted;
+
+    public AchievementSystem(IAchievementRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task InitializeAsync()
+    {
+        var sheets = await _repository.LoadSheetDataAsync();
+        var saves = await _repository.LoadSaveDataAsync();
+        _achievements.AddRange(AchievementCreator.Create(sheets, saves));
+
+        foreach (var achievement in _achievements)
+            achievement.Completed += OnCompleted;
+
+        UpdateActivation();
+    }
+
+    public void Report(AchievementReport report)
+    {
+        foreach (var achievement in _achievements)
+            achievement.Report(report);
+    }
+
+    private void OnCompleted(Achievement achievement)
+    {
+        UpdateActivation();
+        _repository.SaveAsync(CreateSaveData());
+        AchievementCompleted?.Invoke(achievement);
+    }
+}</code></pre></div>
+  <div class="section card green"><h3>실무 효과</h3><p>게임 시스템은 <code>Report</code>만 호출합니다. 저장, 활성화, UI 이벤트는 AchievementSystem 내부에서 일관되게 처리합니다.</p></div>
+  <div class="footer">5 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Prerequisites</div><h2>선행 조건과 자동 활성화</h2>
+  <div class="section"><pre><code>private void UpdateActivation()
+{
+    var completedIds = _achievements
+        .Where(x =&gt; x.State == AchievementState.Completed)
+        .Select(x =&gt; x.Id)
+        .ToHashSet();
+
+    foreach (var achievement in _achievements)
+    {
+        if (achievement.State != AchievementState.Inactive)
+            continue;
+
+        var canActivate = achievement.Prerequisites.All(completedIds.Contains);
+        if (canActivate)
+            achievement.Activate();
+    }
+}
+
+private IReadOnlyList&lt;AchievementSaveData&gt; CreateSaveData()
+{
+    return _achievements
+        .Select(x =&gt; new AchievementSaveData
+        {
+            Id = x.Id,
+            CurrentCount = x.CurrentCount,
+            IsCompleted = x.State == AchievementState.Completed
+        })
+        .ToArray();
+}</code></pre></div>
+  <div class="section grid two"><div class="card"><h3>활성화 정책</h3><p>선행 업적이 모두 완료된 업적만 Active 상태로 전환합니다.</p></div><div class="card"><h3>저장 정책</h3><p>정의 데이터는 저장하지 않고 플레이어 진행 상태만 저장합니다.</p></div></div>
+  <div class="footer">6 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Repository</div><h2>저장소 추상화와 로컬/클라우드 분리</h2>
+  <div class="section"><pre><code>public interface IAchievementRepository
+{
+    Task&lt;IReadOnlyList&lt;AchievementSheetData&gt;&gt; LoadSheetDataAsync();
+    Task&lt;IReadOnlyList&lt;AchievementSaveData&gt;&gt; LoadSaveDataAsync();
+    Task SaveAsync(IReadOnlyList&lt;AchievementSaveData&gt; data);
+}
+
+public interface IAchievementDataSource
+{
+    Task&lt;string&gt; LoadAsync();
+    Task SaveAsync(string json);
+}
+
+public sealed class AchievementRepository : IAchievementRepository
+{
+    private readonly IAchievementDataSource _local;
+    private readonly IAchievementDataSource _cloud;
+
+    public async Task&lt;IReadOnlyList&lt;AchievementSaveData&gt;&gt; LoadSaveDataAsync()
+    {
+        var cloudJson = await _cloud.LoadAsync();
+        if (!string.IsNullOrEmpty(cloudJson))
+            return JsonConvert.DeserializeObject&lt;List&lt;AchievementSaveData&gt;&gt;(cloudJson);
+
+        var localJson = await _local.LoadAsync();
+        return string.IsNullOrEmpty(localJson)
+            ? Array.Empty&lt;AchievementSaveData&gt;()
+            : JsonConvert.DeserializeObject&lt;List&lt;AchievementSaveData&gt;&gt;(localJson);
+    }
+
+    public async Task SaveAsync(IReadOnlyList&lt;AchievementSaveData&gt; data)
+    {
+        var json = JsonConvert.SerializeObject(data);
+        await _local.SaveAsync(json);
+        await _cloud.SaveAsync(json);
+    }
+}</code></pre></div>
+  <div class="footer">7 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">UI Feedback</div><h2>업적 완료 이벤트와 팝업 UI</h2>
+  <div class="section"><pre><code>public sealed class AchievementPopupPresenter : MonoBehaviour
+{
+    [SerializeField] private AchievementPopupItem itemPrefab;
+    [SerializeField] private Transform contentRoot;
+    [SerializeField] private LocalizedStringTable stringTable;
+
+    private AchievementSystem _achievementSystem;
+
+    public void Initialize(AchievementSystem achievementSystem)
+    {
+        _achievementSystem = achievementSystem;
+        _achievementSystem.AchievementCompleted += ShowCompleted;
+    }
+
+    private void ShowCompleted(Achievement achievement)
+    {
+        var item = Instantiate(itemPrefab, contentRoot);
+        item.Bind(new AchievementPopupViewModel
+        {
+            Name = stringTable.Get(achievement.NameKey),
+            Description = stringTable.Get(achievement.DescriptionKey),
+            State = achievement.State
+        });
+        item.PlayOpenAnimation();
+    }
+
+    private void OnDestroy()
+    {
+        if (_achievementSystem != null)
+            _achievementSystem.AchievementCompleted -= ShowCompleted;
+    }
+}</code></pre></div>
+  <div class="section card blue"><h3>리뷰 포인트</h3><p>도메인 시스템은 UI를 직접 알지 않고 이벤트만 발행합니다. Presenter가 이벤트를 구독해 팝업을 생성합니다.</p></div>
+  <div class="footer">8 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Tests</div><h2>테스트 가능한 항목</h2>
+  <div class="section"><pre><code>// Example test cases
+// 1. StageClear report increments only matching stage achievement.
+// 2. Completed achievement does not increment again.
+// 3. Prerequisite achievement activates next achievement.
+// 4. Cloud save is preferred over local save when both exist.
+// 5. AchievementCompleted event fires once.
+
+var achievement = new Achievement(sheet, save);
+achievement.Activate();
+
+var completed = achievement.Report(AchievementReport.StageClear("stage_01"));
+
+Assert.True(completed);
+Assert.Equal(AchievementState.Completed, achievement.State);
+Assert.Equal(sheet.RequiredCount, achievement.CurrentCount);</code></pre></div>
+  <div class="section grid two"><div class="card blue"><h3>테스트 포인트</h3><ul><li>조건 타입 매칭</li><li>진행도 누적</li><li>완료 이벤트</li><li>선행 조건 활성화</li><li>저장소 우선순위</li></ul></div><div class="card green"><h3>면접 포인트</h3><ul><li>보상/퀘스트 시스템으로 확장 가능</li><li>UI와 도메인 분리</li><li>클라우드 저장 충돌 정책 설명 가능</li><li>Localization 연동 구조 설명 가능</li></ul></div></div>
+  <div class="footer">9 / 10</div>
+</section>
+<section class="page">
+  <div class="eyebrow">Review Summary</div><h2>코드 리뷰에서 보여주고 싶은 점</h2>
+  <div class="section grid two">
+    <div class="card blue"><h3>강점</h3><ul><li>정의 데이터와 저장 데이터 분리</li><li>게임 이벤트를 Report로 정규화</li><li>Repository로 저장소 의존성 분리</li><li>이벤트 기반 UI 피드백</li><li>선행 조건 기반 상태 전환</li></ul></div>
+    <div class="card green"><h3>게임 시스템 확장</h3><ul><li>업적</li><li>퀘스트</li><li>미션</li><li>일일 과제</li><li>배틀패스 진행도</li></ul></div>
+  </div>
+  <div class="section card"><h3>포트폴리오 연결 문구</h3><p>이 샘플은 Slime Rush 업적 시스템 경험을 바탕으로 구성했습니다. 실제 프로젝트에서는 업적 조건 판정, 진행 상태 저장, 로컬/클라우드 저장, UI 피드백을 담당했습니다.</p></div>
+  <div class="section card"><h3>연락처</h3><p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p></div>
+  <div class="footer">10 / 10</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>김철규 코드 샘플 - Combat Targeting System</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    :root {
+      --ink: #172033;
+      --muted: #63708a;
+      --line: #d8e0ec;
+      --paper: #ffffff;
+      --navy: #0f172a;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --cyan: #0891b2;
+      --soft: #f8fafc;
+      --soft-blue: #eef5ff;
+      --soft-green: #ecfdf3;
+      --code-bg: #101827;
+      --code-ink: #e5edf8;
+      --code-dim: #9fb0c8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #eef2f8;
+      color: var(--ink);
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.48;
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 18px;
+      padding: 17mm 16mm 14mm;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+      page-break-after: always;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 7mm;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--green));
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--navy);
+      font-size: 29px;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      color: var(--navy);
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.035em;
+    }
+
+    h3 {
+      margin-bottom: 7px;
+      color: var(--navy);
+      font-size: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      margin-bottom: 7px;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .lead {
+      margin-top: 15px;
+      color: #334155;
+      font-size: 13px;
+    }
+
+    .section {
+      margin-top: 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 11px;
+    }
+
+    .grid.two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 12px 13px;
+      background: #fff;
+    }
+
+    .card.blue {
+      border-color: #bfdbfe;
+      background: var(--soft-blue);
+    }
+
+    .card.green {
+      border-color: #bbf7d0;
+      background: var(--soft-green);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eef5ff;
+      color: #1d4ed8;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    li {
+      margin: 3px 0;
+    }
+
+    strong {
+      color: #0f172a;
+      font-weight: 900;
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px 13px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: "Cascadia Mono", "Consolas", "Fira Code", monospace;
+      font-size: 9.4px;
+      line-height: 1.42;
+      white-space: pre-wrap;
+    }
+
+    code {
+      font-family: "Cascadia Mono", "Consolas", "Fira Code", monospace;
+    }
+
+    .small-code pre {
+      font-size: 8.6px;
+      line-height: 1.35;
+    }
+
+    .code-note {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .footer {
+      position: absolute;
+      right: 16mm;
+      bottom: 8mm;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .table th,
+    .table td {
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      width: 28%;
+      background: var(--soft);
+      color: #475569;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .table tr:last-child th,
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Code Sample</div>
+    <h1>Combat Targeting & Damage System</h1>
+    <p class="subtitle">Unity / C# 게임 클라이언트 코드 샘플 | 김철규</p>
+    <p class="lead">
+      이 문서는 Slime Rush 전투 시스템 경험을 기반으로 정리한 코드 샘플입니다.
+      회사 원본 코드를 그대로 공개하는 목적이 아니라, 채용 검토자가 구조 설계, 책임 분리, 테스트 가능성, 게임 로직 구현 방식을 빠르게 확인할 수 있도록 샘플 형태로 재구성했습니다.
+    </p>
+
+    <div class="pill-row">
+      <span class="pill">Gameplay System</span>
+      <span class="pill">Targeting</span>
+      <span class="pill">Damage Calculation</span>
+      <span class="pill">C#</span>
+      <span class="pill">Unity-compatible</span>
+    </div>
+
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>샘플 목표</h3>
+        <ul>
+          <li>스킬 타입에 따라 단일/다중/랜덤/위치 기반 타겟을 선택</li>
+          <li>캐릭터 스탯과 스킬 데이터를 기반으로 데미지 정보를 생성</li>
+          <li>치명타, 속성 보너스, 스킬 크기 보너스, 부가 효과를 분리 계산</li>
+          <li>랜덤 의존성을 분리하여 테스트 가능한 전투 계산 구조 구성</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>설계 기준</h3>
+        <ul>
+          <li><strong>TargetSystem</strong>: 타겟 등록/해제 및 타겟 선택 흐름 관리</li>
+          <li><strong>TargetScanner</strong>: 거리/랜덤/위치 탐색 알고리즘 담당</li>
+          <li><strong>BattleDamageCalculator</strong>: 데미지 계산 전용 순수 로직</li>
+          <li><strong>IRandomProvider</strong>: 랜덤 판정 추상화로 테스트 가능성 확보</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <table class="table">
+        <tr><th>원 프로젝트</th><td>Slime Rush: Leshy and the Magic Book</td></tr>
+        <tr><th>담당 영역</th><td>BattleSystem, AchievementSystem</td></tr>
+        <tr><th>샘플 범위</th><td>전투 타겟팅, 데미지 계산, 치명타 판정, 부가 효과 생성</td></tr>
+        <tr><th>공개 방식</th><td>회사 내부 데이터/리소스/이름을 제거하고 채용 검토용 샘플 형태로 재구성</td></tr>
+      </table>
+    </div>
+
+    <div class="section card">
+      <h3>핵심 어필</h3>
+      <p>
+        게임 클라이언트에서 자주 확장되는 전투 로직을 역할별로 분리했습니다.
+        스킬이 추가되어도 타겟 선택, 데미지 계산, 부가 효과 처리의 수정 범위를 줄이는 것이 목표입니다.
+      </p>
+    </div>
+    <div class="footer">1 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Interfaces & Data</div>
+    <h2>타겟팅과 데미지 계산의 입력 모델</h2>
+
+    <div class="section small-code">
+      <pre><code>public interface ITarget
+{
+    Vector3 Position { get; }
+    bool IsAlive { get; }
+}
+
+public enum TargetingType
+{
+    None,
+    MousePosition,
+    Nearest,
+    Random,
+    Self
+}
+
+public readonly struct TargetingOption
+{
+    public TargetingType Type { get; }
+    public int Count { get; }
+    public float Range { get; }
+
+    public TargetingOption(TargetingType type, int count, float range)
+    {
+        Type = type;
+        Count = Math.Max(1, count);
+        Range = Math.Max(0f, range);
+    }
+}
+
+public readonly struct ActorStats
+{
+    public float AttackPower { get; init; }
+    public float CriticalChance { get; init; }
+    public float CriticalMultiplier { get; init; }
+    public ElementBonus ElementBonus { get; init; }
+}
+
+public readonly struct SkillData
+{
+    public float PowerRate { get; init; }
+    public ElementType Element { get; init; }
+    public SkillSize Size { get; init; }
+    public SkillAbility Ability { get; init; }
+}</code></pre>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>포인트 1. 인터페이스로 전투 대상 추상화</h3>
+        <p>
+          전투 시스템은 몬스터, 플레이어, 소환체 등 실제 구현체를 직접 알 필요가 없습니다.
+          <code>ITarget</code>만 바라보게 하여 타겟 가능한 객체가 추가되어도 타겟팅 시스템 수정 범위를 줄입니다.
+        </p>
+      </div>
+      <div class="card">
+        <h3>포인트 2. 계산 입력을 데이터로 고정</h3>
+        <p>
+          <code>ActorStats</code>와 <code>SkillData</code>를 계산 입력으로 분리하면 UI, 저장 데이터, 밸런스 테이블과 전투 계산 로직의 결합을 낮출 수 있습니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="section small-code">
+      <pre><code>public interface IRandomProvider
+{
+    float Value01();
+    int Range(int minInclusive, int maxExclusive);
+}
+
+public sealed class UnityRandomProvider : IRandomProvider
+{
+    public float Value01() => UnityEngine.Random.value;
+    public int Range(int minInclusive, int maxExclusive)
+        => UnityEngine.Random.Range(minInclusive, maxExclusive);
+}</code></pre>
+      <p class="code-note">랜덤 판정을 직접 호출하지 않고 인터페이스로 분리하면 치명타/랜덤 타겟 테스트를 안정적으로 작성할 수 있습니다.</p>
+    </div>
+    <div class="footer">2 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Target System</div>
+    <h2>타겟 등록, 탐색, 선택 흐름</h2>
+
+    <div class="section small-code">
+      <pre><code>public sealed class TargetSystem
+{
+    private readonly TargetScanner _scanner;
+    private readonly HashSet&lt;ITarget&gt; _enemies = new();
+    private ITarget _player;
+
+    public TargetSystem(TargetScanner scanner)
+    {
+        _scanner = scanner;
+    }
+
+    public void InitPlayer(ITarget player)
+    {
+        _player = player ?? throw new ArgumentNullException(nameof(player));
+    }
+
+    public void AddEnemy(ITarget enemy)
+    {
+        if (enemy != null) _enemies.Add(enemy);
+    }
+
+    public void RemoveEnemy(ITarget enemy)
+    {
+        if (enemy != null) _enemies.Remove(enemy);
+    }
+
+    public IReadOnlyList&lt;ITarget&gt; FindTargets(
+        Vector3 origin,
+        TargetingOption option)
+    {
+        var aliveEnemies = _enemies.Where(enemy =&gt; enemy.IsAlive).ToArray();
+
+        return option.Type switch
+        {
+            TargetingType.Self =&gt; _player != null ? new[] { _player } : Array.Empty&lt;ITarget&gt;(),
+            TargetingType.Nearest =&gt; _scanner.FindNearest(origin, aliveEnemies, option.Count, option.Range),
+            TargetingType.Random =&gt; _scanner.FindRandom(origin, aliveEnemies, option.Count, option.Range),
+            _ =&gt; Array.Empty&lt;ITarget&gt;()
+        };
+    }
+}</code></pre>
+    </div>
+
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>설계 의도</h3>
+        <ul>
+          <li><code>HashSet</code>으로 중복 등록 방지</li>
+          <li>사망한 타겟은 검색 대상에서 제외</li>
+          <li>타겟 선택 알고리즘은 <code>TargetScanner</code>에 위임</li>
+          <li>타겟 타입 추가 시 switch 분기만 확장 가능</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>실무 적용 지점</h3>
+        <ul>
+          <li>마법, 스킬, 몬스터 AI가 같은 타겟 시스템을 재사용</li>
+          <li>단일 타겟/다중 타겟을 같은 API로 처리</li>
+          <li>플레이어 기준 탐색, 마우스 위치 탐색, 자기 자신 대상 처리 분리</li>
+          <li>밸런스 데이터의 <code>TargetingOption</code>만 바꿔도 스킬 동작 변경 가능</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">3 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Damage Calculator</div>
+    <h2>데미지 정보 생성과 치명타 판정</h2>
+
+    <div class="section small-code">
+      <pre><code>public sealed class BattleDamageCalculator
+{
+    private const float Percent = 100f;
+    private readonly IRandomProvider _random;
+
+    public BattleDamageCalculator(IRandomProvider random)
+    {
+        _random = random;
+    }
+
+    public DamageInfo CreateDamageInfo(ActorStats actor, SkillData skill)
+    {
+        var baseDamage = CalculateBaseDamage(actor, skill);
+        var criticalDamage = baseDamage * (actor.CriticalMultiplier / Percent);
+
+        return new DamageInfo
+        {
+            CommonDamage = baseDamage,
+            CriticalDamage = criticalDamage,
+            CriticalChance = actor.CriticalChance,
+            Element = skill.Element,
+            Ability = CreateAbility(actor, skill)
+        };
+    }
+
+    public DamageResult RollDamage(DamageInfo info)
+    {
+        if (info.CriticalChance &lt;= 0f)
+            return DamageResult.Normal(info.CommonDamage);
+
+        var isCritical = _random.Value01() &lt;= info.CriticalChance / Percent;
+        return isCritical
+            ? DamageResult.Critical(info.CriticalDamage)
+            : DamageResult.Normal(info.CommonDamage);
+    }
+
+    private static float CalculateBaseDamage(ActorStats actor, SkillData skill)
+    {
+        var elementBonus = actor.ElementBonus.Get(skill.Element);
+        var sizeBonus = actor.ElementBonus.Get(skill.Size);
+        var multiplier = 1f + ((elementBonus + sizeBonus) / Percent);
+
+        return actor.AttackPower * (skill.PowerRate * multiplier) / Percent;
+    }
+}</code></pre>
+    </div>
+
+    <div class="section grid two">
+      <div class="card">
+        <h3>계산 책임 분리</h3>
+        <p>
+          전투 연출, 피격 처리, UI 갱신과 데미지 계산을 분리했습니다.
+          계산 클래스는 입력 데이터만 받아 결과를 반환하므로 테스트와 밸런스 검증이 쉽습니다.
+        </p>
+      </div>
+      <div class="card">
+        <h3>확장 포인트</h3>
+        <p>
+          속성 보너스, 크기 보너스, 치명타, 부가 효과가 독립적으로 계산됩니다.
+          신규 속성이나 신규 부가 효과가 추가되어도 기존 계산 흐름을 유지하기 쉽습니다.
+        </p>
+      </div>
+    </div>
+    <div class="footer">4 / 5</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Testability & Review Points</div>
+    <h2>테스트 가능성과 코드 리뷰 포인트</h2>
+
+    <div class="section small-code">
+      <pre><code>public sealed class FixedRandomProvider : IRandomProvider
+{
+    private readonly float _value;
+
+    public FixedRandomProvider(float value)
+    {
+        _value = value;
+    }
+
+    public float Value01() => _value;
+    public int Range(int minInclusive, int maxExclusive) => minInclusive;
+}
+
+// Example
+// CriticalChance = 10%, random = 0.05 => critical
+var calculator = new BattleDamageCalculator(new FixedRandomProvider(0.05f));
+var info = calculator.CreateDamageInfo(actorStats, fireSkill);
+var result = calculator.RollDamage(info);</code></pre>
+    </div>
+
+    <div class="section grid two">
+      <div class="card blue">
+        <h3>테스트 가능한 항목</h3>
+        <ul>
+          <li>속성/크기 보너스 조합별 데미지 계산</li>
+          <li>치명타 확률 경계값</li>
+          <li>랜덤 타겟 선택 결과 고정</li>
+          <li>사망 타겟 제외 여부</li>
+          <li>단일/다중 타겟 개수 제한</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>코드 리뷰에서 보여주고 싶은 점</h3>
+        <ul>
+          <li>Unity API 의존 로직과 순수 계산 로직을 구분</li>
+          <li>전투 시스템의 변경 가능성이 높은 지점을 데이터와 인터페이스로 분리</li>
+          <li>랜덤, 타겟 탐색, 데미지 계산의 책임을 분리</li>
+          <li>샘플 코드만으로도 테스트 전략을 설명 가능</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section card">
+      <h3>포트폴리오 연결 문구</h3>
+      <p>
+        이 샘플은 Slime Rush의 전투 시스템 경험을 바탕으로 구성한 공개용 코드 샘플입니다.
+        실제 프로젝트에서는 마법 생성, 쿨타임, 타겟팅, 데미지 계산, 몬스터 공격 처리, 업적 시스템을 담당했습니다.
+      </p>
+    </div>
+
+    <div class="section card">
+      <h3>연락처</h3>
+      <p>Portfolio: https://cosmicgiantkoala.github.io<br>Email: cosmicgiantkoala@gmail.com</p>
+    </div>
+    <div class="footer">5 / 5</div>
+  </section>
+</body>
+</html>
