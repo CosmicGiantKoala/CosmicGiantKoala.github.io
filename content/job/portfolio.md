@@ -29,18 +29,18 @@ pdfFile = "KimCheolGyu_GameClient_Portfolio.pdf"
 
 <div class="section">
   <table class="table">
-    <tr><th>이력서</th><td><a href="https://cosmicgiantkoala.github.io/job/resume/">링크</a></td></tr>
-    <tr><th>경력기술서</th><td><a href="https://cosmicgiantkoala.github.io/job/career/">링크</a></td></tr>
-    <tr><th>RFist 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/rfist_1/">링크</a>
+    <tr><th>이력서</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_GameClient_Resume.pdf">링크</a></td></tr>
+    <tr><th>경력기술서</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_GameClient_CareerDescription.pdf">링크</a></td></tr>
+    <tr><th>RFist 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFist.pdf">링크</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/rfist_network.mp4">제작영상1</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/rfist_control.mp4">제작영상2</a>
 </td></tr>
-    <tr><th>Slime Rush 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/slimerush_1/">링크</a>
+    <tr><th>Slime Rush 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_SlimeRush.pdf">링크</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_target.mp4">제작영상1</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_magic.mp4">제작영상2</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_monster.mp4">제작영상3</a>
 </td></tr>
-    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/rfice_1/">링크</a>
+    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFice.pdf">링크</a>
 <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_1.mp4">제작영상1</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_2.mp4">제작영상2</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_3.mp4">제작영상3</a>
@@ -110,10 +110,9 @@ NetworkCharacterController --> CharacterController : execute
 
 <div class="section">
   <table class="table">
-    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/rfice_1/">링크</a>
-<br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_1.mp4">제작영상1</a>
-        <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_2.mp4">제작영상2</a>
-        <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_3.mp4">제작영상3</a>
+    <tr><th>Rfist 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFist.pdf">링크</a>
+<br>        <a href="https://cosmicgiantkoala.github.io/videos/rfist_network.mp4">제작영상1</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/rfist_control.mp4">제작영상2</a>
 </td></tr>
   </table>
 </div>
@@ -179,7 +178,7 @@ TargetScanner --> ITarget : return candidates
 
 <div class="section">
   <table class="table">
-    <tr><th>Slime Rush 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/slimerush_1/">링크</a>
+    <tr><th>Slime Rush 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_SlimeRush.pdf">링크</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_target.mp4">제작영상1</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_magic.mp4">제작영상2</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_monster.mp4">제작영상3</a>
@@ -263,7 +262,7 @@ HousingSystemObjectEditUI --> HousingSystemPropEditingManager : edit mode events
 
 <div class="section">
   <table class="table">
-    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/job/rfice_1/">링크</a>
+    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFice.pdf">링크</a>
 <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_1.mp4">제작영상1</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_2.mp4">제작영상2</a>
         <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_3.mp4">제작영상3</a>

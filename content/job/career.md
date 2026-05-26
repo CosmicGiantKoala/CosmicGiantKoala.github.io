@@ -102,7 +102,6 @@ pdfFile = "KimCheolGyu_GameClient_CareerDescription.pdf"
       <li>입력 데이터와 액션 실행 계층 분리</li>
       <li>네트워크 지연값을 전투 판정 계층까지 전달</li>
       <li>스킬 정의와 실행 로직을 분리해 확장성 확보</li>
-      <li>히트 판정 요청/결과/반응을 분리해 테스트 가능성 확보</li>
     </ul>
   </div>
 </div>
@@ -114,8 +113,14 @@ pdfFile = "KimCheolGyu_GameClient_CareerDescription.pdf"
       <li>스킬 실행, 피격 처리, 연출(애니메이션/이펙트 등)의 책임 분리 및 주요 행동 흐름을 이벤트 기반으로 연결해 기능 추가 및 수정 시 영향 범위 최소화</li>
       <li>네트워크, 입력, 전투, 캐릭터 연출 계층을 분리해 멀티플레이 액션 게임 클라이언트의 주요 런타임 흐름을 구현</li>
     </ul>
-    <h4>동작 영상 링크</h4>
-    <h4>코드 샘플 링크</h4>
+<div class="section">
+  <table class="table">
+    <tr><th>Rfist 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFist.pdf">링크</a>
+<br>        <a href="https://cosmicgiantkoala.github.io/videos/rfist_network.mp4">제작영상1</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/rfist_control.mp4">제작영상2</a>
+</td></tr>
+  </table>
+</div>
 </div>
 {{% /pdf-page %}}
 
@@ -161,8 +166,15 @@ pdfFile = "KimCheolGyu_GameClient_CareerDescription.pdf"
   <li>업적 시스템에서 달성 조건, 진행도 갱신, 보상 수령 흐름을 분리해 신규 업적 추가 시 기존 처리 흐름 수정 최소화</li>
   <li>로컬/클라우드 저장소를 교체 가능한 구조로 분리해 저장 방식 변경에 따른 도메인 로직 영향 최소화</li>
   </ul>
-    <h4>동작 영상 링크</h4>
-    <h4>코드 샘플 링크</h4>
+<div class="section">
+  <table class="table">
+    <tr><th>Slime Rush 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_SlimeRush.pdf">링크</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_target.mp4">제작영상1</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_magic.mp4">제작영상2</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/battlesystem_monster.mp4">제작영상3</a>
+</td></tr>
+  </table>
+</div>
 </div>
 {{% /pdf-page %}}
 
@@ -214,8 +226,15 @@ pdfFile = "KimCheolGyu_GameClient_CareerDescription.pdf"
     <li>코드 리뷰 기반으로 기능별 책임, 데이터 흐름, 의존 관계를 점검하며 클라이언트 기능 구조를 지속적으로 개선</li>
     <li>플랫폼별 네이티브 담당자와 협업해 플랫폼별 비즈니스 로직 작성 및 Unity-네이티브 간 통신 프로토콜을 협의 및 구현</li>
 </ul>
-    <h4>동작 영상 링크</h4>
-    <h4>코드 샘플 링크</h4>
+<div class="section">
+  <table class="table">
+    <tr><th>Rfice 코드 샘플</th><td><a href="https://cosmicgiantkoala.github.io/pdf/KimCheolGyu_CodeSample_RFice.pdf">링크</a>
+<br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_1.mp4">제작영상1</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_2.mp4">제작영상2</a>
+        <br><a href="https://cosmicgiantkoala.github.io/videos/myroomeditor_3.mp4">제작영상3</a>
+</td></tr>
+  </table>
+</div>
 </div>
 {{% /pdf-page %}}
 

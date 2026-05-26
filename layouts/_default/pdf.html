@@ -104,10 +104,18 @@
   {{- end }}
   {{- if not $source }}
   {{- $videos := resources.Match "videos/*.mp4" }}
+  {{- $pdfs := resources.Match "pdf/*.pdf" }}
   {{- if $videos }}
   <div style="display:none" aria-hidden="true">
     {{- range $videos }}
     <span data-video="{{ .RelPermalink }}">{{ .Name }}</span>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- if $pdfs }}
+  <div style="display:none" aria-hidden="true">
+    {{- range $pdfs }}
+    <span data-pdf="{{ .RelPermalink }}">{{ .Name }}</span>
     {{- end }}
   </div>
   {{- end }}
